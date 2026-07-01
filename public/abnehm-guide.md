@@ -473,3 +473,10 @@ Ein funktionierendes System muss nicht verändert werden, ein nicht funktioniere
 Alle relevanten Formeln aus diesem Guide auf einen Blick – zum schnellen Nachschlagen und Ausrechnen der eigenen Werte.
 
 <!-- visual:formeln -->
+
+
+## 7. Glossar
+
+Alle wichtigen Begriffe, Abkürzungen und Konzepte aus diesem Guide – alphabetisch nach Kategorie sortiert.
+
+<!-- visual:glossar -->

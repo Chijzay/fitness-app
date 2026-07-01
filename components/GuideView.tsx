@@ -442,10 +442,109 @@ function VisualFormeln() {
   );
 }
 
+function VisualGlossar() {
+  const cats = [
+    {
+      name: "Energiestoffwechsel", color: "var(--teal)", icon: "🔥",
+      terms: [
+        { term: "BMR", full: "Basal Metabolic Rate", def: "Grundumsatz – Kalorien, die der Körper in völliger Ruhe (24 h) verbraucht, nur um lebenserhaltende Funktionen aufrechtzuerhalten." },
+        { term: "TDEE", full: "Total Daily Energy Expenditure", def: "Gesamtenergieverbrauch pro Tag = BMR × Aktivitätsfaktor. Das ist die Kalorienmenge, die du essen musst, um dein Gewicht zu halten." },
+        { term: "TEF", full: "Thermic Effect of Food", def: "Thermischer Effekt der Nahrung – Energie, die beim Verdauen verbraucht wird. Protein ~25 %, Kohlenhydrate ~6 %, Fett ~2 % der jeweiligen Kalorien." },
+        { term: "AEE", full: "Activity Energy Expenditure", def: "Kalorienverbrauch durch bewusste Bewegung (Sport, Training). Wird manuell im QuickEntry eingetragen und vom Defizit abgezogen." },
+        { term: "NEAT", full: "Non-Exercise Activity Thermogenesis", def: "Kalorienverbrauch durch unbewusste Alltagsbewegung: Stehen, Zappeln, Treppengehen, Hausarbeit. Stark unterschätzt – kann mehrere hundert kcal pro Tag ausmachen." },
+        { term: "Kaloriendefizit", full: "", def: "Negative Kalorienbilanz: Du nimmst weniger Kalorien zu dir als du verbrauchst. Voraussetzung für Fettabbau. Empfohlene Größe: 300–500 kcal/Tag." },
+        { term: "Kalorienüberschuss", full: "Surplus", def: "Positive Kalorienbilanz: mehr essen als verbrauchen. Voraussetzung für gezielten Muskelaufbau (Bulk-Phase)." },
+      ],
+    },
+    {
+      name: "Körperzusammensetzung", color: "var(--blue)", icon: "📊",
+      terms: [
+        { term: "KG", full: "Körpergewicht", def: "Gesamtgewicht inkl. Wasser, Muskeln, Fett, Knochen und Organgewebe. Schwankt täglich bis zu 2 kg – Trend zählt, nicht der Einzelwert." },
+        { term: "KF%", full: "Körperfettanteil", def: "Prozentualer Anteil des Körperfetts am Gesamtgewicht. Gesunde Bereiche: Männer 10–20 %, Frauen 18–28 %. Wird per Formel (Deurenberg) oder Messung bestimmt." },
+        { term: "LBM", full: "Lean Body Mass", def: "Magergewicht – alles außer Körperfett: Muskeln, Knochen, Organe, Wasser. Formel: Gewicht × (1 – KF%/100). Basis für Proteinbedarf und BMR." },
+        { term: "Muskelmasse", full: "Skelettmuskulatur", def: "Der kontrahierbare Anteil der LBM, ca. 60 % (♂) bzw. 55 % (♀) des Magergewichts. Schätzwert, der in der App angezeigt wird." },
+        { term: "BMI", full: "Body-Mass-Index", def: "Gewicht (kg) ÷ Größe (m)². Grober Überblicksindex, berücksichtigt keine Körperzusammensetzung. Normalbereich: 18,5–24,9." },
+        { term: "Wassereinlagerungen", full: "", def: "Temporäre Gewichtsschwankungen durch gespeichertes Wasser im Gewebe. Können durch Stress, Salz, Kohlenhydrate oder Muskelkater entstehen und das Waage-Ergebnis verfälschen." },
+      ],
+    },
+    {
+      name: "Trainingskonzepte", color: "var(--green)", icon: "💪",
+      terms: [
+        { term: "Progressive Überlastung", full: "Progressive Overload", def: "Das Prinzip, Trainingsreize schrittweise zu steigern (mehr Gewicht, Wiederholungen oder Volumen), damit der Muskel weiter wächst und stärker wird." },
+        { term: "Deload", full: "", def: "Gezielte Trainingswoche mit deutlich reduziertem Volumen oder Intensität (~40–60 % der normalen Last). Ziel: Erholung des ZNS und Prävention von Übertraining." },
+        { term: "Refeed", full: "", def: "Gezielter Tag oder mehrtägiger Zeitraum mit Kalorienzufuhr auf TDEE-Niveau während einer Diät. Hebt Leptin und Stoffwechselrate, verbessert Wohlbefinden und Leistung." },
+        { term: "Muskelschutz", full: "Muscle Retention", def: "Ziel beim Abnehmen: möglichst viel Muskelmasse erhalten. Erreicht durch ausreichend Protein (≥1,6 g/kg), Krafttraining und moderates Defizit (max. 500 kcal/Tag)." },
+        { term: "Volumen", full: "Trainingsvolumen", def: "Gesamtarbeit pro Einheit: Sätze × Wiederholungen × Gewicht. Primärer Wachstumsreiz. Muss progressiv gesteigert werden." },
+        { term: "ZNS", full: "Zentrales Nervensystem", def: "Steuert Muskelkontraktion und Koordination. Ermüdet bei schwerem Training stärker und langsamer als die Muskulatur selbst – daher Bedarf an Deload-Wochen." },
+      ],
+    },
+    {
+      name: "Ernährung & Makros", color: "var(--orange)", icon: "🥗",
+      terms: [
+        { term: "Makros", full: "Makronährstoffe", def: "Die drei kalorienliefernden Nährstoffgruppen: Protein (4 kcal/g), Kohlenhydrate (4 kcal/g) und Fett (9 kcal/g)." },
+        { term: "Protein", full: "Eiweiß", def: "Wichtigster Makronährstoff für Muskelschutz und -aufbau. Empfehlung in der Diät: 1,6–2,2 g pro kg Körpergewicht. Hat den höchsten thermischen Effekt (TEF ~25 %)." },
+        { term: "KH", full: "Kohlenhydrate", def: "Primärer Energielieferant für Gehirn und Muskulatur. 1 g Glykogen bindet ~3 g Wasser – daher schnelle Gewichtsschwankungen bei KH-Änderungen." },
+        { term: "Mifflin-St-Jeor", full: "", def: "Wissenschaftlich validierte Formel zur BMR-Berechnung (1990). Gilt als genaueste Standardformel. Männer: 10×kg + 6,25×cm − 5×Alter + 5. Frauen: −161 statt +5." },
+        { term: "Aktivitätsfaktor", full: "PAL-Wert", def: "Multiplikator für den BMR zur TDEE-Berechnung: 1,2 (kaum Bewegung) bis 1,9 (sehr aktiv/2× tägl. Training). Wird im Profil eingestellt." },
+        { term: "Glykogen", full: "", def: "Gespeicherte Form der Kohlenhydrate in Muskeln und Leber. Wird bei Sport zuerst verbraucht. Volle Speicher = ca. 400–600 g, bindet zusätzlich ~1,5 kg Wasser." },
+      ],
+    },
+    {
+      name: "App-Konzepte", color: "var(--purple)", icon: "📱",
+      terms: [
+        { term: "Phase", full: "Diätphase", def: "Abschnitt mit definierten Zielen (Start-/Zielgewicht, Startdatum). Die App berechnet daraus Ziel-Defizit und Fortschritt. Mehrere Phasen können hintereinander angelegt werden." },
+        { term: "Bilanz", full: "Tagesbilanz / Defizit", def: "Gegessen − TDEE − Sport-kcal. Negative Werte = Defizit (gut beim Abnehmen). Positive Werte = Überschuss. Wird täglich im Dashboard angezeigt." },
+        { term: "Score", full: "Tagesscore", def: "Interne Qualitätsbewertung des Tages: berücksichtigt Defizit, Protein, Schlaf und Schritte. Dient als Orientierung, nicht als harte Vorgabe." },
+        { term: "QuickEntry", full: "", def: "Schnelleingabe-Formular im Dashboard zum Erfassen aller Tageswerte: Gewicht, Kalorien, Protein, Sport, Schritte, Schlaf und Körperfett." },
+        { term: "TDEE-Override", full: "", def: "Möglichkeit, den berechneten TDEE manuell zu überschreiben, wenn du deinen tatsächlichen Verbrauch durch längeres Tracking besser kennst." },
+        { term: "Körperfett (geschätzt)", full: "", def: "Wird aus BMI, Alter und Geschlecht per Deurenberg-Formel berechnet, wenn keine manuelle Messung eingegeben wurde. Schätzwert ± 3–4 Prozentpunkte." },
+      ],
+    },
+  ];
+
+  const tdCell: React.CSSProperties = { padding: "9px 14px", verticalAlign: "top" };
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 14, margin: "20px 0 8px" }}>
+      {cats.map((cat, i) => (
+        <div key={i} style={{ background: "var(--surface)", border: "1px solid var(--border)", borderRadius: 12, overflow: "hidden" }}>
+          <div style={{ padding: "10px 16px", background: "var(--surface2)", borderBottom: "1px solid var(--border)", display: "flex", alignItems: "center", gap: 8 }}>
+            <span>{cat.icon}</span>
+            <span style={{ fontSize: 13, fontWeight: 700, color: cat.color }}>{cat.name}</span>
+          </div>
+          <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
+            <colgroup>
+              <col style={{ width: "14%" }} />
+              <col style={{ width: "22%" }} />
+              <col style={{ width: "64%" }} />
+            </colgroup>
+            <thead>
+              <tr>
+                {(["Kürzel", "Ausgeschrieben", "Bedeutung"] as const).map(h => (
+                  <th key={h} style={{ textAlign: "left", padding: "7px 14px", fontSize: 10, fontWeight: 700, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.07em", borderBottom: "1px solid var(--border)" }}>{h}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {cat.terms.map((r, j) => (
+                <tr key={j} style={{ borderBottom: j < cat.terms.length - 1 ? "1px solid var(--border)" : "none" }}>
+                  <td style={{ ...tdCell, fontWeight: 700, color: cat.color, fontFamily: "monospace", fontSize: 12 }}>{r.term}</td>
+                  <td style={{ ...tdCell, fontWeight: 500, color: "var(--text-2)", fontSize: 12 }}>{r.full || "–"}</td>
+                  <td style={{ ...tdCell, color: "var(--text-muted)", lineHeight: 1.55 }}>{r.def}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 function VisualBlock({ name }: { name: string }) {
   if (name === "bausteine") return <VisualBausteine />;
   if (name === "tdee") return <VisualTDEE />;
   if (name === "formeln") return <VisualFormeln />;
+  if (name === "glossar") return <VisualGlossar />;
   return null;
 }
 

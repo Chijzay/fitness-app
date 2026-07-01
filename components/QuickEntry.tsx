@@ -131,7 +131,20 @@ export default function QuickEntry({
   useEffect(() => {
     const existing = logs.find(l => l.date.startsWith(date));
     setExistingId(existing?.id ?? null);
-    setForm(existing ? logToForm(existing) : empty);
+    if (existing) {
+      setForm(logToForm(existing));
+    } else {
+      const sorted = [...logs].filter(l => !l.date.startsWith(date)).sort((a, b) => b.date.localeCompare(a.date));
+      const prevBf = sorted.find(l => !l.bodyFatEstimated && l.bodyFatPercent != null);
+      const prevMm = sorted.find(l => l.muscleMass != null);
+      setForm({
+        ...empty,
+        bodyFatPercent: prevBf?.bodyFatPercent?.toString() ?? "",
+        bodyFatManual: prevBf != null,
+        muscleMass: prevMm?.muscleMass?.toString() ?? "",
+        muscleMassManual: prevMm != null,
+      });
+    }
     setConfirmDelete(false);
   }, [date, logs]);
 

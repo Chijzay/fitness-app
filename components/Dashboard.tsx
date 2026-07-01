@@ -91,8 +91,9 @@ export default function Dashboard({ logs, profile, range, today: todayProp, onGo
   // Sync when todayProp changes (SSR gives UTC date, client corrects to local date)
   useEffect(() => { setSelectedDate(todayProp); }, [todayProp]);
   const [goals, setGoals] = useState<Goal[]>([]);
+  const [goalsLoaded, setGoalsLoaded] = useState(false);
   useEffect(() => {
-    fetch("/api/goals").then(r => r.json()).then(setGoals).catch(() => {});
+    fetch("/api/goals").then(r => r.json()).then(g => { setGoals(g); setGoalsLoaded(true); }).catch(() => setGoalsLoaded(true));
   }, []);
 
   const dates = useMemo(() => allDatesInRange(range), [range]);
@@ -267,7 +268,7 @@ export default function Dashboard({ logs, profile, range, today: todayProp, onGo
         <div className="kpi-card" style={{ borderLeft: "2px solid var(--purple)", opacity: 0.9 }}>
           <div className="kpi-label"><span>😴</span>Schlaf heute</div>
           <div className="kpi-value" style={{ fontSize: 18, color: todaySleep ? "var(--purple)" : "var(--text-muted)" }}>
-            {todaySleep ? formatMinutes(todaySleep) : sleepGoal ? `${sleepGoal.targetValue} Std.` : "7–9 Std."}
+            {todaySleep ? formatMinutes(todaySleep) : !goalsLoaded ? "–" : sleepGoal ? `${sleepGoal.targetValue} Std.` : "7–9 Std."}
           </div>
           <div className="kpi-sub">
             {todaySleep
