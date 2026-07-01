@@ -74,14 +74,28 @@ export default function Home() {
   const [returnView, setReturnView] = useState<View>("dashboard");
   // dashRange wird jedes Mal neu aus dem aktuellen Datum berechnet
   const [today, setToday] = useState(todayStr());
-  const dashRange: DateRange = {
-    from: (() => { const d = new Date(today); d.setDate(d.getDate() - 6); return d.toISOString().split("T")[0]; })(),
-    to: today,
-  };
   const [detailRange, setDetailRange] = useState<DateRange>(last30());
   const [allLogs, setAllLogs] = useState<DailyLog[]>([]);
   const [entryDate, setEntryDate] = useState(todayStr());
   const [refreshKey, setRefreshKey] = useState(0);
+
+  // Fix: Vercel-Server läuft in UTC — nach Hydration korrektes lokales Datum setzen
+  useEffect(() => {
+    const local = todayStr();
+    if (local !== today) {
+      setToday(local);
+      setEntryDate(local);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  function makeDashRange(t: string): DateRange {
+    const d = new Date(t + "T12:00:00"); // mittags parsen um UTC-Offset-Fehler zu vermeiden
+    d.setDate(d.getDate() - 6);
+    const from = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+    return { from, to: t };
+  }
+  const dashRange = makeDashRange(today);
 
   // Mitternachts-Refresh: aktualisiert "today" automatisch wenn der Tag wechselt
   useEffect(() => {

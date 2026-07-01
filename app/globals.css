@@ -326,6 +326,9 @@ tbody td { padding: 10px 14px; color: var(--text); }
 /* ── Divider ──────────────────────────────────── */
 .divider { border: none; border-top: 1px solid var(--border); margin: 16px 0; }
 
+/* ── Widget Chart Container ───────────────────── */
+.widget-chart { height: 110px; }
+
 /* ── Scrollbar ────────────────────────────────── */
 * { scrollbar-width: thin; scrollbar-color: var(--border2) transparent; }
 ::-webkit-scrollbar { width: 5px; height: 5px; }
@@ -361,7 +364,7 @@ tbody td { padding: 10px 14px; color: var(--text); }
   .kpi-sub   { font-size: 10.5px !important; }
 
   .card-pad { padding: 12px; }
-  .widget-chart-inner { height: 80px !important; }
+  .widget-chart { height: 80px !important; }
   .widget-detail-hint { display: none !important; }
 
   .section-head { margin-bottom: 10px; }
@@ -379,19 +382,42 @@ tbody td { padding: 10px 14px; color: var(--text); }
   html { font-size: 13px; }
   .page { padding: 10px 10px 44px; max-width: 100%; }
 
-  .nav { flex-wrap: wrap; height: auto; padding: 8px 12px 0; gap: 0; }
-  .nav-brand { margin-right: auto; }
-  .nav-spacer, .nav-divider { display: none; }
-  .nav-actions { gap: 4px; }
+  /* Nav: Single Row — Icon | scrollable tabs | + Button */
+  .nav {
+    flex-wrap: nowrap;
+    height: 52px;
+    padding: 0 10px;
+    gap: 6px;
+    overflow: hidden;
+  }
+  /* Desktop-tabs direkt in der Nav ausblenden */
+  .nav > .nav-tab,
+  .nav > .nav-divider,
+  .nav > .nav-spacer { display: none !important; }
+  /* Brand: nur Icon, kein Text */
+  .nav-brand { margin-right: 0; padding: 4px 6px; }
+  .nav-brand > span { display: none; }
+  /* Actions: nur + Button, Rest weg */
   .nav-actions .btn-secondary { display: none; }
+  .nav-actions .nav-tab { display: none; }
+  .nav-actions .nav-divider { display: none; }
+  .nav-actions { gap: 0; }
+  /* Mobile-Tabs füllen verbleibenden Raum, scrollen horizontal */
   .nav-tabs-mobile {
-    width: 100%; display: flex !important; overflow-x: auto;
-    -webkit-overflow-scrolling: touch; scrollbar-width: none;
-    gap: 2px; padding: 5px 0 7px;
-    border-top: 1px solid var(--border); margin-top: 6px;
+    flex: 1;
+    display: flex !important;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    gap: 2px;
+    padding: 0;
+    border-top: none !important;
+    margin-top: 0 !important;
+    align-items: center;
+    height: 100%;
   }
   .nav-tabs-mobile::-webkit-scrollbar { display: none; }
-  .nav-tabs-mobile .nav-tab { flex-shrink: 0; font-size: 11px; padding: 4px 9px; }
+  .nav-tabs-mobile .nav-tab { flex-shrink: 0; font-size: 11px; padding: 5px 9px; }
 
   /* KPI + Ziele: 2 Spalten — kompakt aber lesbar */
   .dash-kpi-grid    { grid-template-columns: repeat(2, 1fr) !important; gap: 7px !important; }
@@ -405,7 +431,7 @@ tbody td { padding: 10px 14px; color: var(--text); }
   .kpi-sub   { font-size: 10px !important; margin-top: 2px !important; }
 
   .card-pad { padding: 14px 16px; }
-  .widget-chart-inner { height: 90px !important; }
+  .widget-chart { height: 90px !important; }
   .widget-detail-hint { display: none !important; }
 
   .section-head { margin-bottom: 10px; }

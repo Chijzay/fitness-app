@@ -1,5 +1,5 @@
 "use client";
-// v2
+// v3
 import { useMemo, useState, useEffect } from "react";
 import {
   ComposedChart, Bar, Line, BarChart, LineChart,
@@ -250,7 +250,7 @@ export default function Dashboard({ logs, profile, range, onGoDetail, onEditEntr
           sub={avgSteps ? `Ø ${avgSteps.toLocaleString("de")} Schritte/Tag · ${stepsCount} Einträge` : "Noch keine Daten"}
           badge={avgSteps ? <span className={`badge ${avgSteps >= 10000 ? "badge-teal" : "badge-orange"}`}>{avgSteps >= 10000 ? "✓ Ziel" : "< 10.000"}</span> : undefined}
           onClick={() => onGoDetail("detail-steps")}>
-          <div className="widget-chart-inner" style={{ height: 110 }}><ResponsiveContainer width="100%" height="100%">
+          <ResponsiveContainer width="100%" height="100%">
             <ComposedChart data={stepsData} margin={{ top: 4, right: 4, left: -28, bottom: 0 }}>
               <CartesianGrid {...DARK.grid} />
               <XAxis dataKey="date" tick={DARK.tick} tickLine={false} axisLine={false} />
@@ -262,7 +262,7 @@ export default function Dashboard({ logs, profile, range, onGoDetail, onEditEntr
               </Bar>
               {avgSteps && <ReferenceLine y={avgSteps} stroke="var(--teal)" strokeDasharray="2 2" strokeWidth={1} />}
             </ComposedChart>
-          </ResponsiveContainer></div>
+          </ResponsiveContainer>
         </WidgetCard>
 
         {/* GEWICHT */}
@@ -271,7 +271,7 @@ export default function Dashboard({ logs, profile, range, onGoDetail, onEditEntr
           sub={weightDiff != null ? `${weightDiff > 0 ? "▲" : weightDiff < 0 ? "▼" : "="} ${Math.abs(weightDiff)} kg diese Woche` : "Noch keine Daten"}
           badge={weightDiff != null ? <span className={`badge ${weightDiff < 0 ? "badge-teal" : weightDiff > 0 ? "badge-red" : "badge-gray"}`}>{weightDiff > 0 ? "+" : ""}{weightDiff} kg</span> : undefined}
           onClick={() => onGoDetail("detail-weight")}>
-          <div className="widget-chart-inner" style={{ height: 110 }}><ResponsiveContainer width="100%" height="100%">
+          <ResponsiveContainer width="100%" height="100%">
             <AreaChart data={weightData} margin={{ top: 4, right: 4, left: -28, bottom: 0 }}>
               <defs>
                 <linearGradient id="wGrad" x1="0" y1="0" x2="0" y2="1">
@@ -286,7 +286,7 @@ export default function Dashboard({ logs, profile, range, onGoDetail, onEditEntr
               <Area type="monotone" dataKey="weight" stroke="var(--teal)" strokeWidth={2.5}
                 fill="url(#wGrad)" dot={{ r: 4, fill: "var(--teal)", strokeWidth: 0 }} connectNulls />
             </AreaChart>
-          </ResponsiveContainer></div>
+          </ResponsiveContainer>
         </WidgetCard>
 
         {/* KALORIEN – kombiniert Bar (Bilanz) + Line (gegessen) */}
@@ -295,7 +295,7 @@ export default function Dashboard({ logs, profile, range, onGoDetail, onEditEntr
           sub={Math.abs(fatKg) > 0.01 ? `≈ ${fatKg > 0 ? "+" : ""}${fatKg.toFixed(2)} kg Fett` : "Noch keine Daten"}
           badge={kcalData.some(d => d.deficit != null) ? <span className={`badge ${totalDeficit <= 0 ? "badge-teal" : "badge-red"}`}>{totalDeficit <= 0 ? "Defizit ✓" : "Überschuss"}</span> : undefined}
           onClick={() => onGoDetail("detail-kcal")}>
-          <div className="widget-chart-inner" style={{ height: 110 }}><ResponsiveContainer width="100%" height="100%">
+          <ResponsiveContainer width="100%" height="100%">
             <ComposedChart data={kcalData} margin={{ top: 4, right: 4, left: -28, bottom: 0 }}>
               <CartesianGrid {...DARK.grid} />
               <XAxis dataKey="date" tick={DARK.tick} tickLine={false} axisLine={false} />
@@ -313,7 +313,7 @@ export default function Dashboard({ logs, profile, range, onGoDetail, onEditEntr
                 strokeWidth={1.5} strokeDasharray="4 3"
                 dot={false} connectNulls />
             </ComposedChart>
-          </ResponsiveContainer></div>
+          </ResponsiveContainer>
         </WidgetCard>
 
         {/* SCHLAF */}
@@ -322,7 +322,7 @@ export default function Dashboard({ logs, profile, range, onGoDetail, onEditEntr
           sub={sleepEntries.length ? `Ø pro Nacht · ${sleepEntries.length} Einträge` : "Noch keine Daten"}
           badge={avgSleep ? <span className={`badge ${avgSleep >= 420 ? "badge-teal" : avgSleep >= 300 ? "badge-orange" : "badge-red"}`}>{avgSleep >= 420 ? "Gut" : avgSleep >= 300 ? "Ok" : "Zu wenig"}</span> : undefined}
           onClick={() => onGoDetail("detail-sleep")}>
-          <div className="widget-chart-inner" style={{ height: 110 }}><ResponsiveContainer width="100%" height="100%">
+          <ResponsiveContainer width="100%" height="100%">
             <ComposedChart data={sleepData} margin={{ top: 4, right: 4, left: -28, bottom: 0 }}>
               <defs>
                 <linearGradient id="sGrad" x1="0" y1="0" x2="0" y2="1">
@@ -339,7 +339,7 @@ export default function Dashboard({ logs, profile, range, onGoDetail, onEditEntr
               <Line type="monotone" dataKey="deep" stroke="var(--teal)" strokeWidth={2}
                 dot={{ r: 3, fill: "var(--teal)", strokeWidth: 0 }} connectNulls />
             </ComposedChart>
-          </ResponsiveContainer></div>
+          </ResponsiveContainer>
         </WidgetCard>
       </div>
 
