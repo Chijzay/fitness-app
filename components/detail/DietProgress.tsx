@@ -122,7 +122,7 @@ export default function DietProgress({ allLogs, profile, range, setRange, onEdit
     estimatedWeeks = Math.ceil((currentWeight - goalWeight) / Math.abs(weeklyTrend));
     const d = new Date();
     d.setDate(d.getDate() + estimatedWeeks * 7);
-    estimatedDate = d.toLocaleDateString("de-DE", { day: "2-digit", month: "long", year: "numeric" });
+    estimatedDate = d.toLocaleDateString("de-DE", { day: "2-digit", month: "short", year: "2-digit" });
   }
 
   const kcalLogs = phaseLogs.filter(l => l.kcalConsumed);
@@ -147,7 +147,7 @@ export default function DietProgress({ allLogs, profile, range, setRange, onEdit
     estimatedWeeks = Math.ceil((currentWeight - goalWeight) / kgPerWeek);
     const d = new Date();
     d.setDate(d.getDate() + estimatedWeeks * 7);
-    estimatedDate = d.toLocaleDateString("de-DE", { day: "2-digit", month: "long", year: "numeric" });
+    estimatedDate = d.toLocaleDateString("de-DE", { day: "2-digit", month: "short", year: "2-digit" });
   }
 
   const avgDeficit = avgDeficitEarly;

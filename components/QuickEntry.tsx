@@ -261,8 +261,8 @@ export default function QuickEntry({
     onSaved();
   }
 
-  const g3 = { display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 14 } as const;
-  const g2 = { display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 } as const;
+  const g3 = "form-g3";
+  const g2 = "form-g2";
 
   return (
     <div style={{ margin: "0 auto" }}>
@@ -300,7 +300,7 @@ export default function QuickEntry({
 
         {/* Gewicht & Körper */}
         <Section icon="⚖️" title="Gewicht & Körper">
-          <div style={g3}>
+          <div className={g3}>
             <Field label="Gewicht (kg)">
               <input type="number" min="0" step="0.1" value={form.weight}
                 onChange={sp("weight")} placeholder="z.B. 85,5" />
@@ -334,7 +334,7 @@ export default function QuickEntry({
 
         {/* Kalorien */}
         <Section icon="🔥" title="Kalorien">
-          <div style={g3}>
+          <div className={g3}>
             <Field label="Gegessen (kcal)">
               <input type="number" min="0" step="1" value={form.kcalConsumed}
                 onChange={si("kcalConsumed")} placeholder="z.B. 1800" />
@@ -393,7 +393,7 @@ export default function QuickEntry({
 
         {/* Makros */}
         <Section icon="🥗" title="Makronährstoffe">
-          <div style={g3}>
+          <div className={g3}>
             <Field label="Kohlenhydrate (g)">
               <input type="number" min="0" step="0.1" value={form.carbsG} onChange={sp("carbsG")} placeholder="z.B. 200" />
             </Field>
@@ -408,7 +408,7 @@ export default function QuickEntry({
 
         {/* Schritte */}
         <Section icon="🚶" title="Schritte & Bewegung">
-          <div style={g3}>
+          <div className={g3}>
             <Field label="Schritte">
               <input type="number" min="0" step="1" value={form.steps}
                 onChange={si("steps")}
@@ -454,7 +454,7 @@ export default function QuickEntry({
               )}
             </div>
             {form.hasMovement && (
-              <div style={g3}>
+              <div className={g3}>
                 <Field label="Dauer (Minuten)">
                   <input type="number" min="0" step="1" value={form.movementDuration}
                     onChange={si("movementDuration")} placeholder="z.B. 60" autoFocus />
@@ -481,7 +481,7 @@ export default function QuickEntry({
 
         {/* Schlaf */}
         <Section icon="😴" title="Schlaf">
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 14 }}>
+          <div className="form-g3">
             <Field label="Im Bett (H:MM)">
               <input type="text" value={form.sleepTotal}
                 onChange={e => set("sleepTotal", e.target.value)} placeholder="z.B. 8:00" />
@@ -536,7 +536,7 @@ export default function QuickEntry({
 
         {/* Wasser & Notizen */}
         <Section icon="💧" title="Wasser & Notizen">
-          <div style={g2}>
+          <div className={g2}>
             <Field label={
               <span style={{ display: "flex", alignItems: "center", gap: 6 }}>
                 Wasser (ml)

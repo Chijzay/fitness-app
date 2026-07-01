@@ -147,6 +147,15 @@ export default function Dashboard({ logs, profile, range, today: todayProp, onGo
 
   const today = selectedDate;
 
+  // Heutiger Tag spezifisch
+  const todayLog = logMap[today] ?? null;
+  const todaySteps = todayLog?.steps ?? null;
+  const todayBmrCalc = todayLog?.bmrOverride ?? (latestWeight ? calcBMR(latestWeight, profile.height, profile.gender, new Date(profile.birthdate)) : null);
+  const todayTdeeCalc = todayBmrCalc ? Math.round(calcTDEE(todayBmrCalc, profile.activityLevel)) : null;
+  const todayKcalDeficit = todayTdeeCalc != null && todayLog?.kcalConsumed != null
+    ? Math.round(todayLog.kcalConsumed - todayTdeeCalc - (todayLog.kcalBurned ?? 0))
+    : null;
+
   // Ziele-Berechnung (außerhalb JSX um IIFE zu vermeiden)
   const weightGoal = goals.find(g => g.type === "weight");
   const proteinGoal = goals.find(g => g.type === "protein");
@@ -272,10 +281,14 @@ export default function Dashboard({ logs, profile, range, today: todayProp, onGo
       <div className="dash-widget-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 22 }}>
 
         {/* SCHRITTE */}
-        <WidgetCard icon="🚶" title="Schritte diese Woche"
-          kpi={totalSteps > 0 ? totalSteps.toLocaleString("de") : "–"}
-          sub={avgSteps ? `Ø ${avgSteps.toLocaleString("de")} Schritte/Tag · ${stepsCount} Einträge` : "Noch keine Daten"}
-          badge={avgSteps ? <span className={`badge ${avgSteps >= 10000 ? "badge-teal" : "badge-orange"}`}>{avgSteps >= 10000 ? "✓ Ziel" : "< 10.000"}</span> : undefined}
+        <WidgetCard icon="🚶" title="Schritte heute"
+          kpi={todaySteps != null ? todaySteps.toLocaleString("de") : "–"}
+          sub={todaySteps != null
+            ? `Heute · Ø ${avgSteps ? avgSteps.toLocaleString("de") : "–"}/Tag diese Woche`
+            : avgSteps ? `Ø ${avgSteps.toLocaleString("de")}/Tag · ${stepsCount} Einträge` : "Noch kein Eintrag"}
+          badge={todaySteps != null
+            ? <span className={`badge ${todaySteps >= stepsGoal ? "badge-teal" : "badge-orange"}`}>{todaySteps >= stepsGoal ? "✓ Ziel" : `${Math.round(todaySteps/stepsGoal*100)} %`}</span>
+            : avgSteps ? <span className={`badge ${avgSteps >= stepsGoal ? "badge-teal" : "badge-orange"}`}>Ø {avgSteps >= stepsGoal ? "✓" : "< Ziel"}</span> : undefined}
           onClick={() => onGoDetail("detail-steps")}>
           <ResponsiveContainer width="100%" height="100%">
             <ComposedChart data={stepsData} margin={{ top: 4, right: 4, left: -28, bottom: 0 }}>
@@ -316,11 +329,15 @@ export default function Dashboard({ logs, profile, range, today: todayProp, onGo
           </ResponsiveContainer>
         </WidgetCard>
 
-        {/* KALORIEN – kombiniert Bar (Bilanz) + Line (gegessen) */}
-        <WidgetCard icon="🔥" title="Kalorienbalance"
-          kpi={kcalData.some(d => d.deficit != null) ? `${totalDeficit > 0 ? "+" : ""}${Math.round(totalDeficit)} kcal` : "–"}
-          sub={Math.abs(fatKg) > 0.01 ? `≈ ${fatKg > 0 ? "+" : ""}${fatKg.toFixed(2)} kg Fett` : "Noch keine Daten"}
-          badge={kcalData.some(d => d.deficit != null) ? <span className={`badge ${totalDeficit <= 0 ? "badge-teal" : "badge-red"}`}>{totalDeficit <= 0 ? "Defizit ✓" : "Überschuss"}</span> : undefined}
+        {/* KALORIEN – Heute spezifisch, Chart zeigt 7-Tage-Trend */}
+        <WidgetCard icon="🔥" title="Kalorien heute"
+          kpi={todayKcalDeficit != null ? `${todayKcalDeficit > 0 ? "+" : ""}${todayKcalDeficit} kcal` : "–"}
+          sub={todayKcalDeficit != null
+            ? `Heute · ${todayKcalDeficit <= 0 ? `≈ ${Math.abs((todayKcalDeficit/7700)).toFixed(3)} kg Fett` : `${todayLog?.kcalConsumed} gegessen`}`
+            : kcalData.some(d => d.deficit != null) ? `Ø ${Math.round(totalDeficit / kcalData.filter(d => d.deficit != null).length)} kcal/Tag (7 T)` : "Noch kein Eintrag"}
+          badge={todayKcalDeficit != null
+            ? <span className={`badge ${todayKcalDeficit <= 0 ? "badge-teal" : "badge-red"}`}>{todayKcalDeficit <= 0 ? "Defizit ✓" : "Überschuss"}</span>
+            : kcalData.some(d => d.deficit != null) ? <span className={`badge ${totalDeficit <= 0 ? "badge-teal" : "badge-red"}`}>{totalDeficit <= 0 ? "Ø Defizit" : "Ø Überschuss"}</span> : undefined}
           onClick={() => onGoDetail("detail-kcal")}>
           <ResponsiveContainer width="100%" height="100%">
             <ComposedChart data={kcalData} margin={{ top: 4, right: 4, left: -28, bottom: 0 }}>

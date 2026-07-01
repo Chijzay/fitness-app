@@ -378,6 +378,9 @@ tbody td { padding: 10px 14px; color: var(--text); }
   .range-date-inputs input { width: 100% !important; }
   .range-date-inputs span { display: none !important; }
 
+  .form-g3 { grid-template-columns: 1fr 1fr !important; gap: 10px !important; }
+  .form-g2 { gap: 10px !important; }
+
   .guide-sidebar { display: none !important; }
   .guide-grid { grid-template-columns: 1fr !important; gap: 0 !important; }
   .guide-content-area { padding: 16px 14px !important; }
@@ -451,10 +454,20 @@ tbody td { padding: 10px 14px; color: var(--text); }
   .range-date-inputs input { width: 100% !important; }
   .range-date-inputs span { display: none !important; }
 
+  .form-g3 { grid-template-columns: 1fr !important; gap: 10px !important; }
+  .form-g2 { gap: 10px !important; }
+
   .guide-sidebar { display: none !important; }
   .guide-grid { grid-template-columns: 1fr !important; gap: 0 !important; }
   .guide-content-area { padding: 16px 14px !important; }
 }
+
+/* ── Form-Grids ───────────────────────────────── */
+.form-g3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
+.form-g2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+
+/* ── Table date cell ──────────────────────────── */
+tbody td:first-child { white-space: nowrap; }
 
 /* Desktop: mobile-Elemente verstecken */
 @media (min-width: 769px) {
