@@ -1,6 +1,8 @@
 import type { DateRange } from "@/app/page";
 
-export function dateStr(d: Date) { return d.toISOString().split("T")[0]; }
+export function dateStr(d: Date) {
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
+}
 export function addDays(d: Date, n: number) { const r = new Date(d); r.setDate(r.getDate() + n); return r; }
 export function fmtShort(s: string) {
   const d = new Date(s + "T12:00:00");
@@ -45,7 +47,7 @@ export function RangeSelector({ range, setRange }: { range: DateRange; setRange:
 }
 
 // Dark-theme chart defaults
-export const tickStyle = { fontSize: 10.5, fill: "#4d5566" };
+export const tickStyle = { fontSize: 10.5, fill: "#8b949e" };
 export const gridStyle = { stroke: "#2a3348", strokeDasharray: "3 3" };
 export const tooltipStyle = {
   contentStyle: {

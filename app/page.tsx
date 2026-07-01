@@ -169,7 +169,7 @@ export default function Home() {
       <main className="page" style={{ flex: 1 }}>
         {view === "dashboard" && (
           <Dashboard
-            logs={dashLogs} profile={profile} range={dashRange}
+            logs={dashLogs} profile={profile} range={dashRange} today={today}
             onGoDetail={goDetail}
             onEditEntry={date => { setReturnView("dashboard"); setEntryDate(date); setView("entry"); }}
           />

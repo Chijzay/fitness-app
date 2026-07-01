@@ -12,7 +12,7 @@ import { allDatesInRange, fmtShort, fmtFull } from "@/lib/chartHelpers";
 
 const DARK = {
   grid:    { stroke: "#2a3348", strokeDasharray: "3 3" },
-  tick:    { fontSize: 10.5, fill: "#4d5566" },
+  tick:    { fontSize: 10.5, fill: "#8b949e" },
   tooltip: {
     contentStyle: {
       background: "#1c2333", border: "1px solid #2a3348",
@@ -82,10 +82,11 @@ function WidgetCard({ icon, title, kpi, sub, badge, children, onClick }: {
 
 type Goal = { id: number; type: string; targetValue: number; targetDate?: string };
 
-export default function Dashboard({ logs, profile, range, onGoDetail, onEditEntry }: {
-  logs: DailyLog[]; profile: Profile; range: DateRange;
+export default function Dashboard({ logs, profile, range, today: todayProp, onGoDetail, onEditEntry }: {
+  logs: DailyLog[]; profile: Profile; range: DateRange; today: string;
   onGoDetail: (v: View) => void; onEditEntry: (date: string) => void;
 }) {
+  const [selectedDate, setSelectedDate] = useState(todayProp);
   const [goals, setGoals] = useState<Goal[]>([]);
   useEffect(() => {
     fetch("/api/goals").then(r => r.json()).then(setGoals).catch(() => {});
@@ -141,7 +142,7 @@ export default function Dashboard({ logs, profile, range, onGoDetail, onEditEntr
   const avgSleep = sleepEntries.length
     ? Math.round(sleepEntries.reduce((s, d) => s + (d.actual ?? 0), 0) / sleepEntries.length) : null;
 
-  const today = new Date().toISOString().split("T")[0];
+  const today = selectedDate;
 
   // Ziele-Berechnung (außerhalb JSX um IIFE zu vermeiden)
   const weightGoal = goals.find(g => g.type === "weight");
@@ -165,17 +166,33 @@ export default function Dashboard({ logs, profile, range, onGoDetail, onEditEntr
     <div>
       {/* Page Header */}
       <div style={{ marginBottom: 26 }}>
-        <div style={{ display: "flex", alignItems: "baseline", gap: 12 }}>
-          <h1 style={{ fontSize: 24, fontWeight: 800, letterSpacing: "-0.025em", color: "var(--text)" }}>
-            Dashboard
-          </h1>
-          <span style={{ fontSize: 13, color: "var(--text-muted)" }}>
-            {new Date(range.from).toLocaleDateString("de-DE", { day: "2-digit", month: "short" })} –{" "}
-            {new Date(range.to).toLocaleDateString("de-DE", { day: "2-digit", month: "short", year: "numeric" })}
-          </span>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 12 }}>
+          <div style={{ display: "flex", alignItems: "baseline", gap: 12 }}>
+            <h1 style={{ fontSize: 24, fontWeight: 800, letterSpacing: "-0.025em", color: "var(--text)" }}>
+              Dashboard
+            </h1>
+            <span style={{ fontSize: 13, color: "var(--text-muted)" }}>
+              {new Date(range.from + "T12:00:00").toLocaleDateString("de-DE", { day: "2-digit", month: "short" })} –{" "}
+              {new Date(range.to + "T12:00:00").toLocaleDateString("de-DE", { day: "2-digit", month: "short", year: "numeric" })}
+            </span>
+          </div>
+          {/* Tagesauswahl */}
+          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+            <span style={{ fontSize: 11.5, fontWeight: 600, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.06em" }}>Tagesansicht</span>
+            <input
+              type="date"
+              value={selectedDate}
+              onChange={e => setSelectedDate(e.target.value)}
+              style={{ fontSize: 12.5, padding: "5px 10px", width: 145 }}
+            />
+            {selectedDate !== todayProp && (
+              <button className="btn btn-xs btn-secondary" onClick={() => setSelectedDate(todayProp)}>
+                Heute
+              </button>
+            )}
+          </div>
         </div>
-        {/* Teal underline accent */}
-        <div style={{ width: 40, height: 3, background: "var(--teal)", borderRadius: 99, marginTop: 8, boxShadow: "0 0 8px var(--teal-glow)" }} />
+        <div style={{ width: 40, height: 3, background: "var(--teal)", borderRadius: 99, marginTop: 10, boxShadow: "0 0 8px var(--teal-glow)" }} />
       </div>
 
       {/* KPI-Leiste */}
