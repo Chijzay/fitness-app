@@ -1,5 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import Nav from "@/components/Nav";
 import Dashboard from "@/components/Dashboard";
 import QuickEntry from "@/components/QuickEntry";
@@ -44,8 +46,14 @@ function last30(): DateRange {
 }
 
 export default function Home() {
+  const { status } = useSession();
+  const router = useRouter();
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (status === "unauthenticated") router.push("/login");
+  }, [status, router]);
   const [view, setView] = useState<View>("dashboard");
   const [returnView, setReturnView] = useState<View>("dashboard");
   const [dashRange] = useState<DateRange>(last7());
@@ -79,6 +87,12 @@ export default function Home() {
     setEntryDate(date);
     setView("entry");
   }
+
+  if (status === "loading" || status === "unauthenticated") return (
+    <div style={{ height: "100vh", display: "flex", alignItems: "center", justifyContent: "center", color: "var(--text-muted)", fontSize: 15 }}>
+      Laden…
+    </div>
+  );
 
   if (loading) return (
     <div style={{ height: "100vh", display: "flex", alignItems: "center", justifyContent: "center", color: "var(--text-muted)", fontSize: 15 }}>
