@@ -1,12 +1,19 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { getToken } from "next-auth/jwt";
 
-export async function middleware(req: NextRequest) {
-  const token = await getToken({ req, secret: process.env.AUTH_SECRET });
-  const isAuthPage = req.nextUrl.pathname === "/login" || req.nextUrl.pathname === "/register";
+export function middleware(req: NextRequest) {
+  const isAuthPage =
+    req.nextUrl.pathname.startsWith("/login") ||
+    req.nextUrl.pathname.startsWith("/register");
 
-  if (!token && !isAuthPage) {
+  // NextAuth v5 session cookie names
+  const hasSession =
+    req.cookies.has("authjs.session-token") ||
+    req.cookies.has("__Secure-authjs.session-token") ||
+    req.cookies.has("next-auth.session-token") ||
+    req.cookies.has("__Secure-next-auth.session-token");
+
+  if (!hasSession && !isAuthPage) {
     return NextResponse.redirect(new URL("/login", req.url));
   }
 
