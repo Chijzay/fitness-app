@@ -498,8 +498,8 @@ export default function GuideView() {
 
       {md && (
         <div className="guide-grid" style={{ display: "grid", gridTemplateColumns: "210px 1fr", gap: 40, alignItems: "start" }}>
-          {/* TOC Sidebar — sticky */}
-          <div className="card card-pad no-print" style={{
+          {/* TOC Sidebar — sticky, desktop only */}
+          <div className="guide-sidebar card card-pad no-print" style={{
             padding: "16px 14px",
             position: "sticky", top: 80, alignSelf: "start",
             maxHeight: "calc(100vh - 110px)", overflowY: "auto",
@@ -511,7 +511,7 @@ export default function GuideView() {
           </div>
 
           {/* Content */}
-          <div ref={contentRef} className="card card-pad guide-content" style={{ padding: "28px 36px", lineHeight: 1.7 }}>
+          <div ref={contentRef} className="card card-pad guide-content-area" style={{ padding: "28px 36px", lineHeight: 1.7 }}>
             <RenderTokens tokens={tokens} />
           </div>
         </div>

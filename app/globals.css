@@ -332,6 +332,94 @@ tbody td { padding: 10px 14px; color: var(--text); }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 99px; }
 
+/* ── Responsive ───────────────────────────────── */
+@media (max-width: 768px) {
+  html { font-size: 13px; }
+
+  .page {
+    padding: 16px 14px 90px; /* extra bottom for mobile nav */
+    max-width: 100%;
+  }
+
+  /* Nav: nur Brand + Eintrag-Button oben */
+  .nav {
+    padding: 0 14px;
+    height: 52px;
+    gap: 0;
+  }
+  .nav-tab,
+  .nav-divider { display: none !important; }
+  .nav-spacer { flex: 1; }
+  .nav-actions { gap: 6px; }
+
+  /* Mobile Bottom Navigation */
+  .mobile-nav {
+    display: flex !important;
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    height: 60px;
+    background: rgba(22, 27, 34, 0.97);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-top: 1px solid var(--border);
+    z-index: 200;
+    padding: 0;
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  .mobile-nav-item {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    color: var(--text-muted);
+    font-size: 10px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: color 0.15s;
+    background: none;
+    border: none;
+    padding: 0;
+    letter-spacing: 0.02em;
+  }
+  .mobile-nav-item.active { color: var(--teal); }
+  .mobile-nav-item span:first-child { font-size: 20px; line-height: 1; }
+
+  /* Cards & Grids */
+  .kpi-card { padding: 14px 16px; }
+  .kpi-value { font-size: 22px; }
+
+  /* Tables: horizontal scroll */
+  .table-scroll {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    margin: 0 -14px;
+    padding: 0 14px;
+  }
+  table { min-width: 520px; }
+  thead th, tbody td { padding: 8px 10px; font-size: 12px; }
+
+  /* Cards padding */
+  .card-pad { padding: 16px; }
+  .card-pad-sm { padding: 12px 14px; }
+
+  /* Guide: sidebar verstecken, content vollbreit */
+  .guide-sidebar { display: none !important; }
+  .guide-grid {
+    grid-template-columns: 1fr !important;
+    gap: 0 !important;
+  }
+  .guide-content-area {
+    padding: 20px 18px !important;
+  }
+}
+
+/* Desktop: mobile-nav ausblenden */
+@media (min-width: 769px) {
+  .mobile-nav { display: none; }
+}
+
 /* ── Print ────────────────────────────────────── */
 @media print {
   @page { margin: 15mm; size: A4; }
