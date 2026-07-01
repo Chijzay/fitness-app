@@ -94,7 +94,7 @@ export default function KcalDetail({ logs, allLogs, profile, range, setRange, on
         </div>
       </div>
 
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 12, marginBottom: 20 }}>
+      <div className="detail-kpi-grid" style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 12, marginBottom: 20 }}>
         <KpiCard icon="📊" label="Gesamtbilanz" value={withData.length ? `${totalDeficit > 0 ? "+" : ""}${Math.round(totalDeficit)} kcal` : "–"}
           sub={Math.abs(totalFatKg) > 0.01 ? `≈ ${totalFatKg > 0 ? "+" : ""}${totalFatKg.toFixed(2)} kg Fett` : undefined}
           color={totalDeficit < 0 ? "var(--green)" : totalDeficit > 0 ? "var(--red)" : undefined} />
@@ -112,7 +112,7 @@ export default function KcalDetail({ logs, allLogs, profile, range, setRange, on
       {(bmrRef || tdee) && (
         <div className="card card-pad" style={{ marginBottom: 16 }}>
           <SectionHeader title="Deine Referenzwerte" icon="📋" />
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 12 }}>
+          <div className="detail-kpi-grid" style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 12 }}>
             {[
               { label: "Grundumsatz (BMR)", value: bmrRef ? `${Math.round(bmrRef)} kcal` : "–", sub: "Mifflin-St-Jeor" },
               { label: "Gesamtumsatz (TDEE)", value: tdee ? `${Math.round(tdee)} kcal` : "–", sub: `Faktor × ${profile.activityLevel}` },
@@ -226,8 +226,8 @@ export default function KcalDetail({ logs, allLogs, profile, range, setRange, on
                 name === "protein" ? "Eiweiß" : name === "carbs" ? "Kohlenhydrate" : "Fett",
               ]} />
               <Legend formatter={(v) => v === "protein" ? "Eiweiß" : v === "carbs" ? "Kohlenhydrate" : "Fett"} />
-              <Bar dataKey="carbs"   fill="var(--blue)" fillOpacity={0.85} radius={[3, 3, 0, 0]} maxBarSize={20} stackId="a" />
-              <Bar dataKey="protein" fill="var(--teal)" fillOpacity={0.85} radius={[0, 0, 0, 0]} maxBarSize={20} stackId="a" />
+              <Bar dataKey="carbs"   fill="var(--blue)"   fillOpacity={0.85} radius={[0, 0, 0, 0]} maxBarSize={20} stackId="a" />
+              <Bar dataKey="protein" fill="var(--teal)"   fillOpacity={0.85} radius={[0, 0, 0, 0]} maxBarSize={20} stackId="a" />
               <Bar dataKey="fat"     fill="var(--orange)" fillOpacity={0.85} radius={[3, 3, 0, 0]} maxBarSize={20} stackId="a" />
               {proteinTarget && <ReferenceLine y={proteinTarget} stroke="var(--teal)" strokeDasharray="4 3" strokeWidth={1.5} label={{ value: `Ziel ${proteinTarget}g`, fontSize: 10, fill: "var(--teal)", position: "right" }} />}
             </BarChart>

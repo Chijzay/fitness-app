@@ -72,7 +72,7 @@ export default function StepsDetail({ logs, allLogs, range, setRange, onEditDate
       </div>
 
       {/* KPIs */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 12, marginBottom: 20 }}>
+      <div className="detail-kpi-grid" style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 12, marginBottom: 20 }}>
         <KpiCard icon="👣" label="Gesamt" value={total > 0 ? total.toLocaleString("de") : "–"} sub="Schritte im Zeitraum" />
         <KpiCard icon="📊" label="Tagesdurchschnitt" value={avg ? avg.toLocaleString("de") : "–"}
           sub="pro Tag mit Eintrag"

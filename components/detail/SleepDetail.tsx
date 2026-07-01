@@ -89,7 +89,7 @@ export default function SleepDetail({ logs, allLogs, range, setRange, onEditDate
         </div>
       </div>
 
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 12, marginBottom: 20 }}>
+      <div className="detail-kpi-grid" style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 12, marginBottom: 20 }}>
         <KpiCard icon="🕐" label="Ø Schlafdauer" value={avgActual ? fmtHours(avgActual) : "–"}
           sub="pro Nacht (tatsächlich)"
           color={avgActual ? (avgActual >= 420 ? "var(--green)" : avgActual >= 300 ? "var(--orange)" : "var(--red)") : undefined} />

@@ -35,7 +35,7 @@ export function RangeSelector({ range, setRange }: { range: DateRange; setRange:
         <button key={p.days} className={`btn btn-xs ${days === p.days ? "btn-primary" : "btn-secondary"}`}
           onClick={() => setPreset(p.days)}>{p.label}</button>
       ))}
-      <div style={{ display: "flex", alignItems: "center", gap: 5, marginLeft: 4 }}>
+      <div className="range-date-inputs" style={{ display: "flex", alignItems: "center", gap: 5, marginLeft: 4 }}>
         <input type="date" value={range.from} onChange={e => setRange({ ...range, from: e.target.value })
         } style={{ width: 130, fontSize: 12 }} />
         <span style={{ color: "var(--text-muted)" }}>–</span>
@@ -56,6 +56,7 @@ export const tooltipStyle = {
     color: "#e6edf3",
   },
   labelStyle: { color: "#8b949e", marginBottom: 4, fontSize: 10.5, fontWeight: 700, textTransform: "uppercase" as const, letterSpacing: "0.05em" },
+  itemStyle: { color: "#e6edf3" },
   cursor: { fill: "rgba(0,212,180,0.04)" },
 };
 

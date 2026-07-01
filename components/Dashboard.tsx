@@ -20,6 +20,7 @@ const DARK = {
       color: "#e6edf3",
     },
     labelStyle: { color: "#8b949e", marginBottom: 4, fontSize: 10.5, fontWeight: 700, textTransform: "uppercase" as const, letterSpacing: "0.05em" },
+    itemStyle: { color: "#e6edf3" },
     cursor: { fill: "rgba(0,212,180,0.04)" },
   },
 };
@@ -87,6 +88,8 @@ export default function Dashboard({ logs, profile, range, today: todayProp, onGo
   onGoDetail: (v: View) => void; onEditEntry: (date: string) => void;
 }) {
   const [selectedDate, setSelectedDate] = useState(todayProp);
+  // Sync when todayProp changes (SSR gives UTC date, client corrects to local date)
+  useEffect(() => { setSelectedDate(todayProp); }, [todayProp]);
   const [goals, setGoals] = useState<Goal[]>([]);
   useEffect(() => {
     fetch("/api/goals").then(r => r.json()).then(setGoals).catch(() => {});
@@ -155,6 +158,9 @@ export default function Dashboard({ logs, profile, range, today: todayProp, onGo
     ?? (latestWeight ? Math.round(latestWeight * profile.proteinFactor) : null);
   const todayAee = logMap[today]?.kcalBurned ?? null;
   const todayProtein = logMap[today]?.proteinG ?? null;
+  const sleepGoalMins = sleepGoal ? Math.round(sleepGoal.targetValue * 60) : 420;
+  const todaySleep = logMap[today]?.sleepActual ?? null;
+  const stepsGoal = goals.find(g => g.type === "steps")?.targetValue ?? 10000;
   const proteinRemaining = proteinTarget != null && todayProtein != null
     ? Math.max(0, Math.round(proteinTarget - todayProtein))
     : null;
@@ -250,11 +256,15 @@ export default function Dashboard({ logs, profile, range, today: todayProp, onGo
           </div>
         </div>
         <div className="kpi-card" style={{ borderLeft: "2px solid var(--purple)", opacity: 0.9 }}>
-          <div className="kpi-label"><span>😴</span>Schlafziel</div>
-          <div className="kpi-value" style={{ fontSize: 18, color: "var(--purple)" }}>
-            {sleepGoal ? `${sleepGoal.targetValue} Std.` : "–"}
+          <div className="kpi-label"><span>😴</span>Schlaf heute</div>
+          <div className="kpi-value" style={{ fontSize: 18, color: todaySleep ? "var(--purple)" : "var(--text-muted)" }}>
+            {todaySleep ? formatMinutes(todaySleep) : sleepGoal ? `${sleepGoal.targetValue} Std.` : "7–9 Std."}
           </div>
-          <div className="kpi-sub">{sleepGoal ? "Ziel gesetzt ✓" : "Kein Ziel gesetzt"}</div>
+          <div className="kpi-sub">
+            {todaySleep
+              ? (sleepGoal ? `Ziel: ${sleepGoal.targetValue} Std. ${todaySleep >= sleepGoalMins ? "✓" : `· noch ${formatMinutes(sleepGoalMins - todaySleep)}`}` : "Eingetragen")
+              : "Noch kein Eintrag · Empfehlung"}
+          </div>
         </div>
       </div>
 
@@ -335,9 +345,13 @@ export default function Dashboard({ logs, profile, range, today: todayProp, onGo
 
         {/* SCHLAF */}
         <WidgetCard icon="😴" title="Schlaf"
-          kpi={avgSleep ? formatMinutes(avgSleep) : "–"}
-          sub={sleepEntries.length ? `Ø pro Nacht · ${sleepEntries.length} Einträge` : "Noch keine Daten"}
-          badge={avgSleep ? <span className={`badge ${avgSleep >= 420 ? "badge-teal" : avgSleep >= 300 ? "badge-orange" : "badge-red"}`}>{avgSleep >= 420 ? "Gut" : avgSleep >= 300 ? "Ok" : "Zu wenig"}</span> : undefined}
+          kpi={todaySleep != null ? formatMinutes(todaySleep) : "–"}
+          sub={todaySleep != null
+            ? `Heute · Ø ${avgSleep ? formatMinutes(avgSleep) : "–"} (${sleepEntries.length} Nächte)`
+            : avgSleep ? `Ø ${formatMinutes(avgSleep)} pro Nacht · ${sleepEntries.length} Einträge` : "Noch kein Eintrag"}
+          badge={todaySleep != null
+            ? <span className={`badge ${todaySleep >= 420 ? "badge-teal" : todaySleep >= 300 ? "badge-orange" : "badge-red"}`}>{todaySleep >= 420 ? "Gut" : todaySleep >= 300 ? "Ok" : "Zu wenig"}</span>
+            : avgSleep ? <span className={`badge ${avgSleep >= 420 ? "badge-teal" : avgSleep >= 300 ? "badge-orange" : "badge-red"}`}>{avgSleep >= 420 ? "Ø Gut" : avgSleep >= 300 ? "Ø Ok" : "Ø Wenig"}</span> : undefined}
           onClick={() => onGoDetail("detail-sleep")}>
           <ResponsiveContainer width="100%" height="100%">
             <ComposedChart data={sleepData} margin={{ top: 4, right: 4, left: -28, bottom: 0 }}>
@@ -415,10 +429,16 @@ export default function Dashboard({ logs, profile, range, today: todayProp, onGo
                     <td style={{ textAlign: "right", color: log?.proteinG && proteinMin && log.proteinG >= proteinMin ? "var(--teal)" : "var(--text)" }}>
                       {log?.proteinG ? `${log.proteinG} g` : <span style={{ color: "var(--text-muted)" }}>–</span>}
                     </td>
-                    <td style={{ textAlign: "right", color: (log?.steps ?? 0) >= 10000 ? "var(--teal)" : "var(--text)" }}>
-                      {log?.steps ? log.steps.toLocaleString("de") : <span style={{ color: "var(--text-muted)" }}>–</span>}
+                    <td style={{ textAlign: "right", color: (log?.steps ?? 0) >= stepsGoal ? "var(--teal)" : "var(--text)" }}>
+                      {log?.steps ? log.steps.toLocaleString("de")
+                        : isToday ? <span style={{ color: "var(--text-muted)", fontSize: "0.9em" }}>Ziel: {stepsGoal.toLocaleString("de")}</span>
+                        : <span style={{ color: "var(--text-muted)" }}>–</span>}
                     </td>
-                    <td style={{ textAlign: "right" }}>{log?.sleepActual ? formatMinutes(log.sleepActual) : <span style={{ color: "var(--text-muted)" }}>–</span>}</td>
+                    <td style={{ textAlign: "right" }}>
+                      {log?.sleepActual ? formatMinutes(log.sleepActual)
+                        : isToday ? <span style={{ color: "var(--text-muted)", fontSize: "0.9em" }}>Ziel: {formatMinutes(sleepGoalMins)}</span>
+                        : <span style={{ color: "var(--text-muted)" }}>–</span>}
+                    </td>
                     <td style={{ textAlign: "center", color: "var(--text-muted)" }}>{log?.waterMl ? `${(log.waterMl / 1000).toFixed(1)} L` : "–"}</td>
                     <td style={{ textAlign: "right", paddingRight: 16 }}>
                       <button className="btn btn-xs btn-secondary" onClick={e => { e.stopPropagation(); onEditEntry(d); }}>

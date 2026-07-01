@@ -104,7 +104,7 @@ export default function WeightDetail({ logs, allLogs, profile, range, setRange, 
         </div>
       </div>
 
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 12, marginBottom: 20 }}>
+      <div className="detail-kpi-grid" style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 12, marginBottom: 20 }}>
         <KpiCard icon="⚖️" label="Aktuell" value={lastW ? `${lastW} kg` : "–"} />
         <KpiCard icon="📉" label="Veränderung" value={diff != null ? `${diff > 0 ? "+" : ""}${diff} kg` : "–"}
           sub="seit Beginn des Zeitraums"

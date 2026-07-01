@@ -6,7 +6,6 @@ import Link from "next/link";
 
 export default function RegisterPage() {
   const router = useRouter();
-  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -20,7 +19,7 @@ export default function RegisterPage() {
     const res = await fetch("/api/auth/register", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name, email, password }),
+      body: JSON.stringify({ email, password }),
     });
     const data = await res.json();
 
@@ -65,24 +64,7 @@ export default function RegisterPage() {
         <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 16 }}>
           <div>
             <label style={{ display: "block", fontSize: 13, color: "var(--text-muted)", marginBottom: 6 }}>
-              Name (optional)
-            </label>
-            <input
-              type="text"
-              value={name}
-              onChange={e => setName(e.target.value)}
-              placeholder="Dein Name"
-              style={{
-                width: "100%", boxSizing: "border-box", padding: "10px 14px",
-                background: "var(--bg)", border: "1px solid var(--border)",
-                borderRadius: 8, color: "var(--text)", fontSize: 15,
-              }}
-            />
-          </div>
-
-          <div>
-            <label style={{ display: "block", fontSize: 13, color: "var(--text-muted)", marginBottom: 6 }}>
-              Email
+              E-Mail
             </label>
             <input
               type="email"

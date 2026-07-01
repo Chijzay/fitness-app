@@ -18,7 +18,7 @@ export default function DietProgress({ allLogs, profile, range, setRange, onEdit
   const [selectedPhaseId, setSelectedPhaseId] = useState<number | null>(null);
   const [showNewPhase, setShowNewPhase] = useState(false);
   const [newPhaseName, setNewPhaseName] = useState("");
-  const [newPhaseDate, setNewPhaseDate] = useState(new Date().toISOString().split("T")[0]);
+  const [newPhaseDate, setNewPhaseDate] = useState(() => { const n = new Date(); return `${n.getFullYear()}-${String(n.getMonth()+1).padStart(2,"0")}-${String(n.getDate()).padStart(2,"0")}`; });
   const [savingPhase, setSavingPhase] = useState(false);
   const [editingPhaseId, setEditingPhaseId] = useState<number | null>(null);
   const [editingPhaseName, setEditingPhaseName] = useState("");
@@ -50,7 +50,7 @@ export default function DietProgress({ allLogs, profile, range, setRange, onEdit
     setSelectedPhaseId(ph.id);
     setShowNewPhase(false);
     setNewPhaseName("");
-    setNewPhaseDate(new Date().toISOString().split("T")[0]);
+    const nd = new Date(); setNewPhaseDate(`${nd.getFullYear()}-${String(nd.getMonth()+1).padStart(2,"0")}-${String(nd.getDate()).padStart(2,"0")}`);
     setSavingPhase(false);
   }
 
@@ -340,7 +340,7 @@ export default function DietProgress({ allLogs, profile, range, setRange, onEdit
       )}
 
       {/* KPIs */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 12, marginBottom: 20 }}>
+      <div className="detail-kpi-grid" style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 12, marginBottom: 20 }}>
         <KpiCard icon="📉" label="Trend / Woche"
           value={weeklyTrend !== 0 ? `${weeklyTrend > 0 ? "+" : ""}${weeklyTrend} kg` : "–"}
           sub="Lineare Regression"

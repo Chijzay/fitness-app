@@ -24,7 +24,7 @@ export default function LoginPage() {
 
     setLoading(false);
     if (res?.error) {
-      setError("Ungültige Email oder Passwort");
+      setError("Ungültige E-Mail oder Passwort");
     } else {
       router.push("/");
       router.refresh();
@@ -54,7 +54,7 @@ export default function LoginPage() {
         <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 16 }}>
           <div>
             <label style={{ display: "block", fontSize: 13, color: "var(--text-muted)", marginBottom: 6 }}>
-              Email
+              E-Mail
             </label>
             <input
               type="email"

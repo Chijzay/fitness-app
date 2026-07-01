@@ -85,6 +85,7 @@ export default function Home() {
     if (local !== today) {
       setToday(local);
       setEntryDate(local);
+      setDetailRange(last30());
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

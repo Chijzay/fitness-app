@@ -309,7 +309,7 @@ function VisualBausteine() {
       <div style={{ fontSize: 11, fontWeight: 700, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 12 }}>
         Die 8 Bausteine — hierarchisch nach Wirksamkeit
       </div>
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 12 }}>
+      <div className="guide-hebel-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 12 }}>
         {hebel.map((h, i) => (
           <div key={i} style={{ background: h.dim, border: `1px solid ${h.border}`, borderRadius: 12, overflow: "hidden" }}>
             <div style={{ padding: "12px 14px 10px", borderBottom: `1px solid ${h.border}` }}>
