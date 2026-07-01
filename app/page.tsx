@@ -33,16 +33,32 @@ export type View =
   | "dashboard" | "entry" | "profile" | "goals" | "guide"
   | "detail-steps" | "detail-weight" | "detail-kcal" | "detail-sleep" | "detail-diet";
 
-function todayStr() { return new Date().toISOString().split("T")[0]; }
+function todayStr() {
+  const now = new Date();
+  return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
+}
 function last7(): DateRange {
   const to = new Date();
   const from = new Date(); from.setDate(from.getDate() - 6);
-  return { from: from.toISOString().split("T")[0], to: to.toISOString().split("T")[0] };
+  return {
+    from: `${from.getFullYear()}-${String(from.getMonth() + 1).padStart(2, "0")}-${String(from.getDate()).padStart(2, "0")}`,
+    to: todayStr(),
+  };
 }
 function last30(): DateRange {
-  const to = new Date();
+  const to = new Date(); void to;
   const from = new Date(); from.setDate(from.getDate() - 29);
-  return { from: from.toISOString().split("T")[0], to: to.toISOString().split("T")[0] };
+  return {
+    from: `${from.getFullYear()}-${String(from.getMonth() + 1).padStart(2, "0")}-${String(from.getDate()).padStart(2, "0")}`,
+    to: todayStr(),
+  };
+}
+
+function msUntilMidnight(): number {
+  const now = new Date();
+  const midnight = new Date(now);
+  midnight.setHours(24, 0, 0, 0);
+  return midnight.getTime() - now.getTime();
 }
 
 export default function Home() {
@@ -56,11 +72,33 @@ export default function Home() {
   }, [status, router]);
   const [view, setView] = useState<View>("dashboard");
   const [returnView, setReturnView] = useState<View>("dashboard");
-  const [dashRange] = useState<DateRange>(last7());
+  // dashRange wird jedes Mal neu aus dem aktuellen Datum berechnet
+  const [today, setToday] = useState(todayStr());
+  const dashRange: DateRange = {
+    from: (() => { const d = new Date(today); d.setDate(d.getDate() - 6); return d.toISOString().split("T")[0]; })(),
+    to: today,
+  };
   const [detailRange, setDetailRange] = useState<DateRange>(last30());
   const [allLogs, setAllLogs] = useState<DailyLog[]>([]);
   const [entryDate, setEntryDate] = useState(todayStr());
   const [refreshKey, setRefreshKey] = useState(0);
+
+  // Mitternachts-Refresh: aktualisiert "today" automatisch wenn der Tag wechselt
+  useEffect(() => {
+    const tick = () => {
+      setToday(todayStr());
+      setEntryDate(todayStr());
+      setRefreshKey(k => k + 1);
+    };
+    const ms = msUntilMidnight();
+    const t = setTimeout(() => {
+      tick();
+      // danach täglich wiederholen
+      const interval = setInterval(tick, 24 * 60 * 60 * 1000);
+      return () => clearInterval(interval);
+    }, ms);
+    return () => clearTimeout(t);
+  }, []);
 
   useEffect(() => {
     fetch("/api/profile").then(r => r.json()).then(p => {
@@ -69,10 +107,10 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    const from = new Date(); from.setDate(from.getDate() - 180);
-    fetch(`/api/logs?from=${from.toISOString().split("T")[0]}&to=${todayStr()}`)
+    const from = new Date(today); from.setDate(from.getDate() - 180);
+    fetch(`/api/logs?from=${from.toISOString().split("T")[0]}&to=${today}`)
       .then(r => r.json()).then(setAllLogs);
-  }, [refreshKey]);
+  }, [refreshKey, today]);
 
   function onSaved() {
     setRefreshKey(k => k + 1);
@@ -110,7 +148,7 @@ export default function Home() {
       <Nav
         view={view} setView={v => { setReturnView("dashboard"); setView(v); }}
         profileName={profile.name}
-        onNewEntry={() => { setReturnView("dashboard"); setEntryDate(todayStr()); setView("entry"); }}
+        onNewEntry={() => { setReturnView("dashboard"); setEntryDate(today); setView("entry"); }}
         onDietProgress={() => goDetail("detail-diet")}
         onGuide={() => setView("guide")}
       />
