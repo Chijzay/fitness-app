@@ -1,0 +1,101 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  name      String?
+  createdAt DateTime @default(now())
+
+  profile    Profile?
+  dietPhases DietPhase[]
+  logs       DailyLog[]
+  goals      Goal[]
+}
+
+model Profile {
+  id             String   @id @default(cuid())
+  userId         String   @unique
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name           String   @default("Ich")
+  gender         String
+  birthdate      DateTime
+  height         Float
+  activityLevel  Float    @default(1.55)
+  proteinFactor  Float    @default(1.9)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+model DietPhase {
+  id          Int        @id @default(autoincrement())
+  userId      String
+  user        User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name        String
+  startDate   DateTime
+  endDate     DateTime?
+  goalWeight  Float?
+  goalDate    DateTime?
+  notes       String?
+  isActive    Boolean    @default(true)
+  createdAt   DateTime   @default(now())
+  dailyLogs   DailyLog[]
+}
+
+model DailyLog {
+  id               Int        @id @default(autoincrement())
+  userId           String
+  user             User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  date             DateTime
+  phaseId          Int?
+  phase            DietPhase? @relation(fields: [phaseId], references: [id])
+
+  weight           Float?
+  bodyFatPercent   Float?
+  bodyFatEstimated Boolean    @default(false)
+  muscleMass       Float?
+
+  kcalConsumed     Float?
+  kcalBurned       Float?
+  bmrOverride      Float?
+
+  carbsG           Float?
+  fatG             Float?
+  proteinG         Float?
+
+  steps            Int?
+  stepsDuration    Int?
+  stepsType        String?
+  stepsNotes       String?
+
+  sleepTotal       Int?
+  sleepActual      Int?
+  sleepDeep        Int?
+  sleepQuality     Int?
+
+  waterMl          Int?
+  notes            String?
+  createdAt        DateTime   @default(now())
+  updatedAt        DateTime   @updatedAt
+
+  @@unique([userId, date])
+}
+
+model Goal {
+  id          Int       @id @default(autoincrement())
+  userId      String
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type        String
+  targetValue Float
+  targetDate  DateTime?
+  notes       String?
+  isActive    Boolean   @default(true)
+  createdAt   DateTime  @default(now())
+}
