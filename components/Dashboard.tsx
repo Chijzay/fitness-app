@@ -56,13 +56,24 @@ function WidgetCard({ icon, title, kpi, sub, badge, children, onClick }: {
         </div>
         <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 8 }}>
           {badge}
-          <span style={{ fontSize: 18, color: "var(--teal)", opacity: 0.7 }}>›</span>
         </div>
       </div>
       {sub && <div style={{ fontSize: 11.5, color: "var(--text-muted)", marginBottom: 14, marginTop: -10 }}>{sub}</div>}
       {/* Chart */}
       <div style={{ borderTop: "1px solid var(--border)", paddingTop: 14 }}>
         {children}
+      </div>
+      {/* Detail-Hinweis */}
+      <div style={{
+        marginTop: 14, paddingTop: 10,
+        borderTop: "1px solid var(--border)",
+        display: "flex", alignItems: "center", justifyContent: "flex-end", gap: 4,
+        fontSize: 11.5, fontWeight: 600,
+        color: "var(--teal)", opacity: 0.75,
+        letterSpacing: "0.02em",
+      }}>
+        Details ansehen
+        <span style={{ fontSize: 14 }}>→</span>
       </div>
     </div>
   );
