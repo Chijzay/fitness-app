@@ -332,86 +332,94 @@ tbody td { padding: 10px 14px; color: var(--text); }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 99px; }
 
-/* ── Responsive ───────────────────────────────── */
-@media (max-width: 768px) {
+/* ── Responsive: Landscape Phones & Tablets (481–768px) ─── */
+@media (min-width: 481px) and (max-width: 768px) {
   html { font-size: 13px; }
+  .page { padding: 12px 14px 40px; max-width: 100%; }
 
-  .page {
-    padding: 14px 12px 48px;
-    max-width: 100%;
-  }
-
-  /* ── Nav: 2-zeilig auf Mobile ── */
-  .nav {
-    flex-wrap: wrap;
-    height: auto;
-    padding: 8px 14px 0;
-    gap: 0;
-  }
+  .nav { flex-wrap: wrap; height: auto; padding: 8px 14px 0; gap: 0; }
   .nav-brand { margin-right: auto; }
-  .nav-spacer { display: none; }
-  .nav-divider { display: none; }
-
-  /* Tabs in eigene scrollbare Zeile */
+  .nav-spacer, .nav-divider { display: none; }
+  .nav-actions { gap: 4px; }
+  .nav-actions .btn-secondary { display: none; }
   .nav-tabs-mobile {
-    width: 100%;
-    display: flex;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
-    gap: 2px;
-    padding: 6px 0 8px;
-    border-top: 1px solid var(--border);
-    margin-top: 6px;
+    width: 100%; display: flex !important; overflow-x: auto;
+    -webkit-overflow-scrolling: touch; scrollbar-width: none;
+    gap: 2px; padding: 6px 0 8px;
+    border-top: 1px solid var(--border); margin-top: 6px;
   }
   .nav-tabs-mobile::-webkit-scrollbar { display: none; }
-  .nav-tabs-mobile .nav-tab {
-    flex-shrink: 0;
-    font-size: 12px;
-    padding: 5px 12px;
-  }
+  .nav-tabs-mobile .nav-tab { flex-shrink: 0; font-size: 12px; padding: 5px 10px; }
 
-  /* Actions rechts neben Brand */
-  .nav-actions { gap: 4px; }
-  .nav-actions .btn-secondary { display: none; } /* Abmelden-Button auf Mobile ausblenden */
+  .dash-kpi-grid    { grid-template-columns: repeat(2, 1fr) !important; gap: 8px !important; }
+  .dash-goal-grid   { grid-template-columns: repeat(2, 1fr) !important; gap: 8px !important; }
+  .dash-widget-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 10px !important; }
 
-  /* ── Grids: 2 Spalten ── */
-  .dash-kpi-grid   { grid-template-columns: repeat(2, 1fr) !important; }
-  .dash-goal-grid  { grid-template-columns: repeat(2, 1fr) !important; }
-  .dash-widget-grid { grid-template-columns: 1fr !important; }
+  .kpi-card { padding: 10px 12px; }
+  .kpi-label { font-size: 9.5px !important; margin-bottom: 4px !important; }
+  .kpi-value { font-size: 18px !important; }
+  .kpi-sub   { font-size: 10.5px !important; }
 
-  /* ── KPI Cards ── */
-  .kpi-card { padding: 12px 14px; }
-  .kpi-value { font-size: 20px !important; }
-  .kpi-label { font-size: 10px !important; }
-  .kpi-sub { font-size: 11px !important; }
+  .card-pad { padding: 12px; }
+  .widget-chart-inner { height: 80px !important; }
+  .widget-detail-hint { display: none !important; }
 
-  /* ── Widget Cards ── */
-  .card-pad { padding: 16px; }
-  .card-pad-sm { padding: 12px 14px; }
+  .section-head { margin-bottom: 10px; }
+  .table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  table { min-width: 500px; font-size: 11.5px; }
+  thead th, tbody td { padding: 7px 9px; }
 
-  /* ── Tables: horizontal scroll ── */
-  .table-wrap {
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-    margin: 0 -12px;
-    padding: 0 12px;
-  }
-  table { min-width: 480px; font-size: 12px; }
-  thead th, tbody td { padding: 7px 10px; }
-
-  /* ── Guide: Sidebar ausblenden ── */
   .guide-sidebar { display: none !important; }
-  .guide-grid {
-    grid-template-columns: 1fr !important;
-    gap: 0 !important;
-  }
-  .guide-content-area { padding: 18px 16px !important; }
+  .guide-grid { grid-template-columns: 1fr !important; gap: 0 !important; }
+  .guide-content-area { padding: 16px 14px !important; }
 }
 
-/* Desktop: mobile-spezifische Klassen ausblenden */
+/* ── Responsive: Portrait Phones (≤480px) ──────────────── */
+@media (max-width: 480px) {
+  html { font-size: 13px; }
+  .page { padding: 10px 10px 44px; max-width: 100%; }
+
+  .nav { flex-wrap: wrap; height: auto; padding: 8px 12px 0; gap: 0; }
+  .nav-brand { margin-right: auto; }
+  .nav-spacer, .nav-divider { display: none; }
+  .nav-actions { gap: 4px; }
+  .nav-actions .btn-secondary { display: none; }
+  .nav-tabs-mobile {
+    width: 100%; display: flex !important; overflow-x: auto;
+    -webkit-overflow-scrolling: touch; scrollbar-width: none;
+    gap: 2px; padding: 5px 0 7px;
+    border-top: 1px solid var(--border); margin-top: 6px;
+  }
+  .nav-tabs-mobile::-webkit-scrollbar { display: none; }
+  .nav-tabs-mobile .nav-tab { flex-shrink: 0; font-size: 11px; padding: 4px 9px; }
+
+  /* KPI + Ziele: 2 Spalten — kompakt aber lesbar */
+  .dash-kpi-grid    { grid-template-columns: repeat(2, 1fr) !important; gap: 7px !important; }
+  .dash-goal-grid   { grid-template-columns: repeat(2, 1fr) !important; gap: 7px !important; }
+  /* Widgets: 1 Spalte — volle Breite, moderne Karten */
+  .dash-widget-grid { grid-template-columns: 1fr !important; gap: 10px !important; }
+
+  .kpi-card { padding: 10px 12px; }
+  .kpi-label { font-size: 9px !important; margin-bottom: 3px !important; }
+  .kpi-value { font-size: 17px !important; letter-spacing: -0.02em !important; }
+  .kpi-sub   { font-size: 10px !important; margin-top: 2px !important; }
+
+  .card-pad { padding: 14px 16px; }
+  .widget-chart-inner { height: 90px !important; }
+  .widget-detail-hint { display: none !important; }
+
+  .section-head { margin-bottom: 10px; }
+  .table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  table { min-width: 500px; font-size: 11.5px; }
+  thead th, tbody td { padding: 7px 9px; }
+
+  .guide-sidebar { display: none !important; }
+  .guide-grid { grid-template-columns: 1fr !important; gap: 0 !important; }
+  .guide-content-area { padding: 16px 14px !important; }
+}
+
+/* Desktop: mobile-Elemente verstecken */
 @media (min-width: 769px) {
-  .mobile-nav { display: none; }
   .nav-tabs-mobile { display: none !important; }
 }
 

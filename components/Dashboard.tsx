@@ -46,26 +46,27 @@ function WidgetCard({ icon, title, kpi, sub, badge, children, onClick }: {
   return (
     <div className="card card-pad card-clickable" onClick={onClick}>
       {/* Header */}
-      <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: 16 }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-          <div className="section-head-icon">{icon}</div>
+      <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: 12 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+          <div className="section-head-icon" style={{ width: 24, height: 24, fontSize: 12 }}>{icon}</div>
           <div>
-            <div style={{ fontSize: 10.5, fontWeight: 700, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 3 }}>{title}</div>
-            <div style={{ fontSize: 26, fontWeight: 800, color: "var(--text)", letterSpacing: "-0.025em", lineHeight: 1 }}>{kpi}</div>
+            <div style={{ fontSize: 10, fontWeight: 700, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 2 }}>{title}</div>
+            <div style={{ fontSize: 22, fontWeight: 800, color: "var(--text)", letterSpacing: "-0.025em", lineHeight: 1 }}>{kpi}</div>
           </div>
         </div>
-        <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 8 }}>
+        <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 6 }}>
           {badge}
+          <span style={{ fontSize: 16, color: "var(--teal)", opacity: 0.6 }}>›</span>
         </div>
       </div>
-      {sub && <div style={{ fontSize: 11.5, color: "var(--text-muted)", marginBottom: 14, marginTop: -10 }}>{sub}</div>}
+      {sub && <div style={{ fontSize: 11, color: "var(--text-muted)", marginBottom: 10, marginTop: -6 }}>{sub}</div>}
       {/* Chart */}
-      <div style={{ borderTop: "1px solid var(--border)", paddingTop: 14 }}>
+      <div className="widget-chart" style={{ borderTop: "1px solid var(--border)", paddingTop: 10 }}>
         {children}
       </div>
-      {/* Detail-Hinweis */}
-      <div style={{
-        marginTop: 14, paddingTop: 10,
+      {/* Detail-Hinweis — nur Desktop */}
+      <div className="widget-detail-hint" style={{
+        marginTop: 10, paddingTop: 8,
         borderTop: "1px solid var(--border)",
         display: "flex", alignItems: "center", justifyContent: "flex-end", gap: 4,
         fontSize: 11.5, fontWeight: 600,
@@ -249,7 +250,7 @@ export default function Dashboard({ logs, profile, range, onGoDetail, onEditEntr
           sub={avgSteps ? `Ø ${avgSteps.toLocaleString("de")} Schritte/Tag · ${stepsCount} Einträge` : "Noch keine Daten"}
           badge={avgSteps ? <span className={`badge ${avgSteps >= 10000 ? "badge-teal" : "badge-orange"}`}>{avgSteps >= 10000 ? "✓ Ziel" : "< 10.000"}</span> : undefined}
           onClick={() => onGoDetail("detail-steps")}>
-          <ResponsiveContainer width="100%" height={110}>
+          <div className="widget-chart-inner" style={{ height: 110 }}><ResponsiveContainer width="100%" height="100%">
             <ComposedChart data={stepsData} margin={{ top: 4, right: 4, left: -28, bottom: 0 }}>
               <CartesianGrid {...DARK.grid} />
               <XAxis dataKey="date" tick={DARK.tick} tickLine={false} axisLine={false} />
@@ -261,7 +262,7 @@ export default function Dashboard({ logs, profile, range, onGoDetail, onEditEntr
               </Bar>
               {avgSteps && <ReferenceLine y={avgSteps} stroke="var(--teal)" strokeDasharray="2 2" strokeWidth={1} />}
             </ComposedChart>
-          </ResponsiveContainer>
+          </ResponsiveContainer></div>
         </WidgetCard>
 
         {/* GEWICHT */}
@@ -270,7 +271,7 @@ export default function Dashboard({ logs, profile, range, onGoDetail, onEditEntr
           sub={weightDiff != null ? `${weightDiff > 0 ? "▲" : weightDiff < 0 ? "▼" : "="} ${Math.abs(weightDiff)} kg diese Woche` : "Noch keine Daten"}
           badge={weightDiff != null ? <span className={`badge ${weightDiff < 0 ? "badge-teal" : weightDiff > 0 ? "badge-red" : "badge-gray"}`}>{weightDiff > 0 ? "+" : ""}{weightDiff} kg</span> : undefined}
           onClick={() => onGoDetail("detail-weight")}>
-          <ResponsiveContainer width="100%" height={110}>
+          <div className="widget-chart-inner" style={{ height: 110 }}><ResponsiveContainer width="100%" height="100%">
             <AreaChart data={weightData} margin={{ top: 4, right: 4, left: -28, bottom: 0 }}>
               <defs>
                 <linearGradient id="wGrad" x1="0" y1="0" x2="0" y2="1">
@@ -285,7 +286,7 @@ export default function Dashboard({ logs, profile, range, onGoDetail, onEditEntr
               <Area type="monotone" dataKey="weight" stroke="var(--teal)" strokeWidth={2.5}
                 fill="url(#wGrad)" dot={{ r: 4, fill: "var(--teal)", strokeWidth: 0 }} connectNulls />
             </AreaChart>
-          </ResponsiveContainer>
+          </ResponsiveContainer></div>
         </WidgetCard>
 
         {/* KALORIEN – kombiniert Bar (Bilanz) + Line (gegessen) */}
@@ -294,7 +295,7 @@ export default function Dashboard({ logs, profile, range, onGoDetail, onEditEntr
           sub={Math.abs(fatKg) > 0.01 ? `≈ ${fatKg > 0 ? "+" : ""}${fatKg.toFixed(2)} kg Fett` : "Noch keine Daten"}
           badge={kcalData.some(d => d.deficit != null) ? <span className={`badge ${totalDeficit <= 0 ? "badge-teal" : "badge-red"}`}>{totalDeficit <= 0 ? "Defizit ✓" : "Überschuss"}</span> : undefined}
           onClick={() => onGoDetail("detail-kcal")}>
-          <ResponsiveContainer width="100%" height={110}>
+          <div className="widget-chart-inner" style={{ height: 110 }}><ResponsiveContainer width="100%" height="100%">
             <ComposedChart data={kcalData} margin={{ top: 4, right: 4, left: -28, bottom: 0 }}>
               <CartesianGrid {...DARK.grid} />
               <XAxis dataKey="date" tick={DARK.tick} tickLine={false} axisLine={false} />
@@ -312,7 +313,7 @@ export default function Dashboard({ logs, profile, range, onGoDetail, onEditEntr
                 strokeWidth={1.5} strokeDasharray="4 3"
                 dot={false} connectNulls />
             </ComposedChart>
-          </ResponsiveContainer>
+          </ResponsiveContainer></div>
         </WidgetCard>
 
         {/* SCHLAF */}
@@ -321,7 +322,7 @@ export default function Dashboard({ logs, profile, range, onGoDetail, onEditEntr
           sub={sleepEntries.length ? `Ø pro Nacht · ${sleepEntries.length} Einträge` : "Noch keine Daten"}
           badge={avgSleep ? <span className={`badge ${avgSleep >= 420 ? "badge-teal" : avgSleep >= 300 ? "badge-orange" : "badge-red"}`}>{avgSleep >= 420 ? "Gut" : avgSleep >= 300 ? "Ok" : "Zu wenig"}</span> : undefined}
           onClick={() => onGoDetail("detail-sleep")}>
-          <ResponsiveContainer width="100%" height={110}>
+          <div className="widget-chart-inner" style={{ height: 110 }}><ResponsiveContainer width="100%" height="100%">
             <ComposedChart data={sleepData} margin={{ top: 4, right: 4, left: -28, bottom: 0 }}>
               <defs>
                 <linearGradient id="sGrad" x1="0" y1="0" x2="0" y2="1">
@@ -338,7 +339,7 @@ export default function Dashboard({ logs, profile, range, onGoDetail, onEditEntr
               <Line type="monotone" dataKey="deep" stroke="var(--teal)" strokeWidth={2}
                 dot={{ r: 3, fill: "var(--teal)", strokeWidth: 0 }} connectNulls />
             </ComposedChart>
-          </ResponsiveContainer>
+          </ResponsiveContainer></div>
         </WidgetCard>
       </div>
 
