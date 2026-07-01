@@ -181,7 +181,7 @@ export default function KcalDetail({ logs, allLogs, profile, range, setRange, on
               </div>
             )) : <p style={{ color: "var(--text-muted)", fontSize: 13 }}>Keine Wochendaten</p>}
             {weeklyData.length > 0 && (
-              <div style={{ padding: "10px 12px", background: totalDeficit < 0 ? "var(--green-bg)" : "var(--red-bg)", borderRadius: 8, border: `1px solid ${totalDeficit < 0 ? "var(--green-border)" : "var(--red-border)"}`, marginTop: 4 }}>
+              <div style={{ padding: "10px 12px", background: totalDeficit < 0 ? "var(--green-dim)" : "var(--red-dim)", borderRadius: 8, border: `1px solid ${totalDeficit < 0 ? "var(--green)" : "var(--red)"}`, marginTop: 4 }}>
                 <span style={{ fontWeight: 700, fontSize: 13, color: totalDeficit < 0 ? "var(--green)" : "var(--red)" }}>
                   Gesamt: {totalDeficit > 0 ? "+" : ""}{Math.round(totalDeficit)} kcal · {totalFatKg > 0 ? "+" : ""}{totalFatKg.toFixed(2)} kg Fett
                 </span>

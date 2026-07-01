@@ -54,7 +54,7 @@ export default function ProfileSetup({
         {isSetup && (
           <div style={{ textAlign: "center", marginBottom: 32 }}>
             <div style={{
-              width: 52, height: 52, borderRadius: 14, background: "var(--accent)",
+              width: 52, height: 52, borderRadius: 14, background: "var(--teal-dim)",
               display: "flex", alignItems: "center", justifyContent: "center",
               fontSize: 24, margin: "0 auto 16px",
             }}>💪</div>

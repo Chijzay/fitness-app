@@ -116,7 +116,7 @@ export default function SleepDetail({ logs, allLogs, range, setRange, onEditDate
             <ReferenceLine y={420} stroke="var(--orange)" strokeDasharray="4 3" strokeWidth={1.5}
               label={{ value: "7h Ziel", fontSize: 10, fill: "var(--orange)", position: "right" }} />
             <Bar dataKey="actual" radius={[5, 5, 0, 0]} maxBarSize={40}>
-              {sleepData.map((d, i) => <Cell key={i} fill={(d.actual ?? 0) >= 420 ? "var(--purple)" : "var(--accent)"} fillOpacity={d.actual ? 0.85 : 0} />)}
+              {sleepData.map((d, i) => <Cell key={i} fill={(d.actual ?? 0) >= 420 ? "var(--purple)" : "var(--blue)"} fillOpacity={d.actual ? 0.85 : 0} />)}
             </Bar>
             <Bar dataKey="deep" radius={[3, 3, 0, 0]} maxBarSize={40} fill="var(--green)" fillOpacity={0.65} />
           </BarChart>
@@ -162,7 +162,7 @@ export default function SleepDetail({ logs, allLogs, range, setRange, onEditDate
               </div>
             )) : <p style={{ color: "var(--text-muted)", fontSize: 13 }}>Keine Wochendaten</p>}
             {withData.length > 0 && (
-              <div style={{ padding: "10px 14px", background: "var(--accent-bg)", borderRadius: 8, fontSize: 13 }}>
+              <div style={{ padding: "10px 14px", background: "var(--teal-dim)", borderRadius: 8, fontSize: 13 }}>
                 <strong>Gesamt {dates.length} Tage:</strong> {formatMinutes(totalActual)} geschlafen
                 {totalDeep > 0 && ` · ${formatMinutes(totalDeep)} Tiefschlaf`}
               </div>
