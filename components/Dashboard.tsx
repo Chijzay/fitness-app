@@ -178,7 +178,7 @@ export default function Dashboard({ logs, profile, range, onGoDetail, onEditEntr
       </div>
 
       {/* KPI-Leiste */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 12, marginBottom: 22 }}>
+      <div className="dash-kpi-grid" style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 12, marginBottom: 22 }}>
         <KpiTile icon="⚖️" label="Gewicht aktuell" value={latestWeight ? `${latestWeight} kg` : "–"}
           sub={bodyFat ? `Körperfett: ${bodyFat.toFixed(1)} %` : "Gewicht eintragen"}
           color={latestWeight ? "var(--teal)" : undefined} />
@@ -195,7 +195,7 @@ export default function Dashboard({ logs, profile, range, onGoDetail, onEditEntr
       </div>
 
       {/* Ziele-Leiste */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 10, marginBottom: 22 }}>
+      <div className="dash-goal-grid" style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 10, marginBottom: 22 }}>
         <div className="kpi-card" style={{ borderLeft: "2px solid var(--teal)", opacity: 0.9 }}>
           <div className="kpi-label"><span>🎯</span>Tagesziel Kalorien</div>
           <div className="kpi-value" style={{ fontSize: 18, color: "var(--teal)", display: "flex", alignItems: "baseline", gap: 4, flexWrap: "wrap" }}>
@@ -241,7 +241,7 @@ export default function Dashboard({ logs, profile, range, onGoDetail, onEditEntr
       </div>
 
       {/* 4 Haupt-Widgets */}
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 22 }}>
+      <div className="dash-widget-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 22 }}>
 
         {/* SCHRITTE */}
         <WidgetCard icon="🚶" title="Schritte diese Woche"

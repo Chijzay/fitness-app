@@ -337,87 +337,82 @@ tbody td { padding: 10px 14px; color: var(--text); }
   html { font-size: 13px; }
 
   .page {
-    padding: 16px 14px 90px; /* extra bottom for mobile nav */
+    padding: 14px 12px 48px;
     max-width: 100%;
   }
 
-  /* Nav: nur Brand + Eintrag-Button oben */
+  /* ── Nav: 2-zeilig auf Mobile ── */
   .nav {
-    padding: 0 14px;
-    height: 52px;
+    flex-wrap: wrap;
+    height: auto;
+    padding: 8px 14px 0;
     gap: 0;
   }
-  .nav-tab,
-  .nav-divider { display: none !important; }
-  .nav-spacer { flex: 1; }
-  .nav-actions { gap: 6px; }
+  .nav-brand { margin-right: auto; }
+  .nav-spacer { display: none; }
+  .nav-divider { display: none; }
 
-  /* Mobile Bottom Navigation */
-  .mobile-nav {
-    display: flex !important;
-    position: fixed;
-    bottom: 0; left: 0; right: 0;
-    height: 60px;
-    background: rgba(22, 27, 34, 0.97);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border-top: 1px solid var(--border);
-    z-index: 200;
-    padding: 0;
-    padding-bottom: env(safe-area-inset-bottom, 0px);
-  }
-  .mobile-nav-item {
-    flex: 1;
+  /* Tabs in eigene scrollbare Zeile */
+  .nav-tabs-mobile {
+    width: 100%;
     display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 3px;
-    color: var(--text-muted);
-    font-size: 10px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: color 0.15s;
-    background: none;
-    border: none;
-    padding: 0;
-    letter-spacing: 0.02em;
-  }
-  .mobile-nav-item.active { color: var(--teal); }
-  .mobile-nav-item span:first-child { font-size: 20px; line-height: 1; }
-
-  /* Cards & Grids */
-  .kpi-card { padding: 14px 16px; }
-  .kpi-value { font-size: 22px; }
-
-  /* Tables: horizontal scroll */
-  .table-scroll {
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
-    margin: 0 -14px;
-    padding: 0 14px;
+    scrollbar-width: none;
+    gap: 2px;
+    padding: 6px 0 8px;
+    border-top: 1px solid var(--border);
+    margin-top: 6px;
   }
-  table { min-width: 520px; }
-  thead th, tbody td { padding: 8px 10px; font-size: 12px; }
+  .nav-tabs-mobile::-webkit-scrollbar { display: none; }
+  .nav-tabs-mobile .nav-tab {
+    flex-shrink: 0;
+    font-size: 12px;
+    padding: 5px 12px;
+  }
 
-  /* Cards padding */
+  /* Actions rechts neben Brand */
+  .nav-actions { gap: 4px; }
+  .nav-actions .btn-secondary { display: none; } /* Abmelden-Button auf Mobile ausblenden */
+
+  /* ── Grids: 2 Spalten ── */
+  .dash-kpi-grid   { grid-template-columns: repeat(2, 1fr) !important; }
+  .dash-goal-grid  { grid-template-columns: repeat(2, 1fr) !important; }
+  .dash-widget-grid { grid-template-columns: 1fr !important; }
+
+  /* ── KPI Cards ── */
+  .kpi-card { padding: 12px 14px; }
+  .kpi-value { font-size: 20px !important; }
+  .kpi-label { font-size: 10px !important; }
+  .kpi-sub { font-size: 11px !important; }
+
+  /* ── Widget Cards ── */
   .card-pad { padding: 16px; }
   .card-pad-sm { padding: 12px 14px; }
 
-  /* Guide: sidebar verstecken, content vollbreit */
+  /* ── Tables: horizontal scroll ── */
+  .table-wrap {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    margin: 0 -12px;
+    padding: 0 12px;
+  }
+  table { min-width: 480px; font-size: 12px; }
+  thead th, tbody td { padding: 7px 10px; }
+
+  /* ── Guide: Sidebar ausblenden ── */
   .guide-sidebar { display: none !important; }
   .guide-grid {
     grid-template-columns: 1fr !important;
     gap: 0 !important;
   }
-  .guide-content-area {
-    padding: 20px 18px !important;
-  }
+  .guide-content-area { padding: 18px 16px !important; }
 }
 
-/* Desktop: mobile-nav ausblenden */
+/* Desktop: mobile-spezifische Klassen ausblenden */
 @media (min-width: 769px) {
   .mobile-nav { display: none; }
+  .nav-tabs-mobile { display: none !important; }
 }
 
 /* ── Print ────────────────────────────────────── */
