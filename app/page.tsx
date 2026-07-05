@@ -13,6 +13,8 @@ import SleepDetail from "@/components/detail/SleepDetail";
 import DietProgress from "@/components/detail/DietProgress";
 import MeasurementsDetail from "@/components/detail/MeasurementsDetail";
 import CardioDetail from "@/components/detail/CardioDetail";
+import WorkoutEntry from "@/components/WorkoutEntry";
+import WorkoutDetail from "@/components/detail/WorkoutDetail";
 import GoalsPage from "@/components/GoalsPage";
 import GuideView from "@/components/GuideView";
 
@@ -34,7 +36,7 @@ export type DateRange = { from: string; to: string };
 export type View =
   | "dashboard" | "entry" | "profile" | "goals" | "guide"
   | "detail-steps" | "detail-weight" | "detail-kcal" | "detail-sleep" | "detail-diet"
-  | "detail-measurements" | "detail-cardio";
+  | "detail-measurements" | "detail-cardio" | "detail-workouts" | "workout-entry";
 
 function todayStr() {
   const now = new Date();
@@ -160,7 +162,7 @@ export default function Home() {
 
   const dashLogs = allLogs.filter(l => l.date.split("T")[0] >= dashRange.from && l.date.split("T")[0] <= dashRange.to);
   const detailLogs = allLogs.filter(l => l.date.split("T")[0] >= detailRange.from && l.date.split("T")[0] <= detailRange.to);
-  const isDetail = view.startsWith("detail-");
+  const isDetail = view.startsWith("detail-") || false;
 
   return (
     <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}>
@@ -190,6 +192,12 @@ export default function Home() {
         )}
         {view === "goals" && <GoalsPage profile={profile} latestLog={allLogs.at(-1)} logs={allLogs} />}
         {view === "guide" && <GuideView />}
+        {view === "workout-entry" && (
+          <WorkoutEntry
+            onSaved={() => { setRefreshKey(k => k + 1); setView("detail-workouts"); }}
+            onCancel={() => setView("detail-workouts")}
+          />
+        )}
         {isDetail && (
           <div>
             <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 24 }}>
@@ -223,6 +231,10 @@ export default function Home() {
             )}
             {view === "detail-cardio" && (
               <CardioDetail range={detailRange} setRange={setDetailRange} />
+            )}
+            {view === "detail-workouts" && (
+              <WorkoutDetail range={detailRange} setRange={setDetailRange}
+                onNewSession={() => setView("workout-entry")} />
             )}
           </div>
         )}

@@ -408,6 +408,15 @@ export default function Dashboard({ logs, profile, range, today: todayProp, onGo
             <p style={{ fontSize: 12, color: "var(--text-muted)", margin: 0 }}>Joggen, Radfahren, Schwimmen – Strecke, Zeit & kcal im Tageseintrag</p>
           </div>
         </WidgetCard>
+
+        <WidgetCard icon="🏋️" title="Training"
+          kpi="–"
+          sub="Progression tracken"
+          onClick={() => onGoDetail("detail-workouts" as View)}>
+          <div style={{ display: "flex", flexDirection: "column", gap: 6, paddingTop: 4 }}>
+            <p style={{ fontSize: 12, color: "var(--text-muted)", margin: 0 }}>Pull, Push, Leg – Übungen, Sätze, Gewichte & Progression über Zeit</p>
+          </div>
+        </WidgetCard>
       </div>
 
       {/* Tagesübersicht */}
