@@ -56,8 +56,8 @@ export default function WorkoutEntry({ onSaved, onCancel, editId }: { onSaved: (
   const [date, setDate]           = useState(todayStr);
   const [name, setName]           = useState("Pull");
   const [customName, setCustomName] = useState("");
-  const [latestWeight, setLatestWeight] = useState<number | null>(null);
   const [energyLevel, setEnergyLevel] = useState<number | null>(null);
+  const [booster, setBooster]     = useState(true);
   const [startTime, setStartTime] = useState("");
   const [endTime, setEndTime]     = useState("");
   const [notes, setNotes]         = useState("");
@@ -69,12 +69,6 @@ export default function WorkoutEntry({ onSaved, onCancel, editId }: { onSaved: (
 
   useEffect(() => {
     fetch("/api/workouts?exercises=1").then(r => r.json()).then(setSuggestions).catch(() => {});
-    fetch("/api/logs?from=2020-01-01&to=" + todayStr())
-      .then(r => r.json())
-      .then((logs: { weight?: number }[]) => {
-        const last = [...logs].reverse().find(l => l.weight);
-        if (last?.weight) setLatestWeight(last.weight);
-      }).catch(() => {});
   }, []);
 
   // Pre-fill form when editing an existing session
@@ -135,9 +129,11 @@ export default function WorkoutEntry({ onSaved, onCancel, editId }: { onSaved: (
       : e));
   }
   function addSet(lid: number) {
-    setExercises(es => es.map(e => e.localId === lid
-      ? { ...e, sets: [...e.sets, { setNumber: e.sets.length + 1, reps: "", weight: "", notes: "" }] }
-      : e));
+    setExercises(es => es.map(e => {
+      if (e.localId !== lid) return e;
+      const lastSet = e.sets.at(-1);
+      return { ...e, sets: [...e.sets, { setNumber: e.sets.length + 1, reps: "", weight: lastSet?.weight ?? "", notes: "" }] };
+    }));
   }
   function removeSet(lid: number, si: number) {
     setExercises(es => es.map(e => e.localId === lid
@@ -156,8 +152,8 @@ export default function WorkoutEntry({ onSaved, onCancel, editId }: { onSaved: (
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         date, name: sessionName,
-        bodyWeight: latestWeight ?? undefined,
         energyLevel,
+        booster,
         startTime: startTime || undefined,
         endTime: endTime || undefined,
         notes: notes || undefined,
@@ -216,13 +212,6 @@ export default function WorkoutEntry({ onSaved, onCancel, editId }: { onSaved: (
             </div>
           )}
           <div>
-            <label className="lbl">Körpergewicht</label>
-            <div style={{ padding: "8px 12px", background: "var(--surface2)", borderRadius: 8, border: "1px solid var(--border2)", fontSize: 14, fontWeight: 700, color: latestWeight ? "var(--teal)" : "var(--text-muted)" }}>
-              {latestWeight ? `${latestWeight} kg` : "Kein Eintrag"}
-              <span style={{ fontSize: 10, fontWeight: 400, color: "var(--text-muted)", marginLeft: 6 }}>aus Tageseintrag</span>
-            </div>
-          </div>
-          <div>
             <label className="lbl">Start</label>
             <input type="time" value={startTime} onChange={e => setStartTime(e.target.value)} />
           </div>
@@ -232,17 +221,33 @@ export default function WorkoutEntry({ onSaved, onCancel, editId }: { onSaved: (
           </div>
         </div>
 
-        {/* Kraftempfinden */}
-        <div style={{ marginBottom: 10 }}>
-          <label className="lbl">Kraftempfinden (1–5)</label>
-          <div style={{ display: "flex", gap: 8, marginTop: 4 }}>
-            {[1, 2, 3, 4, 5].map(n => (
-              <button key={n} type="button" onClick={() => setEnergyLevel(energyLevel === n ? null : n)}
-                style={{ fontSize: 13, padding: "5px 14px", borderRadius: 20, cursor: "pointer", fontWeight: 700, border: `1px solid ${energyLevel === n ? "var(--teal)" : "var(--border2)"}`, background: energyLevel === n ? "var(--teal-dim)" : "var(--surface2)", color: energyLevel === n ? "var(--teal)" : "var(--text-muted)" }}>
-                {n}
-              </button>
-            ))}
-            {energyLevel && <span style={{ fontSize: 12, color: "var(--text-muted)", alignSelf: "center" }}>{ENERGY_LABELS[energyLevel]}</span>}
+        {/* Kraftempfinden + Booster */}
+        <div style={{ marginBottom: 10, display: "flex", gap: 24, flexWrap: "wrap", alignItems: "flex-start" }}>
+          <div>
+            <label className="lbl">Kraftempfinden (1–5)</label>
+            <div style={{ display: "flex", gap: 8, marginTop: 4 }}>
+              {[1, 2, 3, 4, 5].map(n => (
+                <button key={n} type="button" onClick={() => setEnergyLevel(energyLevel === n ? null : n)}
+                  style={{ fontSize: 13, padding: "5px 14px", borderRadius: 20, cursor: "pointer", fontWeight: 700, border: `1px solid ${energyLevel === n ? "var(--teal)" : "var(--border2)"}`, background: energyLevel === n ? "var(--teal-dim)" : "var(--surface2)", color: energyLevel === n ? "var(--teal)" : "var(--text-muted)" }}>
+                  {n}
+                </button>
+              ))}
+              {energyLevel && <span style={{ fontSize: 12, color: "var(--text-muted)", alignSelf: "center" }}>{ENERGY_LABELS[energyLevel]}</span>}
+            </div>
+          </div>
+          <div>
+            <label className="lbl">Booster?</label>
+            <div style={{ display: "flex", gap: 6, marginTop: 4 }}>
+              {[true, false].map(val => (
+                <button key={String(val)} type="button" onClick={() => setBooster(val)}
+                  style={{ fontSize: 13, padding: "5px 16px", borderRadius: 20, cursor: "pointer", fontWeight: 700,
+                    border: `1px solid ${booster === val ? (val ? "var(--teal)" : "var(--red)") : "var(--border2)"}`,
+                    background: booster === val ? (val ? "var(--teal-dim)" : "rgba(239,68,68,.15)") : "var(--surface2)",
+                    color: booster === val ? (val ? "var(--teal)" : "var(--red)") : "var(--text-muted)" }}>
+                  {val ? "Ja" : "Nein"}
+                </button>
+              ))}
+            </div>
           </div>
         </div>
 
@@ -255,25 +260,27 @@ export default function WorkoutEntry({ onSaved, onCancel, editId }: { onSaved: (
       {/* Übungen */}
       <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
         {exercises.map((ex, exIdx) => {
-          const last = lastSession[ex.name];
           return (
             <div key={ex.localId} className="card card-pad">
               {/* Übungs-Header */}
               <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 12 }}>
                 <span style={{ width: 26, height: 26, borderRadius: 8, background: "var(--teal-dim)", color: "var(--teal)", fontSize: 12, fontWeight: 800, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>{exIdx + 1}</span>
                 <div style={{ flex: 1 }}>
-                  <Autocomplete value={ex.name} onChange={v => updateEx(ex.localId, "name", v)} suggestions={suggestions} />
+                  <Autocomplete value={ex.name} onChange={v => {
+                    const prev = lastSession[v];
+                    if (prev && prev.length > 0) {
+                      setExercises(es => es.map(e => e.localId === ex.localId ? {
+                        ...e, name: v,
+                        sets: prev.map((s, i) => ({ setNumber: i + 1, reps: String(s.reps), weight: String(s.weight), notes: "" })),
+                      } : e));
+                    } else {
+                      updateEx(ex.localId, "name", v);
+                    }
+                  }} suggestions={suggestions} />
                 </div>
                 <button type="button" onClick={() => setExercises(es => es.filter(e => e.localId !== ex.localId))}
                   style={{ fontSize: 11, color: "var(--red)", background: "none", border: "none", cursor: "pointer", padding: "4px 6px" }}>🗑</button>
               </div>
-
-              {/* Letztes Training Vorschau */}
-              {last && last.length > 0 && (
-                <div style={{ fontSize: 11, color: "var(--text-muted)", marginBottom: 10, padding: "6px 10px", background: "var(--surface2)", borderRadius: 6 }}>
-                  Letztes {sessionName}: {last.map((s, i) => `${s.weight} kg × ${s.reps}`).join(" · ")}
-                </div>
-              )}
 
               {/* Sätze */}
               <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
@@ -285,16 +292,13 @@ export default function WorkoutEntry({ onSaved, onCancel, editId }: { onSaved: (
                   <span />
                 </div>
                 {ex.sets.map((s, si) => {
-                  const prevSet = last?.[si];
                   return (
                     <div key={si} style={{ display: "grid", gridTemplateColumns: "28px 1fr 1fr 1fr auto", gap: 6, alignItems: "center" }}>
                       <span style={{ fontSize: 12, fontWeight: 700, color: "var(--teal)", textAlign: "center" }}>{s.setNumber}</span>
-                      <input type="number" min="0" step="1" value={s.reps}
-                        placeholder={prevSet ? String(prevSet.reps) : "0"}
+                      <input type="number" min="0" step="1" value={s.reps} placeholder="0"
                         onChange={e => updateSet(ex.localId, si, "reps", e.target.value)}
                         style={{ textAlign: "center" }} />
-                      <input type="number" min="0" step="0.25" value={s.weight}
-                        placeholder={prevSet ? String(prevSet.weight) : "0"}
+                      <input type="number" min="0" step="0.25" value={s.weight} placeholder="0"
                         onChange={e => updateSet(ex.localId, si, "weight", e.target.value)}
                         style={{ textAlign: "center" }} />
                       <input value={s.notes} placeholder="–"

@@ -49,7 +49,7 @@ export async function POST(req: Request) {
   if (!session?.user?.id) return NextResponse.json({ error: "Nicht angemeldet" }, { status: 401 });
 
   const body = await req.json();
-  const { date, name, bodyWeight, energyLevel, startTime, endTime, notes, exercises } = body;
+  const { date, name, energyLevel, booster, startTime, endTime, notes, exercises } = body;
   if (!date || !name) return NextResponse.json({ error: "date and name required" }, { status: 400 });
 
   const d = new Date(date); d.setHours(12, 0, 0, 0);
@@ -59,8 +59,8 @@ export async function POST(req: Request) {
       userId: session.user.id,
       date: d,
       name,
-      bodyWeight: bodyWeight ?? null,
       energyLevel: energyLevel ?? null,
+      booster: booster ?? true,
       startTime: startTime ?? null,
       endTime: endTime ?? null,
       notes: notes ?? null,
