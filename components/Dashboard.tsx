@@ -362,6 +362,63 @@ export default function Dashboard({ logs, allLogs, profile, range, today: todayP
         <div style={{ width: 40, height: 3, background: "var(--teal)", borderRadius: 99, marginTop: 10, boxShadow: "0 0 8px var(--teal-glow)" }} />
       </div>
 
+      {/* Heute-Statusleiste */}
+      <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginBottom: 18, alignItems: "center" }}>
+        <span style={{ fontSize: 11, fontWeight: 700, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.08em", marginRight: 2 }}>
+          {selectedDate === todayProp ? "Heute" : new Date(selectedDate + "T12:00:00").toLocaleDateString("de-DE", { weekday: "short", day: "2-digit", month: "2-digit" })}
+        </span>
+        {([
+          {
+            icon: "⚖️", label: "Gewicht",
+            value: todayLog?.weight != null ? `${todayLog.weight} kg` : null,
+            ok: todayLog?.weight != null ? true : undefined,
+          },
+          {
+            icon: "🔥", label: "Kalorien",
+            value: todayLog?.kcalConsumed != null
+              ? (todayTdeeCalc != null
+                  ? `${todayLog.kcalConsumed} / ${todayTdeeCalc}`
+                  : `${todayLog.kcalConsumed} kcal`)
+              : null,
+            ok: todayKcalDeficit != null ? todayKcalDeficit <= 0 : undefined,
+          },
+          {
+            icon: "🥩", label: "Protein",
+            value: todayProtein != null ? `${todayProtein} g` : null,
+            ok: proteinTarget != null && todayProtein != null ? todayProtein >= proteinTarget : undefined,
+          },
+          {
+            icon: "🚶", label: "Schritte",
+            value: todaySteps != null ? todaySteps.toLocaleString("de") : null,
+            ok: todaySteps != null ? todaySteps >= stepsGoal : undefined,
+          },
+          {
+            icon: "😴", label: "Schlaf",
+            value: todaySleep != null ? formatMinutes(todaySleep) : null,
+            ok: todaySleep != null ? todaySleep >= sleepGoalMins : undefined,
+          },
+          {
+            icon: "💧", label: "Wasser",
+            value: todayLog?.waterMl != null ? `${+(todayLog.waterMl / 1000).toFixed(1)} L` : null,
+            ok: todayLog?.waterMl != null ? todayLog.waterMl >= 2000 : undefined,
+          },
+        ] as { icon: string; label: string; value: string | null; ok?: boolean }[]).map(({ icon, label, value, ok }) => {
+          const filled = value != null;
+          const color = filled ? (ok === true ? "var(--teal)" : ok === false ? "var(--red)" : "var(--text)") : "var(--text-muted)";
+          const bg    = filled ? (ok === true ? "rgba(0,212,180,.10)" : ok === false ? "rgba(239,68,68,.08)" : "var(--surface2)") : "var(--surface2)";
+          const border= filled ? (ok === true ? "var(--teal)" : ok === false ? "var(--red)" : "var(--border2)") : "var(--border2)";
+          return (
+            <button key={label} onClick={() => onEditEntry(selectedDate)}
+              style={{ display: "inline-flex", alignItems: "center", gap: 5, padding: "4px 11px", borderRadius: 20, fontSize: 12, fontWeight: 600, cursor: "pointer", background: bg, border: `1px solid ${border}`, color }}>
+              <span style={{ fontSize: 12 }}>{icon}</span>
+              <span>{filled ? value : label}</span>
+              {filled && ok === true && <span style={{ fontSize: 10 }}>✓</span>}
+              {!filled && <span style={{ fontSize: 10, opacity: 0.5 }}>?</span>}
+            </button>
+          );
+        })}
+      </div>
+
       {/* KPI-Leiste */}
       <div className="dash-kpi-grid" style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 12, marginBottom: 22 }}>
         <KpiTile icon="⚖️" label="Gewicht aktuell" value={latestWeight ? `${latestWeight} kg` : "–"}
@@ -495,12 +552,18 @@ export default function Dashboard({ logs, allLogs, profile, range, today: todayP
 
         {/* KALORIEN – Heute spezifisch, Chart zeigt 7-Tage-Trend */}
         <WidgetCard icon="🔥" title="Kalorien heute"
-          kpi={todayKcalDeficit != null ? `${todayKcalDeficit > 0 ? "+" : ""}${todayKcalDeficit} kcal` : "–"}
-          sub={todayKcalDeficit != null
-            ? `Heute · ${todayKcalDeficit <= 0 ? `≈ ${Math.abs((todayKcalDeficit/7700)).toFixed(3)} kg Fett` : `${todayLog?.kcalConsumed} gegessen`}`
-            : kcalData.some(d => d.deficit != null) ? `Ø ${Math.round(totalDeficit / kcalData.filter(d => d.deficit != null).length)} kcal/Tag (7 T)` : "Noch kein Eintrag"}
+          kpi={todayLog?.kcalConsumed != null
+            ? (todayTdeeCalc != null ? `${todayLog.kcalConsumed} / ${baseKcalTarget + (todayLog.kcalBurned ?? 0)}` : `${todayLog.kcalConsumed} kcal`)
+            : "–"}
+          sub={todayLog?.kcalConsumed != null && todayTdeeCalc != null
+            ? (todayKcalDeficit! <= 0
+                ? `Defizit ${Math.abs(todayKcalDeficit!)} kcal · ${Math.abs(todayKcalDeficit!/7700).toFixed(3)} kg Fett`
+                : `${todayKcalDeficit} kcal über Budget · Heute gegessen`)
+            : kcalData.some(d => d.deficit != null)
+              ? `Ø ${Math.round(totalDeficit / kcalData.filter(d => d.deficit != null).length)} kcal/Tag · 7 Tage`
+              : "Noch kein Eintrag"}
           badge={todayKcalDeficit != null
-            ? <span className={`badge ${todayKcalDeficit <= 0 ? "badge-teal" : "badge-red"}`}>{todayKcalDeficit <= 0 ? "Defizit ✓" : "Überschuss"}</span>
+            ? <span className={`badge ${todayKcalDeficit <= 0 ? "badge-teal" : "badge-red"}`}>{todayKcalDeficit <= 0 ? `${Math.abs(todayKcalDeficit)} kcal frei` : "Überschuss"}</span>
             : kcalData.some(d => d.deficit != null) ? <span className={`badge ${totalDeficit <= 0 ? "badge-teal" : "badge-red"}`}>{totalDeficit <= 0 ? "Ø Defizit" : "Ø Überschuss"}</span> : undefined}
           onClick={() => onGoDetail("detail-kcal")}>
           <ResponsiveContainer width="100%" height="100%">

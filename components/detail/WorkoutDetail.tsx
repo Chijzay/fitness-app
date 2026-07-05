@@ -156,6 +156,37 @@ export default function WorkoutDetail({
             </div>
           </div>
 
+          {/* Personal Records */}
+          {allExercises.length > 0 && (
+            <div className="card card-pad">
+              <SectionHeader title="Persönliche Rekorde" icon="🏆" />
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(180px, 1fr))", gap: 10 }}>
+                {allExercises.map((exName, i) => {
+                  const allSetsForEx = sessions.flatMap(s =>
+                    s.exercises.filter(e => e.name === exName).flatMap(e => e.sets)
+                  );
+                  const prWeight = allSetsForEx.length ? Math.max(0, ...allSetsForEx.map(s => s.weight ?? 0)) : 0;
+                  const prSet = allSetsForEx.find(s => (s.weight ?? 0) === prWeight);
+                  const sessionCount = sessions.filter(s => s.exercises.some(e => e.name === exName)).length;
+                  const color = TYPE_COLORS[i % TYPE_COLORS.length];
+                  return (
+                    <div key={exName} style={{ padding: "12px 14px", background: "var(--surface2)", borderRadius: 10, border: `1px solid ${color}33` }}>
+                      <div style={{ fontSize: 10, color: "var(--text-muted)", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: 6 }}>{exName}</div>
+                      <div style={{ fontSize: 20, fontWeight: 800, color, lineHeight: 1 }}>
+                        {prWeight > 0 ? `${prWeight} kg` : "–"}
+                      </div>
+                      <div style={{ fontSize: 11, color: "var(--text-muted)", marginTop: 4 }}>
+                        {prSet?.reps ? `× ${prSet.reps} Wdh.` : ""}
+                        {prSet?.reps ? " · " : ""}
+                        {sessionCount} Session{sessionCount !== 1 ? "s" : ""}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
           {/* Progression per exercise */}
           {allExercises.length > 0 && (
             <div className="card card-pad">
