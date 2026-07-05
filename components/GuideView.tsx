@@ -587,25 +587,25 @@ function VisualGlossar() {
             <span>{cat.icon}</span>
             <span style={{ fontSize: 13, fontWeight: 700, color: cat.color }}>{cat.name}</span>
           </div>
-          <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
+          <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13, tableLayout: "fixed" }}>
             <colgroup>
-              <col className="glossar-col-term" style={{ width: "14%" }} />
-              <col className="glossar-col-mid" style={{ width: "22%" }} />
-              <col className="glossar-col-def" style={{ width: "64%" }} />
+              <col style={{ width: "26%" }} />
+              <col style={{ width: "20%" }} />
+              <col style={{ width: "54%" }} />
             </colgroup>
             <thead>
               <tr>
-                <th style={{ textAlign: "left", padding: "7px 14px", fontSize: 10, fontWeight: 700, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.07em", borderBottom: "1px solid var(--border)" }}>Kürzel</th>
-                <th className="glossar-col-mid" style={{ textAlign: "left", padding: "7px 14px", fontSize: 10, fontWeight: 700, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.07em", borderBottom: "1px solid var(--border)" }}>Ausgeschrieben</th>
-                <th style={{ textAlign: "left", padding: "7px 14px", fontSize: 10, fontWeight: 700, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.07em", borderBottom: "1px solid var(--border)" }}>Bedeutung</th>
+                {["Kürzel", "Ausgeschrieben", "Bedeutung"].map(h => (
+                  <th key={h} style={{ textAlign: "left", padding: "7px 14px", fontSize: 10, fontWeight: 700, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.07em", borderBottom: "1px solid var(--border)" }}>{h}</th>
+                ))}
               </tr>
             </thead>
             <tbody>
               {cat.terms.map((r, j) => (
                 <tr key={j} style={{ borderBottom: j < cat.terms.length - 1 ? "1px solid var(--border)" : "none" }}>
-                  <td style={{ ...tdCell, fontWeight: 700, color: cat.color, fontFamily: "monospace", fontSize: 12 }}>{r.term}</td>
-                  <td className="glossar-col-mid" style={{ ...tdCell, fontWeight: 500, color: "var(--text-2)", fontSize: 12 }}>{r.full || "–"}</td>
-                  <td style={{ ...tdCell, color: "var(--text-muted)", lineHeight: 1.55 }}>{r.def}</td>
+                  <td style={{ ...tdCell, fontWeight: 700, color: cat.color, wordBreak: "break-word" }}>{r.term}</td>
+                  <td style={{ ...tdCell, fontWeight: 500, color: "var(--text-2)", fontSize: 12, wordBreak: "break-word" }}>{r.full || "–"}</td>
+                  <td style={{ ...tdCell, color: "var(--text-muted)", lineHeight: 1.6, wordBreak: "break-word" }}>{r.def}</td>
                 </tr>
               ))}
             </tbody>
