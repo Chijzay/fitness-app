@@ -83,15 +83,17 @@ function WidgetCard({ icon, title, kpi, sub, badge, children, onClick }: {
 
 type Goal = { id: number; type: string; targetValue: number; targetDate?: string };
 
-export default function Dashboard({ logs, profile, range, today: todayProp, onGoDetail, onEditEntry }: {
-  logs: DailyLog[]; profile: Profile; range: DateRange; today: string;
+export default function Dashboard({ logs, allLogs, profile, range, today: todayProp, onGoDetail, onEditEntry }: {
+  logs: DailyLog[]; allLogs: DailyLog[]; profile: Profile; range: DateRange; today: string;
   onGoDetail: (v: View) => void; onEditEntry: (date: string) => void;
 }) {
   const [selectedDate, setSelectedDate] = useState(todayProp);
-  // Sync when todayProp changes (SSR gives UTC date, client corrects to local date)
   useEffect(() => { setSelectedDate(todayProp); }, [todayProp]);
   const [goals, setGoals] = useState<Goal[]>([]);
   const [goalsLoaded, setGoalsLoaded] = useState(false);
+  const [noteText, setNoteText]   = useState<string>("");
+  const [noteEditing, setNoteEditing] = useState(false);
+  const [noteSaving, setNoteSaving]   = useState(false);
   useEffect(() => {
     fetch("/api/goals").then(r => r.json()).then(g => { setGoals(g); setGoalsLoaded(true); }).catch(() => setGoalsLoaded(true));
   }, []);
@@ -148,6 +150,136 @@ export default function Dashboard({ logs, profile, range, today: todayProp, onGo
 
   const today = selectedDate;
 
+  // ── Streak ────────────────────────────────────
+  const streak = useMemo(() => {
+    const logDateSet = new Set(allLogs.map(l => l.date.split("T")[0]));
+    let count = 0;
+    const base = new Date(todayProp + "T12:00:00");
+    for (let i = 0; i < 365; i++) {
+      const d = new Date(base); d.setDate(base.getDate() - i);
+      const ds = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
+      if (logDateSet.has(ds)) count++; else break;
+    }
+    return count;
+  }, [allLogs, todayProp]);
+
+  // ── Längste Streak (Benchmarks) ──────────────
+  const longestStreak = useMemo(() => {
+    const dates = [...new Set(allLogs.map(l => l.date.split("T")[0]))].sort();
+    let max = 0; let cur = 0; let prev = "";
+    for (const d of dates) {
+      if (prev) {
+        const diff = (new Date(d + "T12:00:00").getTime() - new Date(prev + "T12:00:00").getTime()) / 86400000;
+        cur = diff === 1 ? cur + 1 : 1;
+      } else { cur = 1; }
+      if (cur > max) max = cur;
+      prev = d;
+    }
+    return max;
+  }, [allLogs]);
+
+  // ── Wöchentliche Zusammenfassung ─────────────
+  const lastWeekSummary = useMemo(() => {
+    const base = new Date(todayProp + "T12:00:00");
+    const dow = base.getDay(); // 0=So,1=Mo..6=Sa
+    // Days since last completed Sunday
+    const daysSinceSunday = dow === 0 ? 7 : dow;
+    const lastSun = new Date(base); lastSun.setDate(base.getDate() - daysSinceSunday);
+    const lastMon = new Date(lastSun); lastMon.setDate(lastSun.getDate() - 6);
+    const from = `${lastMon.getFullYear()}-${String(lastMon.getMonth()+1).padStart(2,"0")}-${String(lastMon.getDate()).padStart(2,"0")}`;
+    const to   = `${lastSun.getFullYear()}-${String(lastSun.getMonth()+1).padStart(2,"0")}-${String(lastSun.getDate()).padStart(2,"0")}`;
+    const wLogs = allLogs.filter(l => { const d = l.date.split("T")[0]; return d >= from && d <= to; });
+    if (wLogs.length === 0) return null;
+    const kcalLogs = wLogs.filter(l => l.kcalConsumed);
+    const sleepLogs = wLogs.filter(l => l.sleepActual);
+    const wts = wLogs.filter(l => l.weight).map(l => l.weight as number);
+    const avgKcal  = kcalLogs.length  ? Math.round(kcalLogs.reduce((s,l) => s+(l.kcalConsumed??0),0)/kcalLogs.length)  : null;
+    const avgSleepW= sleepLogs.length ? Math.round(sleepLogs.reduce((s,l) => s+(l.sleepActual??0),0)/sleepLogs.length) : null;
+    const wtDelta  = wts.length >= 2  ? +(wts[wts.length-1] - wts[0]).toFixed(1) : null;
+    // Ø deficit
+    const deficits = wLogs.map(l => {
+      if (!l.kcalConsumed) return null;
+      const w = l.weight ?? latestWeight;
+      const bmr = l.bmrOverride ?? (w ? calcBMR(w, profile.height, profile.gender, new Date(profile.birthdate)) : null);
+      if (!bmr) return null;
+      return l.kcalConsumed - Math.round(calcTDEE(bmr, profile.activityLevel)) - (l.kcalBurned ?? 0);
+    }).filter(d => d != null) as number[];
+    const avgDeficit = deficits.length ? Math.round(deficits.reduce((s,d)=>s+d,0)/deficits.length) : null;
+    return { from, to, avgKcal, avgSleepW, wtDelta, avgDeficit, days: wLogs.length };
+  }, [allLogs, todayProp, latestWeight, profile]);
+
+  // ── Trend-Projektion ─────────────────────────
+  const projection = useMemo(() => {
+    if (!latestWeight) return null;
+    const wg = goals.find(g => g.type === "weight");
+    if (!wg || wg.targetValue >= latestWeight) return null;
+    const kgToLose = latestWeight - wg.targetValue;
+    // Average daily deficit from last 14 days with data
+    const recent = allLogs.filter(l => l.kcalConsumed).slice(-14);
+    if (recent.length < 3) return null;
+    const avgDef = recent.map(l => {
+      const w = l.weight ?? latestWeight;
+      const bmr = l.bmrOverride ?? calcBMR(w, profile.height, profile.gender, new Date(profile.birthdate));
+      return -(l.kcalConsumed! - Math.round(calcTDEE(bmr, profile.activityLevel)) - (l.kcalBurned ?? 0));
+    }).reduce((s,d)=>s+d,0) / recent.length;
+    if (avgDef <= 50) return null; // basically no deficit
+    const daysLeft = Math.round((kgToLose * 7700) / avgDef);
+    const target = new Date(todayProp + "T12:00:00");
+    target.setDate(target.getDate() + daysLeft);
+    const dateStr = target.toLocaleDateString("de-DE", { day: "numeric", month: "long", year: "numeric" });
+    return { dateStr, daysLeft, avgDef: Math.round(avgDef), kgToLose: +kgToLose.toFixed(1) };
+  }, [allLogs, goals, latestWeight, profile, todayProp]);
+
+  // ── Benchmarks ────────────────────────────────
+  const benchmarks = useMemo(() => {
+    const logsLast90 = allLogs.filter(l => {
+      const d = new Date(l.date.split("T")[0] + "T12:00:00");
+      const cutoff = new Date(todayProp + "T12:00:00"); cutoff.setDate(cutoff.getDate() - 90);
+      return d >= cutoff;
+    });
+    // Niedrigstes Gewicht
+    const weights = logsLast90.filter(l => l.weight).map(l => ({ w: l.weight as number, d: l.date.split("T")[0] }));
+    const lowestW = weights.length ? weights.reduce((a,b) => b.w < a.w ? b : a) : null;
+    // Beste Woche (höchstes Ø Defizit)
+    const byWeek: Record<string, number[]> = {};
+    logsLast90.forEach(l => {
+      if (!l.kcalConsumed) return;
+      const d = new Date(l.date.split("T")[0] + "T12:00:00");
+      const mon = new Date(d); mon.setDate(d.getDate() - ((d.getDay()+6)%7));
+      const key = `${mon.getFullYear()}-${String(mon.getMonth()+1).padStart(2,"0")}-${String(mon.getDate()).padStart(2,"0")}`;
+      const w = l.weight ?? latestWeight;
+      if (!w) return;
+      const bmr = l.bmrOverride ?? calcBMR(w, profile.height, profile.gender, new Date(profile.birthdate));
+      const def = -(l.kcalConsumed - Math.round(calcTDEE(bmr, profile.activityLevel)) - (l.kcalBurned ?? 0));
+      if (!byWeek[key]) byWeek[key] = [];
+      byWeek[key].push(def);
+    });
+    const weekEntries = Object.entries(byWeek).filter(([,v]) => v.length >= 3);
+    const bestWeek = weekEntries.length
+      ? weekEntries.map(([k,v]) => ({ k, avg: Math.round(v.reduce((s,d)=>s+d,0)/v.length) })).sort((a,b)=>b.avg-a.avg)[0]
+      : null;
+    const bestWeekDate = bestWeek ? new Date(bestWeek.k + "T12:00:00").toLocaleDateString("de-DE", { day: "2-digit", month: "short" }) : null;
+    return { lowestW, bestWeek, bestWeekDate, longestStreak };
+  }, [allLogs, todayProp, latestWeight, profile, longestStreak]);
+
+  // ── Notizen-Sync ──────────────────────────────
+  useEffect(() => {
+    const log = allLogs.find(l => l.date.split("T")[0] === todayProp);
+    setNoteText(log?.notes ?? "");
+    setNoteEditing(false);
+  }, [todayProp, allLogs]);
+
+  async function saveNote() {
+    setNoteSaving(true);
+    await fetch("/api/logs", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ date: todayProp, notes: noteText }),
+    });
+    setNoteSaving(false);
+    setNoteEditing(false);
+  }
+
   // Heutiger Tag spezifisch
   const todayLog = logMap[today] ?? null;
   const todaySteps = todayLog?.steps ?? null;
@@ -191,6 +323,12 @@ export default function Dashboard({ logs, profile, range, today: todayProp, onGo
               {new Date(range.from + "T12:00:00").toLocaleDateString("de-DE", { day: "2-digit", month: "short" })} –{" "}
               {new Date(range.to + "T12:00:00").toLocaleDateString("de-DE", { day: "2-digit", month: "short", year: "numeric" })}
             </span>
+            {streak > 0 && (
+              <span title={`${streak} Tag${streak !== 1 ? "e" : ""} in Folge mit Eintrag`}
+                style={{ display: "inline-flex", alignItems: "center", gap: 5, fontSize: 12.5, fontWeight: 700, padding: "3px 12px", borderRadius: 20, background: streak >= 7 ? "var(--teal-dim)" : "var(--surface2)", color: streak >= 7 ? "var(--teal)" : "var(--text-muted)", border: `1px solid ${streak >= 7 ? "var(--teal)" : "var(--border2)"}` }}>
+                🔥 {streak} Tag{streak !== 1 ? "e" : ""} Streak
+              </span>
+            )}
           </div>
           {/* Tagesauswahl */}
           <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
@@ -265,17 +403,29 @@ export default function Dashboard({ logs, profile, range, today: todayProp, onGo
               : weightGoal ? "Ziel gesetzt" : "Kein Ziel gesetzt"}
           </div>
         </div>
-        <div className="kpi-card" style={{ borderLeft: "2px solid var(--purple)", opacity: 0.9 }}>
-          <div className="kpi-label"><span>😴</span>Schlaf heute</div>
-          <div className="kpi-value" style={{ fontSize: 18, color: todaySleep ? "var(--purple)" : "var(--text-muted)" }}>
-            {todaySleep ? formatMinutes(todaySleep) : !goalsLoaded ? "–" : sleepGoal ? `${sleepGoal.targetValue} Std.` : "7–9 Std."}
+        {projection ? (
+          <div className="kpi-card" style={{ borderLeft: "2px solid var(--green)", opacity: 0.9 }}>
+            <div className="kpi-label"><span>📅</span>Trend-Projektion</div>
+            <div className="kpi-value" style={{ fontSize: 14, fontWeight: 800, color: "var(--green)", lineHeight: 1.25 }}>
+              {projection.dateStr}
+            </div>
+            <div className="kpi-sub">
+              Ø {projection.avgDef} kcal/Tag · noch {projection.kgToLose} kg · {projection.daysLeft} Tage
+            </div>
           </div>
-          <div className="kpi-sub">
-            {todaySleep
-              ? (sleepGoal ? `Ziel: ${sleepGoal.targetValue} Std. ${todaySleep >= sleepGoalMins ? "✓" : `· noch ${formatMinutes(sleepGoalMins - todaySleep)}`}` : "Eingetragen")
-              : "Noch kein Eintrag · Empfehlung"}
+        ) : (
+          <div className="kpi-card" style={{ borderLeft: "2px solid var(--purple)", opacity: 0.9 }}>
+            <div className="kpi-label"><span>😴</span>Schlaf heute</div>
+            <div className="kpi-value" style={{ fontSize: 18, color: todaySleep ? "var(--purple)" : "var(--text-muted)" }}>
+              {todaySleep ? formatMinutes(todaySleep) : !goalsLoaded ? "–" : sleepGoal ? `${sleepGoal.targetValue} Std.` : "7–9 Std."}
+            </div>
+            <div className="kpi-sub">
+              {todaySleep
+                ? (sleepGoal ? `Ziel: ${sleepGoal.targetValue} Std. ${todaySleep >= sleepGoalMins ? "✓" : `· noch ${formatMinutes(sleepGoalMins - todaySleep)}`}` : "Eingetragen")
+                : "Noch kein Eintrag · Empfehlung"}
+            </div>
           </div>
-        </div>
+        )}
       </div>
 
       {/* 4 Haupt-Widgets */}
@@ -417,6 +567,123 @@ export default function Dashboard({ logs, profile, range, today: todayProp, onGo
             <p style={{ fontSize: 12, color: "var(--text-muted)", margin: 0 }}>Pull, Push, Leg – Übungen, Sätze, Gewichte & Progression über Zeit</p>
           </div>
         </WidgetCard>
+      </div>
+
+      {/* ── Wöchentliche Zusammenfassung + Benchmarks + Notizen ── */}
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 16, marginBottom: 22 }}>
+
+        {/* Letzte Woche */}
+        <div className="card card-pad">
+          <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 14 }}>
+            <div className="section-head-icon">📆</div>
+            <span style={{ fontWeight: 700, fontSize: 14 }}>Letzte Woche</span>
+            {lastWeekSummary && <span style={{ fontSize: 11, color: "var(--text-muted)", marginLeft: "auto" }}>{lastWeekSummary.days} Einträge</span>}
+          </div>
+          {!lastWeekSummary ? (
+            <p style={{ fontSize: 12.5, color: "var(--text-muted)", margin: 0 }}>Noch keine abgeschlossene Woche mit Daten.</p>
+          ) : (
+            <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+              {lastWeekSummary.avgKcal != null && (
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                  <span style={{ fontSize: 12, color: "var(--text-muted)" }}>Ø Kalorien</span>
+                  <span style={{ fontWeight: 700, color: "var(--orange)", fontSize: 14 }}>{lastWeekSummary.avgKcal} kcal</span>
+                </div>
+              )}
+              {lastWeekSummary.avgDeficit != null && (
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                  <span style={{ fontSize: 12, color: "var(--text-muted)" }}>Ø Bilanz</span>
+                  <span style={{ fontWeight: 700, color: lastWeekSummary.avgDeficit <= 0 ? "var(--teal)" : "var(--red)", fontSize: 14 }}>
+                    {lastWeekSummary.avgDeficit > 0 ? "+" : ""}{lastWeekSummary.avgDeficit} kcal
+                  </span>
+                </div>
+              )}
+              {lastWeekSummary.avgSleepW != null && (
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                  <span style={{ fontSize: 12, color: "var(--text-muted)" }}>Ø Schlaf</span>
+                  <span style={{ fontWeight: 700, color: "var(--purple)", fontSize: 14 }}>{formatMinutes(lastWeekSummary.avgSleepW)}</span>
+                </div>
+              )}
+              {lastWeekSummary.wtDelta != null && (
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                  <span style={{ fontSize: 12, color: "var(--text-muted)" }}>Gewichtstrend</span>
+                  <span style={{ fontWeight: 700, color: lastWeekSummary.wtDelta <= 0 ? "var(--teal)" : "var(--red)", fontSize: 14 }}>
+                    {lastWeekSummary.wtDelta > 0 ? "+" : ""}{lastWeekSummary.wtDelta} kg
+                  </span>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+
+        {/* Benchmarks */}
+        <div className="card card-pad">
+          <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 14 }}>
+            <div className="section-head-icon">🏆</div>
+            <span style={{ fontWeight: 700, fontSize: 14 }}>Bestleistungen</span>
+            <span style={{ fontSize: 11, color: "var(--text-muted)", marginLeft: "auto" }}>90 Tage</span>
+          </div>
+          <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+              <span style={{ fontSize: 12, color: "var(--text-muted)" }}>🔥 Längste Streak</span>
+              <span style={{ fontWeight: 700, color: "var(--orange)", fontSize: 14 }}>{benchmarks.longestStreak} Tage</span>
+            </div>
+            {benchmarks.lowestW && (
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                <span style={{ fontSize: 12, color: "var(--text-muted)" }}>⚖️ Niedrigstes Gewicht</span>
+                <span style={{ fontWeight: 700, color: "var(--teal)", fontSize: 14 }}>{benchmarks.lowestW.w} kg</span>
+              </div>
+            )}
+            {benchmarks.bestWeek && (
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                <span style={{ fontSize: 12, color: "var(--text-muted)" }}>📉 Beste Woche</span>
+                <div style={{ textAlign: "right" }}>
+                  <span style={{ fontWeight: 700, color: "var(--green)", fontSize: 14 }}>−{benchmarks.bestWeek.avg} kcal/T</span>
+                  {benchmarks.bestWeekDate && <div style={{ fontSize: 10, color: "var(--text-muted)" }}>ab {benchmarks.bestWeekDate}</div>}
+                </div>
+              </div>
+            )}
+            {streak > 0 && (
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                <span style={{ fontSize: 12, color: "var(--text-muted)" }}>🔥 Aktuelle Streak</span>
+                <span style={{ fontWeight: 700, color: streak >= 7 ? "var(--teal)" : "var(--text)", fontSize: 14 }}>{streak} Tage</span>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Notizen heute */}
+        <div className="card card-pad">
+          <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 14 }}>
+            <div className="section-head-icon">📝</div>
+            <span style={{ fontWeight: 700, fontSize: 14 }}>Notiz heute</span>
+            {!noteEditing && (
+              <button className="btn btn-xs btn-secondary" style={{ marginLeft: "auto" }} onClick={() => setNoteEditing(true)}>
+                {noteText ? "Bearbeiten" : "+ Notiz"}
+              </button>
+            )}
+          </div>
+          {noteEditing ? (
+            <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+              <textarea
+                value={noteText}
+                onChange={e => setNoteText(e.target.value)}
+                placeholder="Wie war der Tag? Besonderheiten, Befinden…"
+                rows={4}
+                style={{ width: "100%", fontSize: 12.5, resize: "vertical", fontFamily: "inherit", background: "var(--surface2)", border: "1px solid var(--border2)", borderRadius: 8, padding: "8px 10px", color: "var(--text)", lineHeight: 1.5, boxSizing: "border-box" }}
+              />
+              <div style={{ display: "flex", gap: 6, justifyContent: "flex-end" }}>
+                <button className="btn btn-xs btn-secondary" onClick={() => setNoteEditing(false)}>Abbrechen</button>
+                <button className="btn btn-xs btn-primary" onClick={saveNote} disabled={noteSaving}>
+                  {noteSaving ? "…" : "Speichern"}
+                </button>
+              </div>
+            </div>
+          ) : noteText ? (
+            <p style={{ fontSize: 12.5, color: "var(--text-2)", lineHeight: 1.6, margin: 0, whiteSpace: "pre-wrap" }}>{noteText}</p>
+          ) : (
+            <p style={{ fontSize: 12.5, color: "var(--text-muted)", margin: 0, fontStyle: "italic" }}>Noch keine Notiz für heute.</p>
+          )}
+        </div>
       </div>
 
       {/* Tagesübersicht */}
