@@ -23,7 +23,7 @@ const METRICS: { key: keyof Measurement; label: string; color: string }[] = [
 ];
 
 function fmtDate(s: string) {
-  const d = new Date(s + "T12:00:00");
+  const d = new Date(s.split("T")[0] + "T12:00:00");
   return `${String(d.getDate()).padStart(2,"0")}.${String(d.getMonth()+1).padStart(2,"0")}`;
 }
 

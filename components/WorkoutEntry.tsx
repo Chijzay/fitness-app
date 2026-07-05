@@ -50,7 +50,7 @@ export default function WorkoutEntry({ onSaved, onCancel }: { onSaved: () => voi
   const [date, setDate]           = useState(todayStr);
   const [name, setName]           = useState("Pull");
   const [customName, setCustomName] = useState("");
-  const [bodyWeight, setBodyWeight] = useState("");
+  const [latestWeight, setLatestWeight] = useState<number | null>(null);
   const [energyLevel, setEnergyLevel] = useState<number | null>(null);
   const [startTime, setStartTime] = useState("");
   const [endTime, setEndTime]     = useState("");
@@ -62,6 +62,12 @@ export default function WorkoutEntry({ onSaved, onCancel }: { onSaved: () => voi
 
   useEffect(() => {
     fetch("/api/workouts?exercises=1").then(r => r.json()).then(setSuggestions).catch(() => {});
+    fetch("/api/logs?from=2020-01-01&to=" + todayStr())
+      .then(r => r.json())
+      .then((logs: { weight?: number }[]) => {
+        const last = [...logs].reverse().find(l => l.weight);
+        if (last?.weight) setLatestWeight(last.weight);
+      }).catch(() => {});
   }, []);
 
   // Load last session of same type for carry-forward preview
@@ -109,7 +115,7 @@ export default function WorkoutEntry({ onSaved, onCancel }: { onSaved: () => voi
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         date, name: sessionName,
-        bodyWeight: bodyWeight ? Number(bodyWeight) : undefined,
+        bodyWeight: latestWeight ?? undefined,
         energyLevel,
         startTime: startTime || undefined,
         endTime: endTime || undefined,
@@ -169,8 +175,11 @@ export default function WorkoutEntry({ onSaved, onCancel }: { onSaved: () => voi
             </div>
           )}
           <div>
-            <label className="lbl">Körpergewicht (kg)</label>
-            <input type="number" step="0.1" value={bodyWeight} onChange={e => setBodyWeight(e.target.value)} placeholder="z.B. 94.4" />
+            <label className="lbl">Körpergewicht</label>
+            <div style={{ padding: "8px 12px", background: "var(--surface2)", borderRadius: 8, border: "1px solid var(--border2)", fontSize: 14, fontWeight: 700, color: latestWeight ? "var(--teal)" : "var(--text-muted)" }}>
+              {latestWeight ? `${latestWeight} kg` : "Kein Eintrag"}
+              <span style={{ fontSize: 10, fontWeight: 400, color: "var(--text-muted)", marginLeft: 6 }}>aus Tageseintrag</span>
+            </div>
           </div>
           <div>
             <label className="lbl">Start</label>
