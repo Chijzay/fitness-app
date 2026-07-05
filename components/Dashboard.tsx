@@ -390,6 +390,24 @@ export default function Dashboard({ logs, profile, range, today: todayProp, onGo
             </ComposedChart>
           </ResponsiveContainer>
         </WidgetCard>
+
+        <WidgetCard icon="📏" title="Körpermaße"
+          kpi="–"
+          sub="Umfänge tracken"
+          onClick={() => onGoDetail("detail-measurements")}>
+          <div style={{ display: "flex", flexDirection: "column", gap: 6, paddingTop: 4 }}>
+            <p style={{ fontSize: 12, color: "var(--text-muted)", margin: 0 }}>Taille, Bauch, Hüfte, Oberarm und mehr – im Tageseintrag erfassen</p>
+          </div>
+        </WidgetCard>
+
+        <WidgetCard icon="🏃" title="Cardio"
+          kpi="–"
+          sub="Sessions tracken"
+          onClick={() => onGoDetail("detail-cardio")}>
+          <div style={{ display: "flex", flexDirection: "column", gap: 6, paddingTop: 4 }}>
+            <p style={{ fontSize: 12, color: "var(--text-muted)", margin: 0 }}>Joggen, Radfahren, Schwimmen – Strecke, Zeit & kcal im Tageseintrag</p>
+          </div>
+        </WidgetCard>
       </div>
 
       {/* Tagesübersicht */}

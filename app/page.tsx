@@ -11,6 +11,8 @@ import WeightDetail from "@/components/detail/WeightDetail";
 import KcalDetail from "@/components/detail/KcalDetail";
 import SleepDetail from "@/components/detail/SleepDetail";
 import DietProgress from "@/components/detail/DietProgress";
+import MeasurementsDetail from "@/components/detail/MeasurementsDetail";
+import CardioDetail from "@/components/detail/CardioDetail";
 import GoalsPage from "@/components/GoalsPage";
 import GuideView from "@/components/GuideView";
 
@@ -31,7 +33,8 @@ export type DateRange = { from: string; to: string };
 
 export type View =
   | "dashboard" | "entry" | "profile" | "goals" | "guide"
-  | "detail-steps" | "detail-weight" | "detail-kcal" | "detail-sleep" | "detail-diet";
+  | "detail-steps" | "detail-weight" | "detail-kcal" | "detail-sleep" | "detail-diet"
+  | "detail-measurements" | "detail-cardio";
 
 function todayStr() {
   const now = new Date();
@@ -213,6 +216,13 @@ export default function Home() {
             {view === "detail-diet" && (
               <DietProgress allLogs={allLogs} profile={profile} range={detailRange} setRange={setDetailRange}
                 onEditDate={date => onEditDate(date, "detail-diet")} />
+            )}
+            {view === "detail-measurements" && (
+              <MeasurementsDetail range={detailRange} setRange={setDetailRange}
+                onEditDate={date => onEditDate(date, "detail-measurements")} />
+            )}
+            {view === "detail-cardio" && (
+              <CardioDetail range={detailRange} setRange={setDetailRange} />
             )}
           </div>
         )}

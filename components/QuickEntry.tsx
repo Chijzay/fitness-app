@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import type { Profile, DailyLog } from "@/app/page";
 import { calcBMR, calcTDEE, estimateBodyFat, estimateMuscleMass, STEPS_TYPES, MOVEMENT_TYPES, calcWaterRecommendation } from "@/lib/calculations";
 
@@ -129,6 +129,20 @@ export default function QuickEntry({
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [existingId, setExistingId] = useState<number | null>(null);
 
+  // ── Körpermaße ───────────────────────────────────────────────────
+  type MeasForm = { waist: string; belly: string; hip: string; chest: string; upperArm: string; thigh: string; neck: string; notes: string; existingId: number | null };
+  const emptyMeas: MeasForm = { waist: "", belly: "", hip: "", chest: "", upperArm: "", thigh: "", neck: "", notes: "", existingId: null };
+  const [measForm, setMeasForm] = useState<MeasForm>(emptyMeas);
+  function setM<K extends keyof MeasForm>(k: K, v: MeasForm[K]) { setMeasForm(f => ({ ...f, [k]: v })); }
+
+  // ── Cardio-Sessions ──────────────────────────────────────────────
+  type CardioEntry = { localId: number; id?: number; type: string; distanceKm: string; durationMin: string; kcal: string; steps: string; notes: string };
+  const [cardioSessions, setCardioSessions] = useState<CardioEntry[]>([]);
+  const [cardioDeleted, setCardioDeleted] = useState<number[]>([]);
+  let _localId = 0;
+  function newCardioEntry(): CardioEntry { return { localId: ++_localId, type: "Joggen", distanceKm: "", durationMin: "", kcal: "", steps: "", notes: "" }; }
+  const CARDIO_TYPES = ["Joggen", "Spazieren", "Radfahren", "Schwimmen", "Wandern", "Sonstiges"];
+
   useEffect(() => {
     const existing = logs.find(l => l.date.startsWith(date));
     setExistingId(existing?.id ?? null);
@@ -160,6 +174,36 @@ export default function QuickEntry({
       });
     }
     setConfirmDelete(false);
+
+    // Load measurements for this date
+    fetch(`/api/measurements?from=${date}&to=${date}`)
+      .then(r => r.json()).then((ms: { id: number; waist?: number; belly?: number; hip?: number; chest?: number; upperArm?: number; thigh?: number; neck?: number; notes?: string }[]) => {
+        if (ms.length > 0) {
+          const m = ms[0];
+          setMeasForm({ waist: m.waist?.toString() ?? "", belly: m.belly?.toString() ?? "", hip: m.hip?.toString() ?? "", chest: m.chest?.toString() ?? "", upperArm: m.upperArm?.toString() ?? "", thigh: m.thigh?.toString() ?? "", neck: m.neck?.toString() ?? "", notes: m.notes ?? "", existingId: m.id });
+        } else {
+          // Carry forward last measurement
+          setMeasForm(emptyMeas);
+          // Try to carry forward from measurements API (best-effort, load last)
+          fetch("/api/measurements?from=2020-01-01&to=" + date)
+            .then(r => r.json()).then((all: { waist?: number; belly?: number; hip?: number; chest?: number; upperArm?: number; thigh?: number; neck?: number }[]) => {
+              const last = all.at(-1);
+              if (last) setMeasForm(f => ({ ...f, waist: last.waist?.toString() ?? "", belly: last.belly?.toString() ?? "", hip: last.hip?.toString() ?? "", chest: last.chest?.toString() ?? "", upperArm: last.upperArm?.toString() ?? "", thigh: last.thigh?.toString() ?? "", neck: last.neck?.toString() ?? "" }));
+            }).catch(() => {});
+        }
+      }).catch(() => {});
+
+    // Load cardio sessions for this date
+    fetch(`/api/cardio?from=${date}&to=${date}`)
+      .then(r => r.json()).then((cs: { id: number; type: string; distanceM?: number; durationS?: number; kcal?: number; steps?: number; notes?: string }[]) => {
+        setCardioSessions(cs.map(c => ({
+          localId: ++_localId, id: c.id, type: c.type,
+          distanceKm: c.distanceM ? (c.distanceM / 1000).toFixed(2) : "",
+          durationMin: c.durationS ? String(Math.round(c.durationS / 60)) : "",
+          kcal: c.kcal?.toString() ?? "", steps: c.steps?.toString() ?? "", notes: c.notes ?? "",
+        })));
+        setCardioDeleted([]);
+      }).catch(() => {});
   }, [date, logs]);
 
   useEffect(() => {
@@ -284,6 +328,41 @@ export default function QuickEntry({
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
     });
+    // Save measurements if any field is filled
+    const measHasData = measForm.waist || measForm.belly || measForm.hip || measForm.chest || measForm.upperArm || measForm.thigh || measForm.neck;
+    if (measHasData) {
+      const nm = (v: string) => v ? Number(v) : undefined;
+      await fetch("/api/measurements", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ date, waist: nm(measForm.waist), belly: nm(measForm.belly), hip: nm(measForm.hip), chest: nm(measForm.chest), upperArm: nm(measForm.upperArm), thigh: nm(measForm.thigh), neck: nm(measForm.neck), notes: measForm.notes || undefined }),
+      });
+    }
+
+    // Delete removed cardio sessions
+    for (const id of cardioDeleted) {
+      await fetch(`/api/cardio?id=${id}`, { method: "DELETE" });
+    }
+
+    // Save new/updated cardio sessions (new ones have no id)
+    for (const cs of cardioSessions) {
+      if (!cs.id) {
+        await fetch("/api/cardio", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            date, type: cs.type,
+            distanceM: cs.distanceKm ? Math.round(Number(cs.distanceKm) * 1000) : undefined,
+            durationS: cs.durationMin ? Number(cs.durationMin) * 60 : undefined,
+            kcal: cs.kcal ? Number(cs.kcal) : undefined,
+            steps: cs.steps ? Number(cs.steps) : undefined,
+            notes: cs.notes || undefined,
+          }),
+        });
+      }
+    }
+    setCardioDeleted([]);
+
     setSaving(false);
     if (onRefresh) {
       onRefresh();
@@ -599,6 +678,68 @@ export default function QuickEntry({
               💡 Empfehlung: ca. {waterRec.toLocaleString("de")} ml/Tag (35 ml × {form.weight} kg)
             </p>
           )}
+        </Section>
+
+        {/* Körpermaße */}
+        <Section icon="📏" title="Körpermaße (cm)">
+          <div className={g3}>
+            <Field label="Taille"><input type="number" min="0" step="0.1" value={measForm.waist} onChange={e => setM("waist", e.target.value)} placeholder="z.B. 85" /></Field>
+            <Field label="Bauch"><input type="number" min="0" step="0.1" value={measForm.belly} onChange={e => setM("belly", e.target.value)} placeholder="z.B. 92" /></Field>
+            <Field label="Hüfte"><input type="number" min="0" step="0.1" value={measForm.hip} onChange={e => setM("hip", e.target.value)} placeholder="z.B. 100" /></Field>
+            <Field label="Brust"><input type="number" min="0" step="0.1" value={measForm.chest} onChange={e => setM("chest", e.target.value)} placeholder="z.B. 98" /></Field>
+            <Field label="Oberarm"><input type="number" min="0" step="0.1" value={measForm.upperArm} onChange={e => setM("upperArm", e.target.value)} placeholder="z.B. 34" /></Field>
+            <Field label="Oberschenkel"><input type="number" min="0" step="0.1" value={measForm.thigh} onChange={e => setM("thigh", e.target.value)} placeholder="z.B. 58" /></Field>
+          </div>
+          <p style={{ fontSize: 11, color: "var(--text-muted)", marginTop: 8 }}>Alle Felder optional — nur ausfüllen wenn gemessen. Letzte Messung wird vorausgefüllt.</p>
+        </Section>
+
+        {/* Cardio */}
+        <Section icon="🏃" title="Cardio-Sessions">
+          <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+            {cardioSessions.map((cs, idx) => (
+              <div key={cs.localId} style={{ background: "var(--surface2)", borderRadius: 10, padding: "12px 14px", position: "relative" }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 10 }}>
+                  <span style={{ fontSize: 12, fontWeight: 700, color: "var(--teal)" }}>Session {idx + 1}</span>
+                  <button type="button" onClick={() => {
+                    if (cs.id) setCardioDeleted(d => [...d, cs.id!]);
+                    setCardioSessions(s => s.filter(x => x.localId !== cs.localId));
+                  }} style={{ marginLeft: "auto", fontSize: 11, color: "var(--red)", background: "none", border: "none", cursor: "pointer" }}>🗑 Entfernen</button>
+                </div>
+                <div className={g3}>
+                  <Field label="Typ">
+                    <select value={cs.type} onChange={e => setCardioSessions(s => s.map(x => x.localId === cs.localId ? { ...x, type: e.target.value } : x))}>
+                      {CARDIO_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
+                    </select>
+                  </Field>
+                  <Field label="Strecke (km)">
+                    <input type="number" min="0" step="0.01" value={cs.distanceKm} placeholder="z.B. 5.2"
+                      onChange={e => setCardioSessions(s => s.map(x => x.localId === cs.localId ? { ...x, distanceKm: e.target.value } : x))} />
+                  </Field>
+                  <Field label="Zeit (Minuten)">
+                    <input type="number" min="0" step="1" value={cs.durationMin} placeholder="z.B. 30"
+                      onChange={e => setCardioSessions(s => s.map(x => x.localId === cs.localId ? { ...x, durationMin: e.target.value } : x))} />
+                  </Field>
+                  <Field label="kcal verbrannt">
+                    <input type="number" min="0" step="1" value={cs.kcal} placeholder="z.B. 320"
+                      onChange={e => setCardioSessions(s => s.map(x => x.localId === cs.localId ? { ...x, kcal: e.target.value } : x))} />
+                  </Field>
+                  <Field label="Schritte (nur Cardio)">
+                    <input type="number" min="0" step="1" value={cs.steps} placeholder="z.B. 4500"
+                      onChange={e => setCardioSessions(s => s.map(x => x.localId === cs.localId ? { ...x, steps: e.target.value } : x))} />
+                  </Field>
+                  <Field label="Notiz">
+                    <input value={cs.notes} placeholder="optional"
+                      onChange={e => setCardioSessions(s => s.map(x => x.localId === cs.localId ? { ...x, notes: e.target.value } : x))} />
+                  </Field>
+                </div>
+              </div>
+            ))}
+            <button type="button" className="btn btn-secondary btn-sm" onClick={() => setCardioSessions(s => [...s, newCardioEntry()])}
+              style={{ alignSelf: "flex-start" }}>
+              + Session hinzufügen
+            </button>
+          </div>
+          <p style={{ fontSize: 11, color: "var(--text-muted)", marginTop: 8 }}>Schritte hier fließen nicht in die Tages-Schrittzählung ein — nur für Cardio-Auswertung.</p>
         </Section>
 
         {/* Footer */}

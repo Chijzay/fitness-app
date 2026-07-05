@@ -15,10 +15,12 @@ model User {
   name      String?
   createdAt DateTime @default(now())
 
-  profile    Profile?
-  dietPhases DietPhase[]
-  logs       DailyLog[]
-  goals      Goal[]
+  profile      Profile?
+  dietPhases   DietPhase[]
+  logs         DailyLog[]
+  goals        Goal[]
+  measurements BodyMeasurement[]
+  cardioSessions CardioSession[]
 }
 
 model Profile {
@@ -87,6 +89,40 @@ model DailyLog {
   updatedAt        DateTime   @updatedAt
 
   @@unique([userId, date])
+}
+
+model BodyMeasurement {
+  id         Int      @id @default(autoincrement())
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  date       DateTime
+  waist      Float?   // Taille (cm)
+  belly      Float?   // Bauch (cm)
+  hip        Float?   // Hüfte (cm)
+  chest      Float?   // Brust (cm)
+  upperArm   Float?   // Oberarm (cm)
+  thigh      Float?   // Oberschenkel (cm)
+  neck       Float?   // Nacken (cm)
+  notes      String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@unique([userId, date])
+}
+
+model CardioSession {
+  id        Int      @id @default(autoincrement())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  date      DateTime
+  type      String   // Joggen, Radfahren, Spazieren, Schwimmen, etc.
+  distanceM Int?     // Strecke in Metern
+  durationS Int?     // Zeit in Sekunden
+  kcal      Int?
+  steps     Int?     // nur für Cardio-Auswertung, nicht in Tagesschritte
+  notes     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Goal {
