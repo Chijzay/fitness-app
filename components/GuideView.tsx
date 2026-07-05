@@ -326,9 +326,9 @@ function VisualBausteine() {
             <div style={{ fontSize: 15, fontWeight: 800, color: blue }}>💪 Bewegung</div>
           </div>
           <div style={{ padding: "10px 14px 14px", display: "flex", flexDirection: "column", gap: 9 }}>
-            <BausteinBlock n={4} name="Krafttraining" desc="2–3× pro Woche" color={blue} />
-            <BausteinBlock n={5} name="Alltagsbewegung" desc="7.000–10.000 Schritte/Tag" color={blue} />
-            <BausteinBlock n={6} name="Ausdauersport" desc="Optional 1–2×/Woche" color={blue} />
+            <BausteinBlock n={1} name="Krafttraining" desc="2–3× pro Woche" color={blue} />
+            <BausteinBlock n={2} name="Alltagsbewegung" desc="7.000–10.000 Schritte/Tag" color={blue} />
+            <BausteinBlock n={3} name="Ausdauersport" desc="Optional 1–2×/Woche" color={blue} />
           </div>
         </div>
       </div>
@@ -346,17 +346,17 @@ function VisualBausteine() {
             <div style={{ fontSize: 11, color: "var(--text-muted)", marginTop: 2 }}>trägt Ernährung & Bewegung — ohne Erholung kein Fortschritt</div>
           </div>
           <div style={{ display: "flex", gap: 20, flex: 1, flexWrap: "wrap" }}>
-            <BausteinBlock n={7} name="Schlaf" desc="7–9 Stunden pro Nacht" color={purple} />
-            <BausteinBlock n={8} name="Pausen" desc="Refeed · Deload" color={purple} />
+            <BausteinBlock n={1} name="Schlaf" desc="7–9 Stunden pro Nacht" color={purple} />
+            <BausteinBlock n={2} name="Pausen" desc="Refeed · Deload" color={purple} />
           </div>
         </div>
       </div>
 
       {/* Legende */}
       <div style={{ display: "flex", gap: 20, marginTop: 12, fontSize: 11, color: "var(--text-muted)", flexWrap: "wrap" }}>
-        <span>↕ Intern: 1 vor 2 vor 3, weil Energiebilanz alles dominiert</span>
-        <span>↔ Extern: Ernährung & Bewegung gleichwertig, nicht nacheinander</span>
-        <span>⬇ Fundament: Schlaf & Pausen sind Voraussetzung, nicht Option</span>
+        <span>↕ Nummerierung = Priorität innerhalb der Kategorie</span>
+        <span>↔ Ernährung & Bewegung gleichwertig, nicht nacheinander</span>
+        <span>⬇ Regeneration ist Voraussetzung, nicht Option</span>
       </div>
     </div>
   );
