@@ -184,6 +184,7 @@ export default function Home() {
         view={view} setView={v => { setReturnView("dashboard"); setView(v); }}
         profileName={profile.name}
         onNewEntry={() => { setReturnView("dashboard"); setEntryDate(today); setView("entry"); }}
+        onWorkouts={() => { setDetailRange(last30()); setView("detail-workouts"); }}
         onDietProgress={() => goDetail("detail-diet")}
         onGuide={() => setView("guide")}
       />

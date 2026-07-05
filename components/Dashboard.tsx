@@ -96,7 +96,7 @@ export default function Dashboard({ logs, allLogs, profile, range, today: todayP
   const [noteSaving, setNoteSaving]   = useState(false);
   const [widgetMeas,    setWidgetMeas]    = useState<{ belly?: number; waist?: number; hip?: number; chest?: number; date: string }[]>([]);
   const [widgetCardio,  setWidgetCardio]  = useState<{ date: string; distKm: number; type: string }[]>([]);
-  const [widgetWorkout, setWidgetWorkout] = useState<{ sessions: number; volume: number } | null>(null);
+  // widgetWorkout removed (Training widget moved to Nav tab)
   useEffect(() => {
     fetch("/api/goals").then(r => r.json()).then(g => { setGoals(g); setGoalsLoaded(true); }).catch(() => setGoalsLoaded(true));
   }, []);
@@ -109,11 +109,6 @@ export default function Dashboard({ logs, allLogs, profile, range, today: todayP
       .then((cs: { date: string; distanceM?: number; type: string }[]) => setWidgetCardio(
         cs.map(c => ({ date: `${String(new Date(c.date.split("T")[0]+"T12:00:00").getDate()).padStart(2,"0")}.${String(new Date(c.date.split("T")[0]+"T12:00:00").getMonth()+1).padStart(2,"0")}`, distKm: +((c.distanceM??0)/1000).toFixed(2), type: c.type }))
       )).catch(() => {});
-    fetch(`/api/workouts?from=${from30}&to=${to}`).then(r => r.json())
-      .then((ws: { exercises: { sets: { reps?: number; weight?: number }[] }[] }[]) => {
-        const vol = ws.reduce((sum, s) => sum + s.exercises.reduce((es, e) => es + e.sets.reduce((ss, set) => ss + (set.reps??0)*(set.weight??0), 0), 0), 0);
-        setWidgetWorkout({ sessions: ws.length, volume: Math.round(vol) });
-      }).catch(() => {});
   }, [todayProp]);
 
   const dates = useMemo(() => allDatesInRange(range), [range]);
@@ -605,9 +600,10 @@ export default function Dashboard({ logs, allLogs, profile, range, today: todayP
 
         {(() => {
           const totalKm = +widgetCardio.reduce((s,c) => s+c.distKm, 0).toFixed(1);
+          const lastSession = widgetCardio.at(-1);
           return (
             <WidgetCard icon="🏃" title="Cardio"
-              kpi={widgetCardio.length ? `${widgetCardio.length} Sessions` : "–"}
+              kpi={widgetCardio.length ? `${widgetCardio.length} Session${widgetCardio.length > 1 ? "s" : ""}` : "–"}
               sub={totalKm > 0 ? `${totalKm} km · 30 Tage` : "Sessions tracken"}
               badge={widgetCardio.length ? <span className="badge badge-teal">{totalKm} km</span> : undefined}
               onClick={() => onGoDetail("detail-cardio")}>
@@ -621,24 +617,27 @@ export default function Dashboard({ logs, allLogs, profile, range, today: todayP
                     <Bar dataKey="distKm" radius={[4,4,0,0]} maxBarSize={28} fill="var(--teal)" fillOpacity={0.8} />
                   </BarChart>
                 </ResponsiveContainer>
+              ) : lastSession ? (
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 8, paddingTop: 6 }}>
+                  {([
+                    ["Datum", lastSession.date],
+                    ["Strecke", `${lastSession.distKm} km`],
+                    ["Art", lastSession.type || "–"],
+                  ] as [string, string][]).map(([label, val]) => (
+                    <div key={label} style={{ textAlign: "center" }}>
+                      <div style={{ fontSize: 15, fontWeight: 800, color: "var(--text)" }}>{val}</div>
+                      <div style={{ fontSize: 10, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.05em" }}>{label}</div>
+                    </div>
+                  ))}
+                </div>
               ) : (
                 <div style={{ paddingTop: 4 }}>
-                  <p style={{ fontSize: 12, color: "var(--text-muted)", margin: 0 }}>Joggen, Radfahren, Schwimmen – Strecke, Zeit & kcal im Tageseintrag</p>
+                  <p style={{ fontSize: 12, color: "var(--text-muted)", margin: 0 }}>Joggen, Radfahren, Schwimmen – im Tageseintrag erfassen</p>
                 </div>
               )}
             </WidgetCard>
           );
         })()}
-
-        <WidgetCard icon="🏋️" title="Training" wide
-          kpi={widgetWorkout?.sessions ? `${widgetWorkout.sessions} Sessions` : "–"}
-          sub={widgetWorkout?.volume ? `${widgetWorkout.volume >= 1000 ? (widgetWorkout.volume/1000).toFixed(1)+"t" : widgetWorkout.volume+" kg"} Volumen · 30 Tage` : "Progression tracken"}
-          badge={widgetWorkout?.sessions ? <span className="badge badge-teal">{widgetWorkout.sessions}×</span> : undefined}
-          onClick={() => onGoDetail("detail-workouts" as View)}>
-          <div style={{ paddingTop: 4 }}>
-            <p style={{ fontSize: 12, color: "var(--text-muted)", margin: 0 }}>Pull, Push, Leg – Übungen, Sätze, Gewichte & Progression über Zeit. Klicken für Auswertung oder neue Session.</p>
-          </div>
-        </WidgetCard>
       </div>
 
       {/* ── Wöchentliche Zusammenfassung + Benchmarks + Notizen ── */}

@@ -2,11 +2,12 @@
 import { signOut } from "next-auth/react";
 import type { View } from "@/app/page";
 
-export default function Nav({ view, setView, profileName, onNewEntry, onDietProgress, onGuide }: {
+export default function Nav({ view, setView, profileName, onNewEntry, onDietProgress, onWorkouts, onGuide }: {
   view: View; setView: (v: View) => void; profileName: string;
-  onNewEntry: () => void; onDietProgress: () => void; onGuide: () => void;
+  onNewEntry: () => void; onDietProgress: () => void; onWorkouts: () => void; onGuide: () => void;
 }) {
   const isDiet = view === "detail-diet";
+  const isWorkouts = view === "detail-workouts" || view === "workout-entry";
   const isGuide = view === "guide";
 
   return (
@@ -22,6 +23,7 @@ export default function Nav({ view, setView, profileName, onNewEntry, onDietProg
       {/* Desktop: Tabs inline */}
       <div className="nav-divider" />
       <button className={`nav-tab${view === "dashboard" ? " active" : ""}`} onClick={() => setView("dashboard")}>Dashboard</button>
+      <button className={`nav-tab${isWorkouts ? " active" : ""}`} onClick={onWorkouts}>💪 Krafttraining</button>
       <button className={`nav-tab${isDiet ? " active" : ""}`} onClick={onDietProgress}>📉 Diätverlauf</button>
       <button className={`nav-tab${view === "goals" ? " active" : ""}`} onClick={() => setView("goals")}>Ziele</button>
       <button className={`nav-tab${isGuide ? " active" : ""}`} onClick={onGuide}>📖 Guide</button>
@@ -46,6 +48,7 @@ export default function Nav({ view, setView, profileName, onNewEntry, onDietProg
       {/* Mobile: Tabs als zweite Zeile (scrollbar) */}
       <div className="nav-tabs-mobile">
         <button className={`nav-tab${view === "dashboard" ? " active" : ""}`} onClick={() => setView("dashboard")}>Dashboard</button>
+        <button className={`nav-tab${isWorkouts ? " active" : ""}`} onClick={onWorkouts}>💪 Krafttraining</button>
         <button className={`nav-tab${isDiet ? " active" : ""}`} onClick={onDietProgress}>📉 Diätverlauf</button>
         <button className={`nav-tab${view === "goals" ? " active" : ""}`} onClick={() => setView("goals")}>Ziele</button>
         <button className={`nav-tab${isGuide ? " active" : ""}`} onClick={onGuide}>📖 Guide</button>
