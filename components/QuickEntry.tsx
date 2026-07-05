@@ -136,19 +136,27 @@ export default function QuickEntry({
       setForm(logToForm(existing));
     } else {
       const sorted = [...logs].filter(l => !l.date.startsWith(date)).sort((a, b) => b.date.localeCompare(a.date));
-      const prevBf = sorted.find(l => !l.bodyFatEstimated && l.bodyFatPercent != null);
-      const prevMm = sorted.find(l => l.muscleMass != null);
-      const prevSleepMode = sorted.find(l => l.sleepQuality != null);
-      const sleepQualityMode: QualityMode = prevSleepMode
-        ? (prevSleepMode.sleepQuality! > 5 ? "watch" : "manual")
+      const prevBf       = sorted.find(l => !l.bodyFatEstimated && l.bodyFatPercent != null);
+      const prevMm       = sorted.find(l => l.muscleMass != null);
+      const prevSleep    = sorted.find(l => l.sleepQuality != null);
+      const prevBmr      = sorted.find(l => l.bmrOverride != null);
+      const prevSteps    = sorted.find(l => l.stepsType != null && l.stepsType !== "Keine Aktivität");
+      const sleepQualityMode: QualityMode = prevSleep
+        ? (prevSleep.sleepQuality! > 5 ? "watch" : "manual")
         : "watch";
+      const prevStepsType = prevSteps?.stepsType ?? "";
+      const isCustomStepsType = prevStepsType && !STEPS_TYPES.slice(0, -1).includes(prevStepsType);
       setForm({
         ...empty,
-        bodyFatPercent: prevBf?.bodyFatPercent?.toString() ?? "",
-        bodyFatManual: prevBf != null,
-        muscleMass: prevMm?.muscleMass?.toString() ?? "",
+        bodyFatPercent:  prevBf?.bodyFatPercent?.toString() ?? "",
+        bodyFatManual:   prevBf != null,
+        muscleMass:      prevMm?.muscleMass?.toString() ?? "",
         muscleMassManual: prevMm != null,
         sleepQualityMode,
+        useBmrManual:    prevBmr != null,
+        bmrManual:       prevBmr?.bmrOverride?.toString() ?? "",
+        stepsType:       isCustomStepsType ? "Eigene Eingabe" : (prevStepsType || "Keine Aktivität"),
+        stepsTypeCustom: isCustomStepsType ? prevStepsType : "",
       });
     }
     setConfirmDelete(false);
