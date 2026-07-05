@@ -37,13 +37,14 @@ function durationMin(s: Session) {
 }
 
 export default function WorkoutDetail({
-  range, setRange, onNewSession,
+  range, setRange, onNewSession, onEditSession,
 }: {
-  range: DateRange; setRange: (r: DateRange) => void; onNewSession: () => void;
+  range: DateRange; setRange: (r: DateRange) => void; onNewSession: () => void; onEditSession: (id: number) => void;
 }) {
-  const [sessions, setSessions]     = useState<Session[]>([]);
-  const [selectedEx, setSelectedEx] = useState<string | null>(null);
-  const [expandedId, setExpandedId] = useState<number | null>(null);
+  const [sessions, setSessions]         = useState<Session[]>([]);
+  const [selectedEx, setSelectedEx]     = useState<string | null>(null);
+  const [expandedId, setExpandedId]     = useState<number | null>(null);
+  const [confirmDeleteId, setConfirmDeleteId] = useState<number | null>(null);
 
   useEffect(() => {
     fetch(`/api/workouts?from=${range.from}&to=${range.to}`)
@@ -51,9 +52,9 @@ export default function WorkoutDetail({
   }, [range]);
 
   async function deleteSession(id: number) {
-    if (!confirm("Session löschen?")) return;
     await fetch(`/api/workouts?id=${id}`, { method: "DELETE" });
     setSessions(s => s.filter(x => x.id !== id));
+    setConfirmDeleteId(null);
   }
 
   // All unique exercise names across sessions
@@ -297,8 +298,25 @@ export default function WorkoutDetail({
                           <div style={{ fontSize: 10, color: "var(--text-muted)" }}>{sets} Sätze</div>
                         </div>
                       </div>
-                      <button onClick={e => { e.stopPropagation(); deleteSession(s.id); }}
-                        style={{ fontSize: 11, color: "var(--red)", background: "none", border: "none", cursor: "pointer", padding: "4px 6px", flexShrink: 0 }}>🗑</button>
+                      {/* Edit / Delete actions */}
+                      <div onClick={e => e.stopPropagation()} style={{ display: "flex", alignItems: "center", gap: 6, flexShrink: 0 }}>
+                        {confirmDeleteId === s.id ? (
+                          <>
+                            <span style={{ fontSize: 11, color: "var(--red)" }}>Löschen?</span>
+                            <button onClick={() => deleteSession(s.id)}
+                              style={{ fontSize: 11, padding: "3px 10px", borderRadius: 6, background: "var(--red)", color: "#fff", border: "none", cursor: "pointer", fontWeight: 700 }}>Ja</button>
+                            <button onClick={() => setConfirmDeleteId(null)}
+                              style={{ fontSize: 11, padding: "3px 8px", borderRadius: 6, background: "var(--surface2)", color: "var(--text-muted)", border: "1px solid var(--border2)", cursor: "pointer" }}>Nein</button>
+                          </>
+                        ) : (
+                          <>
+                            <button onClick={() => onEditSession(s.id)}
+                              style={{ fontSize: 11, padding: "3px 10px", borderRadius: 6, background: "var(--surface2)", color: "var(--teal)", border: "1px solid var(--teal)", cursor: "pointer", fontWeight: 600 }}>✏️ Bearbeiten</button>
+                            <button onClick={() => setConfirmDeleteId(s.id)}
+                              style={{ fontSize: 11, padding: "3px 8px", borderRadius: 6, background: "var(--surface2)", color: "var(--red)", border: "1px solid var(--red)", cursor: "pointer" }}>🗑</button>
+                          </>
+                        )}
+                      </div>
                     </div>
 
                     {/* Expanded detail */}

@@ -95,7 +95,7 @@ export default function Dashboard({ logs, allLogs, profile, range, today: todayP
   const [noteEditing, setNoteEditing] = useState(false);
   const [noteSaving, setNoteSaving]   = useState(false);
   const [widgetMeas,    setWidgetMeas]    = useState<{ belly?: number; waist?: number; date: string }[] >([]);
-  const [widgetCardio,  setWidgetCardio]  = useState<{ sessions: number; distKm: number } | null>(null);
+  const [widgetCardio,  setWidgetCardio]  = useState<{ date: string; distKm: number; type: string }[]>([]);
   const [widgetWorkout, setWidgetWorkout] = useState<{ sessions: number; volume: number } | null>(null);
   useEffect(() => {
     fetch("/api/goals").then(r => r.json()).then(g => { setGoals(g); setGoalsLoaded(true); }).catch(() => setGoalsLoaded(true));
@@ -106,7 +106,9 @@ export default function Dashboard({ logs, allLogs, profile, range, today: todayP
     fetch(`/api/measurements?from=${from30}&to=${to}`).then(r => r.json())
       .then((ms: { date: string; belly?: number; waist?: number }[]) => setWidgetMeas(ms)).catch(() => {});
     fetch(`/api/cardio?from=${from30}&to=${to}`).then(r => r.json())
-      .then((cs: { distanceM?: number }[]) => setWidgetCardio({ sessions: cs.length, distKm: +(cs.reduce((s, c) => s+(c.distanceM??0),0)/1000).toFixed(1) })).catch(() => {});
+      .then((cs: { date: string; distanceM?: number; type: string }[]) => setWidgetCardio(
+        cs.map(c => ({ date: `${String(new Date(c.date.split("T")[0]+"T12:00:00").getDate()).padStart(2,"0")}.${String(new Date(c.date.split("T")[0]+"T12:00:00").getMonth()+1).padStart(2,"0")}`, distKm: +((c.distanceM??0)/1000).toFixed(2), type: c.type }))
+      )).catch(() => {});
     fetch(`/api/workouts?from=${from30}&to=${to}`).then(r => r.json())
       .then((ws: { exercises: { sets: { reps?: number; weight?: number }[] }[] }[]) => {
         const vol = ws.reduce((sum, s) => sum + s.exercises.reduce((es, e) => es + e.sets.reduce((ss, set) => ss + (set.reps??0)*(set.weight??0), 0), 0), 0);
@@ -592,15 +594,32 @@ export default function Dashboard({ logs, allLogs, profile, range, today: todayP
           );
         })()}
 
-        <WidgetCard icon="🏃" title="Cardio"
-          kpi={widgetCardio?.sessions ? `${widgetCardio.sessions} Sessions` : "–"}
-          sub={widgetCardio?.distKm ? `${widgetCardio.distKm} km · 30 Tage` : "Sessions tracken"}
-          badge={widgetCardio?.sessions ? <span className="badge badge-teal">{widgetCardio.distKm} km</span> : undefined}
-          onClick={() => onGoDetail("detail-cardio")}>
-          <div style={{ display: "flex", flexDirection: "column", gap: 6, paddingTop: 4 }}>
-            <p style={{ fontSize: 12, color: "var(--text-muted)", margin: 0 }}>Joggen, Radfahren, Schwimmen – Strecke, Zeit & kcal im Tageseintrag</p>
-          </div>
-        </WidgetCard>
+        {(() => {
+          const totalKm = +widgetCardio.reduce((s,c) => s+c.distKm, 0).toFixed(1);
+          return (
+            <WidgetCard icon="🏃" title="Cardio"
+              kpi={widgetCardio.length ? `${widgetCardio.length} Sessions` : "–"}
+              sub={totalKm > 0 ? `${totalKm} km · 30 Tage` : "Sessions tracken"}
+              badge={widgetCardio.length ? <span className="badge badge-teal">{totalKm} km</span> : undefined}
+              onClick={() => onGoDetail("detail-cardio")}>
+              {widgetCardio.length >= 2 ? (
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={widgetCardio} margin={{ top: 4, right: 4, left: -28, bottom: 0 }}>
+                    <CartesianGrid {...DARK.grid} />
+                    <XAxis dataKey="date" tick={DARK.tick} tickLine={false} axisLine={false} />
+                    <YAxis tick={DARK.tick} tickLine={false} axisLine={false} unit=" km" />
+                    <Tooltip {...DARK.tooltip} formatter={(v: unknown) => [`${v} km`, "Strecke"]} />
+                    <Bar dataKey="distKm" radius={[4,4,0,0]} maxBarSize={28} fill="var(--teal)" fillOpacity={0.8} />
+                  </BarChart>
+                </ResponsiveContainer>
+              ) : (
+                <div style={{ paddingTop: 4 }}>
+                  <p style={{ fontSize: 12, color: "var(--text-muted)", margin: 0 }}>Joggen, Radfahren, Schwimmen – Strecke, Zeit & kcal im Tageseintrag</p>
+                </div>
+              )}
+            </WidgetCard>
+          );
+        })()}
 
         <WidgetCard icon="🏋️" title="Training" wide
           kpi={widgetWorkout?.sessions ? `${widgetWorkout.sessions} Sessions` : "–"}

@@ -83,6 +83,20 @@ export default function Home() {
   const [allLogs, setAllLogs] = useState<DailyLog[]>([]);
   const [entryDate, setEntryDate] = useState(todayStr());
   const [refreshKey, setRefreshKey] = useState(0);
+  const [workoutEditId, setWorkoutEditId] = useState<number | undefined>(undefined);
+
+  // Browser-Back fängt SPA-Navigation ab → immer zum Dashboard
+  useEffect(() => {
+    history.replaceState({ inApp: true }, "");
+    history.pushState({ inApp: true }, ""); // extra Eintrag, damit Back intern bleibt
+    const handler = () => {
+      history.pushState({ inApp: true }, ""); // re-push so further Back stays here
+      setView("dashboard");
+      setReturnView("dashboard");
+    };
+    window.addEventListener("popstate", handler);
+    return () => window.removeEventListener("popstate", handler);
+  }, []);
 
   // Fix: Vercel-Server läuft in UTC — nach Hydration korrektes lokales Datum setzen
   useEffect(() => {
@@ -194,8 +208,9 @@ export default function Home() {
         {view === "guide" && <GuideView />}
         {view === "workout-entry" && (
           <WorkoutEntry
-            onSaved={() => { setRefreshKey(k => k + 1); setView("detail-workouts"); }}
-            onCancel={() => setView("detail-workouts")}
+            editId={workoutEditId}
+            onSaved={() => { setRefreshKey(k => k + 1); setWorkoutEditId(undefined); setView("detail-workouts"); }}
+            onCancel={() => { setWorkoutEditId(undefined); setView("detail-workouts"); }}
           />
         )}
         {isDetail && (
@@ -234,7 +249,8 @@ export default function Home() {
             )}
             {view === "detail-workouts" && (
               <WorkoutDetail range={detailRange} setRange={setDetailRange}
-                onNewSession={() => setView("workout-entry")} />
+                onNewSession={() => { setWorkoutEditId(undefined); setView("workout-entry"); }}
+                onEditSession={id => { setWorkoutEditId(id); setView("workout-entry"); }} />
             )}
           </div>
         )}

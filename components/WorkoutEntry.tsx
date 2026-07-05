@@ -46,7 +46,13 @@ function Autocomplete({ value, onChange, suggestions }: { value: string; onChang
   );
 }
 
-export default function WorkoutEntry({ onSaved, onCancel }: { onSaved: () => void; onCancel: () => void }) {
+type EditSession = {
+  id: number; date: string; name: string; energyLevel?: number | null;
+  startTime?: string | null; endTime?: string | null; notes?: string | null;
+  exercises: { name: string; order: number; notes?: string | null; sets: { setNumber: number; reps?: number | null; weight?: number | null; notes?: string | null }[] }[];
+};
+
+export default function WorkoutEntry({ onSaved, onCancel, editId }: { onSaved: () => void; onCancel: () => void; editId?: number }) {
   const [date, setDate]           = useState(todayStr);
   const [name, setName]           = useState("Pull");
   const [customName, setCustomName] = useState("");
@@ -59,6 +65,7 @@ export default function WorkoutEntry({ onSaved, onCancel }: { onSaved: () => voi
   const [saving, setSaving]       = useState(false);
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [lastSession, setLastSession] = useState<Record<string, { weight: number; reps: number }[]>>({});
+  const isEditing = !!editId;
 
   useEffect(() => {
     fetch("/api/workouts?exercises=1").then(r => r.json()).then(setSuggestions).catch(() => {});
@@ -70,13 +77,45 @@ export default function WorkoutEntry({ onSaved, onCancel }: { onSaved: () => voi
       }).catch(() => {});
   }, []);
 
+  // Pre-fill form when editing an existing session
+  useEffect(() => {
+    if (!editId) return;
+    fetch(`/api/workouts?from=2020-01-01&to=2099-12-31`)
+      .then(r => r.json())
+      .then((all: EditSession[]) => {
+        const s = all.find(x => x.id === editId);
+        if (!s) return;
+        const dateStr = s.date.split("T")[0];
+        setDate(dateStr);
+        const knownType = WORKOUT_TYPES.find(t => t === s.name);
+        setName(knownType ?? "Sonstiges");
+        if (!knownType) setCustomName(s.name);
+        setEnergyLevel(s.energyLevel ?? null);
+        setStartTime(s.startTime ?? "");
+        setEndTime(s.endTime ?? "");
+        setNotes(s.notes ?? "");
+        setExercises(s.exercises.map(ex => ({
+          localId: ++_lid,
+          name: ex.name,
+          notes: ex.notes ?? "",
+          sets: ex.sets.map(set => ({
+            setNumber: set.setNumber,
+            reps:   set.reps   != null ? String(set.reps)   : "",
+            weight: set.weight != null ? String(set.weight) : "",
+            notes:  set.notes  ?? "",
+          })),
+        })));
+      }).catch(() => {});
+  }, [editId]);
+
   // Load last session of same type for carry-forward preview
   useEffect(() => {
+    if (isEditing) return; // don't override when editing
     const n = name === "Sonstiges" ? customName : name;
     if (!n) return;
     fetch(`/api/workouts?from=2020-01-01&to=${date}`)
       .then(r => r.json())
-      .then((sessions: { name: string; date: string; exercises: { name: string; sets: { reps?: number; weight?: number }[] }[] }[]) => {
+      .then((sessions: { id?: number; name: string; date: string; exercises: { name: string; sets: { reps?: number; weight?: number }[] }[] }[]) => {
         const prev = sessions.filter(s => s.name === n && s.date.split("T")[0] < date).at(0);
         if (!prev) { setLastSession({}); return; }
         const map: Record<string, { weight: number; reps: number }[]> = {};
@@ -85,7 +124,7 @@ export default function WorkoutEntry({ onSaved, onCancel }: { onSaved: () => voi
         });
         setLastSession(map);
       }).catch(() => {});
-  }, [name, customName, date]);
+  }, [name, customName, date, isEditing]);
 
   function updateEx(lid: number, key: keyof ExerciseRow, val: string) {
     setExercises(es => es.map(e => e.localId === lid ? { ...e, [key]: val } : e));
@@ -110,6 +149,8 @@ export default function WorkoutEntry({ onSaved, onCancel }: { onSaved: () => voi
     const sessionName = name === "Sonstiges" ? customName : name;
     if (!sessionName) return;
     setSaving(true);
+    // When editing: delete old session first, then create new
+    if (editId) await fetch(`/api/workouts?id=${editId}`, { method: "DELETE" });
     await fetch("/api/workouts", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -142,8 +183,8 @@ export default function WorkoutEntry({ onSaved, onCancel }: { onSaved: () => voi
       {/* Header */}
       <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 22, flexWrap: "wrap" }}>
         <div>
-          <h2 style={{ fontSize: 18, fontWeight: 700, lineHeight: 1.2 }}>🏋️ Training</h2>
-          <p style={{ fontSize: 12.5, color: "var(--text-muted)", marginTop: 2 }}>Übungen, Sätze, Gewichte erfassen</p>
+          <h2 style={{ fontSize: 18, fontWeight: 700, lineHeight: 1.2 }}>🏋️ {isEditing ? "Session bearbeiten" : "Training"}</h2>
+          <p style={{ fontSize: 12.5, color: "var(--text-muted)", marginTop: 2 }}>{isEditing ? "Änderungen werden als neue Version gespeichert" : "Übungen, Sätze, Gewichte erfassen"}</p>
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
           <button className="btn btn-sm btn-secondary" style={{ padding: "4px 10px", fontSize: 16, lineHeight: 1 }}
