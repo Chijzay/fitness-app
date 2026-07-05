@@ -275,7 +275,9 @@ export default function WorkoutDetail({
                   <div key={s.id} style={{ borderBottom: "1px solid var(--border)" }}>
                     {/* Row header */}
                     <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "12px 16px", cursor: "pointer" }}
-                      onClick={() => setExpandedId(open ? null : s.id)}>
+                      onClick={() => setExpandedId(open ? null : s.id)}
+                      onDoubleClick={() => onEditSession(s.id)}
+                      title="Doppelklick zum Bearbeiten">
                       <span style={{ fontSize: 11, transform: `rotate(${open ? 90 : 0}deg)`, transition: "transform .2s", color: "var(--text-muted)" }}>▶</span>
                       <div style={{ flex: 1, minWidth: 0 }}>
                         <div style={{ fontWeight: 700, fontSize: 13.5 }}>

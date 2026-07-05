@@ -94,7 +94,7 @@ export default function Dashboard({ logs, allLogs, profile, range, today: todayP
   const [noteText, setNoteText]   = useState<string>("");
   const [noteEditing, setNoteEditing] = useState(false);
   const [noteSaving, setNoteSaving]   = useState(false);
-  const [widgetMeas,    setWidgetMeas]    = useState<{ belly?: number; waist?: number; date: string }[] >([]);
+  const [widgetMeas,    setWidgetMeas]    = useState<{ belly?: number; waist?: number; hip?: number; chest?: number; date: string }[]>([]);
   const [widgetCardio,  setWidgetCardio]  = useState<{ date: string; distKm: number; type: string }[]>([]);
   const [widgetWorkout, setWidgetWorkout] = useState<{ sessions: number; volume: number } | null>(null);
   useEffect(() => {
@@ -104,7 +104,7 @@ export default function Dashboard({ logs, allLogs, profile, range, today: todayP
     const from30 = (() => { const d = new Date(); d.setDate(d.getDate()-29); return d.toISOString().split("T")[0]; })();
     const to = todayProp;
     fetch(`/api/measurements?from=${from30}&to=${to}`).then(r => r.json())
-      .then((ms: { date: string; belly?: number; waist?: number }[]) => setWidgetMeas(ms)).catch(() => {});
+      .then((ms: { date: string; belly?: number; waist?: number; hip?: number; chest?: number }[]) => setWidgetMeas(ms)).catch(() => {});
     fetch(`/api/cardio?from=${from30}&to=${to}`).then(r => r.json())
       .then((cs: { date: string; distanceM?: number; type: string }[]) => setWidgetCardio(
         cs.map(c => ({ date: `${String(new Date(c.date.split("T")[0]+"T12:00:00").getDate()).padStart(2,"0")}.${String(new Date(c.date.split("T")[0]+"T12:00:00").getMonth()+1).padStart(2,"0")}`, distKm: +((c.distanceM??0)/1000).toFixed(2), type: c.type }))
@@ -585,8 +585,17 @@ export default function Dashboard({ logs, allLogs, profile, range, today: todayP
                       dot={{ r: 4, fill: "var(--orange)", strokeWidth: 0 }} connectNulls />
                   </LineChart>
                 </ResponsiveContainer>
+              ) : latestMeas ? (
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 8, paddingTop: 6 }}>
+                  {([["Bauch", latestMeas.belly], ["Brust", latestMeas.chest], ["Hüfte", latestMeas.hip]] as [string, number|undefined][]).map(([label, val]) => (
+                    <div key={label} style={{ textAlign: "center" }}>
+                      <div style={{ fontSize: 15, fontWeight: 800, color: "var(--text)" }}>{val != null ? `${val}` : "–"}</div>
+                      <div style={{ fontSize: 10, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.05em" }}>{label}</div>
+                    </div>
+                  ))}
+                </div>
               ) : (
-                <div style={{ display: "flex", flexDirection: "column", gap: 6, paddingTop: 4 }}>
+                <div style={{ paddingTop: 4 }}>
                   <p style={{ fontSize: 12, color: "var(--text-muted)", margin: 0 }}>Taille, Bauch, Hüfte, Oberarm und mehr – im Tageseintrag erfassen</p>
                 </div>
               )}

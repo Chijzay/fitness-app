@@ -33,7 +33,7 @@ export default function MeasurementsDetail({
   range: DateRange; setRange: (r: DateRange) => void; onEditDate?: (date: string) => void;
 }) {
   const [data, setData] = useState<Measurement[]>([]);
-  const [visible, setVisible] = useState<Set<string>>(new Set(["waist", "belly", "hip", "chest", "upperArm", "thigh", "neck", "calf"]));
+  const [visible, setVisible] = useState<Set<string>>(new Set(["belly", "chest", "thigh"]));
 
   useEffect(() => {
     fetch(`/api/measurements?from=${range.from}&to=${range.to}`)
