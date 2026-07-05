@@ -275,62 +275,88 @@ function Toc({ tokens, active }: { tokens: Token[]; active: string }) {
 
 // ── Visual Blocks ─────────────────────────────────────────────────────────────
 
+function BausteinBlock({ n, name, desc, color }: { n: number; name: string; desc: string; color: string }) {
+  return (
+    <div style={{ display: "flex", alignItems: "flex-start", gap: 10 }}>
+      <div style={{ width: 22, height: 22, borderRadius: 6, background: color, color: "#000", fontSize: 11, fontWeight: 800, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, marginTop: 1 }}>
+        {n}
+      </div>
+      <div>
+        <div style={{ fontSize: 13, fontWeight: 700, color: "var(--text)", lineHeight: 1.3 }}>{name}</div>
+        <div style={{ fontSize: 11, color: "var(--text-muted)", marginTop: 1 }}>{desc}</div>
+      </div>
+    </div>
+  );
+}
+
 function VisualBausteine() {
-  const hebel = [
-    {
-      icon: "🥗", name: "Ernährung", badge: "1. Hebel · Wichtigster",
-      color: "var(--teal)", dim: "var(--teal-dim)", border: "rgba(0,212,180,0.3)",
-      blocks: [
-        { n: 1, name: "Energiebilanz", desc: "Kaloriendefizit schaffen" },
-        { n: 2, name: "Proteine", desc: "≥ 1,6 g/kg Körpergewicht" },
-        { n: 3, name: "Lebensmittelauswahl", desc: "80/20-Regel anwenden" },
-      ],
-    },
-    {
-      icon: "💪", name: "Bewegung", badge: "2. Hebel",
-      color: "var(--blue)", dim: "var(--blue-dim)", border: "rgba(79,142,247,0.3)",
-      blocks: [
-        { n: 4, name: "Krafttraining", desc: "2–3× pro Woche" },
-        { n: 5, name: "Alltagsbewegung", desc: "7.000–10.000 Schritte/Tag" },
-        { n: 6, name: "Ausdauersport", desc: "Optional 1–2×/Woche" },
-      ],
-    },
-    {
-      icon: "🌙", name: "Regeneration", badge: "3. Hebel · Durchgehend",
-      color: "var(--purple)", dim: "var(--purple-dim)", border: "rgba(167,139,250,0.3)",
-      blocks: [
-        { n: 7, name: "Schlaf", desc: "7–9 Stunden pro Nacht" },
-        { n: 8, name: "Pausen", desc: "Refeed · Deload" },
-      ],
-    },
-  ];
+  const teal = "var(--teal)"; const tealDim = "var(--teal-dim)"; const tealBorder = "rgba(0,212,180,0.3)";
+  const blue = "var(--blue)"; const blueDim = "var(--blue-dim)"; const blueBorder = "rgba(79,142,247,0.3)";
+  const purple = "var(--purple)"; const purpleDim = "var(--purple-dim)"; const purpleBorder = "rgba(167,139,250,0.3)";
+
   return (
     <div style={{ margin: "20px 0 28px" }}>
       <div style={{ fontSize: 11, fontWeight: 700, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 12 }}>
-        Die 8 Bausteine — hierarchisch nach Wirksamkeit
+        Die 8 Bausteine — Ernährung & Bewegung parallel, Regeneration als Fundament
       </div>
-      <div className="guide-hebel-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 12 }}>
-        {hebel.map((h, i) => (
-          <div key={i} style={{ background: h.dim, border: `1px solid ${h.border}`, borderRadius: 12, overflow: "hidden" }}>
-            <div style={{ padding: "12px 14px 10px", borderBottom: `1px solid ${h.border}` }}>
-              <div style={{ fontSize: 10, fontWeight: 700, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.07em", marginBottom: 4 }}>{h.badge}</div>
-              <div style={{ fontSize: 15, fontWeight: 800, color: h.color }}>{h.icon} {h.name}</div>
+
+      {/* Zwei Säulen nebeneinander */}
+      <div className="guide-hebel-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginBottom: 12 }}>
+        {/* Ernährung */}
+        <div style={{ background: tealDim, border: `1px solid ${tealBorder}`, borderRadius: 12, overflow: "hidden" }}>
+          <div style={{ padding: "12px 14px 10px", borderBottom: `1px solid ${tealBorder}` }}>
+            <div style={{ fontSize: 10, fontWeight: 700, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.07em", marginBottom: 4 }}>
+              Primärer Hebel · intern priorisiert
             </div>
-            <div style={{ padding: "10px 14px 14px", display: "flex", flexDirection: "column", gap: 9 }}>
-              {h.blocks.map(b => (
-                <div key={b.n} style={{ display: "flex", alignItems: "flex-start", gap: 10 }}>
-                  <div style={{ width: 22, height: 22, borderRadius: 6, background: h.color, color: "#000", fontSize: 11, fontWeight: 800, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, marginTop: 1 }}>
-                    {b.n}
-                  </div>
-                  <div>
-                    <div style={{ fontSize: 13, fontWeight: 700, color: "var(--text)", lineHeight: 1.3 }}>{b.name}</div>
-                    <div style={{ fontSize: 11, color: "var(--text-muted)", marginTop: 1 }}>{b.desc}</div>
-                  </div>
-                </div>
-              ))}
-            </div>
+            <div style={{ fontSize: 15, fontWeight: 800, color: teal }}>🥗 Ernährung</div>
           </div>
-        ))}
+          <div style={{ padding: "10px 14px 14px", display: "flex", flexDirection: "column", gap: 9 }}>
+            <BausteinBlock n={1} name="Energiebilanz" desc="Kaloriendefizit schaffen" color={teal} />
+            <BausteinBlock n={2} name="Proteine" desc="≥ 1,6 g/kg Körpergewicht" color={teal} />
+            <BausteinBlock n={3} name="Lebensmittelauswahl" desc="80/20-Regel anwenden" color={teal} />
+          </div>
+        </div>
+
+        {/* Bewegung */}
+        <div style={{ background: blueDim, border: `1px solid ${blueBorder}`, borderRadius: 12, overflow: "hidden" }}>
+          <div style={{ padding: "12px 14px 10px", borderBottom: `1px solid ${blueBorder}` }}>
+            <div style={{ fontSize: 10, fontWeight: 700, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.07em", marginBottom: 4 }}>
+              Primärer Hebel · parallel zur Ernährung
+            </div>
+            <div style={{ fontSize: 15, fontWeight: 800, color: blue }}>💪 Bewegung</div>
+          </div>
+          <div style={{ padding: "10px 14px 14px", display: "flex", flexDirection: "column", gap: 9 }}>
+            <BausteinBlock n={4} name="Krafttraining" desc="2–3× pro Woche" color={blue} />
+            <BausteinBlock n={5} name="Alltagsbewegung" desc="7.000–10.000 Schritte/Tag" color={blue} />
+            <BausteinBlock n={6} name="Ausdauersport" desc="Optional 1–2×/Woche" color={blue} />
+          </div>
+        </div>
+      </div>
+
+      {/* Regeneration als Fundament — vollbreite Leiste */}
+      <div style={{ background: purpleDim, border: `1px solid ${purpleBorder}`, borderRadius: 12, overflow: "hidden", position: "relative" }}>
+        {/* Fundament-Indikator oben */}
+        <div style={{ height: 3, background: `linear-gradient(90deg, ${purple} 0%, rgba(167,139,250,0.4) 100%)`, width: "100%" }} />
+        <div style={{ padding: "10px 16px 14px", display: "flex", alignItems: "center", gap: 20, flexWrap: "wrap" }}>
+          <div style={{ minWidth: 160 }}>
+            <div style={{ fontSize: 10, fontWeight: 700, color: purple, textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 3 }}>
+              🌙 Das Fundament · immer aktiv
+            </div>
+            <div style={{ fontSize: 13, fontWeight: 700, color: "var(--text)", lineHeight: 1.4 }}>Regeneration</div>
+            <div style={{ fontSize: 11, color: "var(--text-muted)", marginTop: 2 }}>trägt Ernährung & Bewegung — ohne Erholung kein Fortschritt</div>
+          </div>
+          <div style={{ display: "flex", gap: 20, flex: 1, flexWrap: "wrap" }}>
+            <BausteinBlock n={7} name="Schlaf" desc="7–9 Stunden pro Nacht" color={purple} />
+            <BausteinBlock n={8} name="Pausen" desc="Refeed · Deload" color={purple} />
+          </div>
+        </div>
+      </div>
+
+      {/* Legende */}
+      <div style={{ display: "flex", gap: 20, marginTop: 12, fontSize: 11, color: "var(--text-muted)", flexWrap: "wrap" }}>
+        <span>↕ Intern: 1 vor 2 vor 3, weil Energiebilanz alles dominiert</span>
+        <span>↔ Extern: Ernährung & Bewegung gleichwertig, nicht nacheinander</span>
+        <span>⬇ Fundament: Schlaf & Pausen sind Voraussetzung, nicht Option</span>
       </div>
     </div>
   );
