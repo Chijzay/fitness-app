@@ -138,12 +138,17 @@ export default function QuickEntry({
       const sorted = [...logs].filter(l => !l.date.startsWith(date)).sort((a, b) => b.date.localeCompare(a.date));
       const prevBf = sorted.find(l => !l.bodyFatEstimated && l.bodyFatPercent != null);
       const prevMm = sorted.find(l => l.muscleMass != null);
+      const prevSleepMode = sorted.find(l => l.sleepQuality != null);
+      const sleepQualityMode: QualityMode = prevSleepMode
+        ? (prevSleepMode.sleepQuality! > 5 ? "watch" : "manual")
+        : "watch";
       setForm({
         ...empty,
         bodyFatPercent: prevBf?.bodyFatPercent?.toString() ?? "",
         bodyFatManual: prevBf != null,
         muscleMass: prevMm?.muscleMass?.toString() ?? "",
         muscleMassManual: prevMm != null,
+        sleepQualityMode,
       });
     }
     setConfirmDelete(false);
@@ -285,7 +290,7 @@ export default function QuickEntry({
   const g2 = "form-g2";
 
   return (
-    <div style={{ margin: "0 auto" }}>
+    <div style={{ margin: "0 auto", maxWidth: 780 }}>
       {/* Header */}
       <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 22, flexWrap: "wrap" }}>
         <div style={{ marginRight: 4 }}>
