@@ -40,12 +40,12 @@ function KpiTile({ icon, label, value, sub, color, badge }: {
   );
 }
 
-function WidgetCard({ icon, title, kpi, sub, badge, children, onClick }: {
+function WidgetCard({ icon, title, kpi, sub, badge, children, onClick, wide }: {
   icon: string; title: string; kpi: string; sub?: string;
-  badge?: React.ReactNode; children: React.ReactNode; onClick: () => void;
+  badge?: React.ReactNode; children: React.ReactNode; onClick: () => void; wide?: boolean;
 }) {
   return (
-    <div className="card card-pad card-clickable" onClick={onClick}>
+    <div className="card card-pad card-clickable" style={wide ? { gridColumn: "1 / -1" } : undefined} onClick={onClick}>
       {/* Header */}
       <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: 12 }}>
         <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
@@ -94,9 +94,25 @@ export default function Dashboard({ logs, allLogs, profile, range, today: todayP
   const [noteText, setNoteText]   = useState<string>("");
   const [noteEditing, setNoteEditing] = useState(false);
   const [noteSaving, setNoteSaving]   = useState(false);
+  const [widgetMeas,    setWidgetMeas]    = useState<{ waist?: number; date: string } | null>(null);
+  const [widgetCardio,  setWidgetCardio]  = useState<{ sessions: number; distKm: number } | null>(null);
+  const [widgetWorkout, setWidgetWorkout] = useState<{ sessions: number; volume: number } | null>(null);
   useEffect(() => {
     fetch("/api/goals").then(r => r.json()).then(g => { setGoals(g); setGoalsLoaded(true); }).catch(() => setGoalsLoaded(true));
   }, []);
+  useEffect(() => {
+    const from30 = (() => { const d = new Date(); d.setDate(d.getDate()-29); return d.toISOString().split("T")[0]; })();
+    const to = todayProp;
+    fetch(`/api/measurements?from=${from30}&to=${to}`).then(r => r.json())
+      .then((ms: { date: string; waist?: number }[]) => setWidgetMeas(ms.at(-1) ?? null)).catch(() => {});
+    fetch(`/api/cardio?from=${from30}&to=${to}`).then(r => r.json())
+      .then((cs: { distanceM?: number }[]) => setWidgetCardio({ sessions: cs.length, distKm: +(cs.reduce((s, c) => s+(c.distanceM??0),0)/1000).toFixed(1) })).catch(() => {});
+    fetch(`/api/workouts?from=${from30}&to=${to}`).then(r => r.json())
+      .then((ws: { exercises: { sets: { reps?: number; weight?: number }[] }[] }[]) => {
+        const vol = ws.reduce((sum, s) => sum + s.exercises.reduce((es, e) => es + e.sets.reduce((ss, set) => ss + (set.reps??0)*(set.weight??0), 0), 0), 0);
+        setWidgetWorkout({ sessions: ws.length, volume: Math.round(vol) });
+      }).catch(() => {});
+  }, [todayProp]);
 
   const dates = useMemo(() => allDatesInRange(range), [range]);
   const logMap = useMemo(() => {
@@ -542,8 +558,8 @@ export default function Dashboard({ logs, allLogs, profile, range, today: todayP
         </WidgetCard>
 
         <WidgetCard icon="📏" title="Körpermaße"
-          kpi="–"
-          sub="Umfänge tracken"
+          kpi={widgetMeas?.waist ? `${widgetMeas.waist} cm` : "–"}
+          sub={widgetMeas ? "Letzte Taille · 30 Tage" : "Umfänge tracken"}
           onClick={() => onGoDetail("detail-measurements")}>
           <div style={{ display: "flex", flexDirection: "column", gap: 6, paddingTop: 4 }}>
             <p style={{ fontSize: 12, color: "var(--text-muted)", margin: 0 }}>Taille, Bauch, Hüfte, Oberarm und mehr – im Tageseintrag erfassen</p>
@@ -551,20 +567,22 @@ export default function Dashboard({ logs, allLogs, profile, range, today: todayP
         </WidgetCard>
 
         <WidgetCard icon="🏃" title="Cardio"
-          kpi="–"
-          sub="Sessions tracken"
+          kpi={widgetCardio?.sessions ? `${widgetCardio.sessions} Sessions` : "–"}
+          sub={widgetCardio?.distKm ? `${widgetCardio.distKm} km · 30 Tage` : "Sessions tracken"}
+          badge={widgetCardio?.sessions ? <span className="badge badge-teal">{widgetCardio.distKm} km</span> : undefined}
           onClick={() => onGoDetail("detail-cardio")}>
           <div style={{ display: "flex", flexDirection: "column", gap: 6, paddingTop: 4 }}>
             <p style={{ fontSize: 12, color: "var(--text-muted)", margin: 0 }}>Joggen, Radfahren, Schwimmen – Strecke, Zeit & kcal im Tageseintrag</p>
           </div>
         </WidgetCard>
 
-        <WidgetCard icon="🏋️" title="Training"
-          kpi="–"
-          sub="Progression tracken"
+        <WidgetCard icon="🏋️" title="Training" wide
+          kpi={widgetWorkout?.sessions ? `${widgetWorkout.sessions} Sessions` : "–"}
+          sub={widgetWorkout?.volume ? `${widgetWorkout.volume >= 1000 ? (widgetWorkout.volume/1000).toFixed(1)+"t" : widgetWorkout.volume+" kg"} Volumen · 30 Tage` : "Progression tracken"}
+          badge={widgetWorkout?.sessions ? <span className="badge badge-teal">{widgetWorkout.sessions}×</span> : undefined}
           onClick={() => onGoDetail("detail-workouts" as View)}>
-          <div style={{ display: "flex", flexDirection: "column", gap: 6, paddingTop: 4 }}>
-            <p style={{ fontSize: 12, color: "var(--text-muted)", margin: 0 }}>Pull, Push, Leg – Übungen, Sätze, Gewichte & Progression über Zeit</p>
+          <div style={{ paddingTop: 4 }}>
+            <p style={{ fontSize: 12, color: "var(--text-muted)", margin: 0 }}>Pull, Push, Leg – Übungen, Sätze, Gewichte & Progression über Zeit. Klicken für Auswertung oder neue Session.</p>
           </div>
         </WidgetCard>
       </div>

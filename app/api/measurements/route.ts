@@ -27,7 +27,7 @@ export async function POST(req: Request) {
   if (!session?.user?.id) return NextResponse.json({ error: "Nicht angemeldet" }, { status: 401 });
 
   const body = await req.json();
-  const { date, waist, belly, hip, chest, upperArm, thigh, neck, notes } = body;
+  const { date, waist, belly, hip, chest, upperArm, thigh, neck, calf, notes } = body;
   if (!date) return NextResponse.json({ error: "date required" }, { status: 400 });
 
   const d = new Date(date); d.setHours(12, 0, 0, 0);
@@ -42,6 +42,7 @@ export async function POST(req: Request) {
     upperArm: upperArm ?? null,
     thigh: thigh ?? null,
     neck: neck ?? null,
+    calf: calf ?? null,
     notes: notes ?? null,
   };
 

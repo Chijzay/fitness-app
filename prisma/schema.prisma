@@ -15,12 +15,13 @@ model User {
   name      String?
   createdAt DateTime @default(now())
 
-  profile      Profile?
-  dietPhases   DietPhase[]
-  logs         DailyLog[]
-  goals        Goal[]
-  measurements BodyMeasurement[]
-  cardioSessions CardioSession[]
+  profile         Profile?
+  dietPhases      DietPhase[]
+  logs            DailyLog[]
+  goals           Goal[]
+  measurements    BodyMeasurement[]
+  cardioSessions  CardioSession[]
+  workoutSessions WorkoutSession[]
 }
 
 model Profile {
@@ -91,6 +92,42 @@ model DailyLog {
   @@unique([userId, date])
 }
 
+model WorkoutSession {
+  id          Int               @id @default(autoincrement())
+  userId      String
+  user        User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  date        DateTime
+  name        String            // z.B. "Pull", "Push", "Leg", "Ganzkörper"
+  bodyWeight  Float?
+  energyLevel Int?              // Kraftempfinden 1–5
+  startTime   String?           // "14:52"
+  endTime     String?           // "16:08"
+  notes       String?
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+  exercises   WorkoutExercise[]
+}
+
+model WorkoutExercise {
+  id        Int          @id @default(autoincrement())
+  sessionId Int
+  session   WorkoutSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  name      String       // frei eingegebener Übungsname
+  order     Int          @default(0)
+  notes     String?
+  sets      WorkoutSet[]
+}
+
+model WorkoutSet {
+  id         Int             @id @default(autoincrement())
+  exerciseId Int
+  exercise   WorkoutExercise @relation(fields: [exerciseId], references: [id], onDelete: Cascade)
+  setNumber  Int
+  reps       Int?
+  weight     Float?          // kg
+  notes      String?         // z.B. "Drop Set", "Warm-Up"
+}
+
 model BodyMeasurement {
   id         Int      @id @default(autoincrement())
   userId     String
@@ -103,6 +140,7 @@ model BodyMeasurement {
   upperArm   Float?   // Oberarm (cm)
   thigh      Float?   // Oberschenkel (cm)
   neck       Float?   // Nacken (cm)
+  calf       Float?   // Wade (cm)
   notes      String?
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt

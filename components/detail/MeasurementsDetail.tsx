@@ -7,7 +7,7 @@ import type { DateRange } from "@/app/page";
 type Measurement = {
   id: number; date: string;
   waist?: number; belly?: number; hip?: number;
-  chest?: number; upperArm?: number; thigh?: number; neck?: number;
+  chest?: number; upperArm?: number; thigh?: number; neck?: number; calf?: number;
   notes?: string;
 };
 
@@ -19,6 +19,7 @@ const METRICS: { key: keyof Measurement; label: string; color: string }[] = [
   { key: "upperArm", label: "Oberarm",       color: "var(--green)" },
   { key: "thigh",    label: "Oberschenkel",  color: "#f472b6" },
   { key: "neck",     label: "Nacken",        color: "#94a3b8" },
+  { key: "calf",     label: "Wade",          color: "#fb923c" },
 ];
 
 function fmtDate(s: string) {
@@ -32,7 +33,7 @@ export default function MeasurementsDetail({
   range: DateRange; setRange: (r: DateRange) => void; onEditDate?: (date: string) => void;
 }) {
   const [data, setData] = useState<Measurement[]>([]);
-  const [visible, setVisible] = useState<Set<string>>(new Set(["waist", "belly", "hip", "upperArm"]));
+  const [visible, setVisible] = useState<Set<string>>(new Set(["waist", "belly", "hip", "chest", "upperArm", "thigh", "neck", "calf"]));
 
   useEffect(() => {
     fetch(`/api/measurements?from=${range.from}&to=${range.to}`)
@@ -51,6 +52,7 @@ export default function MeasurementsDetail({
     upperArm: m.upperArm ?? null,
     thigh:    m.thigh    ?? null,
     neck:     m.neck     ?? null,
+    calf:     m.calf     ?? null,
   })), [data]);
 
   function toggle(key: string) {

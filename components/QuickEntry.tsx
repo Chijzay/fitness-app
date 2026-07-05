@@ -130,8 +130,8 @@ export default function QuickEntry({
   const [existingId, setExistingId] = useState<number | null>(null);
 
   // ── Körpermaße ───────────────────────────────────────────────────
-  type MeasForm = { waist: string; belly: string; hip: string; chest: string; upperArm: string; thigh: string; neck: string; notes: string; existingId: number | null };
-  const emptyMeas: MeasForm = { waist: "", belly: "", hip: "", chest: "", upperArm: "", thigh: "", neck: "", notes: "", existingId: null };
+  type MeasForm = { waist: string; belly: string; hip: string; chest: string; upperArm: string; thigh: string; neck: string; calf: string; notes: string; existingId: number | null };
+  const emptyMeas: MeasForm = { waist: "", belly: "", hip: "", chest: "", upperArm: "", thigh: "", neck: "", calf: "", notes: "", existingId: null };
   const [measForm, setMeasForm] = useState<MeasForm>(emptyMeas);
   function setM<K extends keyof MeasForm>(k: K, v: MeasForm[K]) { setMeasForm(f => ({ ...f, [k]: v })); }
 
@@ -180,15 +180,13 @@ export default function QuickEntry({
       .then(r => r.json()).then((ms: { id: number; waist?: number; belly?: number; hip?: number; chest?: number; upperArm?: number; thigh?: number; neck?: number; notes?: string }[]) => {
         if (ms.length > 0) {
           const m = ms[0];
-          setMeasForm({ waist: m.waist?.toString() ?? "", belly: m.belly?.toString() ?? "", hip: m.hip?.toString() ?? "", chest: m.chest?.toString() ?? "", upperArm: m.upperArm?.toString() ?? "", thigh: m.thigh?.toString() ?? "", neck: m.neck?.toString() ?? "", notes: m.notes ?? "", existingId: m.id });
+          setMeasForm({ waist: m.waist?.toString() ?? "", belly: m.belly?.toString() ?? "", hip: m.hip?.toString() ?? "", chest: m.chest?.toString() ?? "", upperArm: m.upperArm?.toString() ?? "", thigh: m.thigh?.toString() ?? "", neck: m.neck?.toString() ?? "", calf: (m as { calf?: number }).calf?.toString() ?? "", notes: m.notes ?? "", existingId: m.id });
         } else {
-          // Carry forward last measurement
           setMeasForm(emptyMeas);
-          // Try to carry forward from measurements API (best-effort, load last)
           fetch("/api/measurements?from=2020-01-01&to=" + date)
-            .then(r => r.json()).then((all: { waist?: number; belly?: number; hip?: number; chest?: number; upperArm?: number; thigh?: number; neck?: number }[]) => {
+            .then(r => r.json()).then((all: { waist?: number; belly?: number; hip?: number; chest?: number; upperArm?: number; thigh?: number; neck?: number; calf?: number }[]) => {
               const last = all.at(-1);
-              if (last) setMeasForm(f => ({ ...f, waist: last.waist?.toString() ?? "", belly: last.belly?.toString() ?? "", hip: last.hip?.toString() ?? "", chest: last.chest?.toString() ?? "", upperArm: last.upperArm?.toString() ?? "", thigh: last.thigh?.toString() ?? "", neck: last.neck?.toString() ?? "" }));
+              if (last) setMeasForm(f => ({ ...f, waist: last.waist?.toString() ?? "", belly: last.belly?.toString() ?? "", hip: last.hip?.toString() ?? "", chest: last.chest?.toString() ?? "", upperArm: last.upperArm?.toString() ?? "", thigh: last.thigh?.toString() ?? "", neck: last.neck?.toString() ?? "", calf: last.calf?.toString() ?? "" }));
             }).catch(() => {});
         }
       }).catch(() => {});
@@ -329,13 +327,13 @@ export default function QuickEntry({
       body: JSON.stringify(payload),
     });
     // Save measurements if any field is filled
-    const measHasData = measForm.waist || measForm.belly || measForm.hip || measForm.chest || measForm.upperArm || measForm.thigh || measForm.neck;
+    const measHasData = measForm.waist || measForm.belly || measForm.hip || measForm.chest || measForm.upperArm || measForm.thigh || measForm.neck || measForm.calf;
     if (measHasData) {
       const nm = (v: string) => v ? Number(v) : undefined;
       await fetch("/api/measurements", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ date, waist: nm(measForm.waist), belly: nm(measForm.belly), hip: nm(measForm.hip), chest: nm(measForm.chest), upperArm: nm(measForm.upperArm), thigh: nm(measForm.thigh), neck: nm(measForm.neck), notes: measForm.notes || undefined }),
+        body: JSON.stringify({ date, waist: nm(measForm.waist), belly: nm(measForm.belly), hip: nm(measForm.hip), chest: nm(measForm.chest), upperArm: nm(measForm.upperArm), thigh: nm(measForm.thigh), neck: nm(measForm.neck), calf: nm(measForm.calf), notes: measForm.notes || undefined }),
       });
     }
 
@@ -377,9 +375,9 @@ export default function QuickEntry({
   const g2 = "form-g2";
 
   return (
-    <div style={{ margin: "0 auto", maxWidth: 780 }}>
+    <div style={{ margin: "0 auto", maxWidth: 780, width: "100%" }}>
       {/* Header */}
-      <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 22, flexWrap: "wrap" }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 22, flexWrap: "wrap", width: "100%", boxSizing: "border-box" }}>
         <div style={{ marginRight: 4 }}>
           <h2 style={{ fontSize: 18, fontWeight: 700, lineHeight: 1.2 }}>Tageseintrag</h2>
           <p style={{ fontSize: 12.5, color: "var(--text-muted)", marginTop: 2 }}>Alle Felder sind optional</p>
@@ -682,13 +680,15 @@ export default function QuickEntry({
 
         {/* Körpermaße */}
         <Section icon="📏" title="Körpermaße (cm)">
-          <div className={g3}>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 12 }}>
             <Field label="Taille"><input type="number" min="0" step="0.1" value={measForm.waist} onChange={e => setM("waist", e.target.value)} placeholder="z.B. 85" /></Field>
             <Field label="Bauch"><input type="number" min="0" step="0.1" value={measForm.belly} onChange={e => setM("belly", e.target.value)} placeholder="z.B. 92" /></Field>
             <Field label="Hüfte"><input type="number" min="0" step="0.1" value={measForm.hip} onChange={e => setM("hip", e.target.value)} placeholder="z.B. 100" /></Field>
             <Field label="Brust"><input type="number" min="0" step="0.1" value={measForm.chest} onChange={e => setM("chest", e.target.value)} placeholder="z.B. 98" /></Field>
             <Field label="Oberarm"><input type="number" min="0" step="0.1" value={measForm.upperArm} onChange={e => setM("upperArm", e.target.value)} placeholder="z.B. 34" /></Field>
             <Field label="Oberschenkel"><input type="number" min="0" step="0.1" value={measForm.thigh} onChange={e => setM("thigh", e.target.value)} placeholder="z.B. 58" /></Field>
+            <Field label="Nacken"><input type="number" min="0" step="0.1" value={measForm.neck} onChange={e => setM("neck", e.target.value)} placeholder="z.B. 38" /></Field>
+            <Field label="Wade"><input type="number" min="0" step="0.1" value={measForm.calf} onChange={e => setM("calf", e.target.value)} placeholder="z.B. 38" /></Field>
           </div>
           <p style={{ fontSize: 11, color: "var(--text-muted)", marginTop: 8 }}>Alle Felder optional — nur ausfüllen wenn gemessen. Letzte Messung wird vorausgefüllt.</p>
         </Section>
