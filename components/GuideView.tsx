@@ -321,7 +321,7 @@ function VisualBausteine() {
         <div style={{ background: blueDim, border: `1px solid ${blueBorder}`, borderRadius: 12, overflow: "hidden" }}>
           <div style={{ padding: "12px 14px 10px", borderBottom: `1px solid ${blueBorder}` }}>
             <div style={{ fontSize: 10, fontWeight: 700, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.07em", marginBottom: 4 }}>
-              Primärer Hebel · parallel zur Ernährung
+              Sekundärer Hebel · parallel zur Ernährung
             </div>
             <div style={{ fontSize: 15, fontWeight: 800, color: blue }}>💪 Bewegung</div>
           </div>
@@ -339,10 +339,10 @@ function VisualBausteine() {
         <div style={{ height: 3, background: `linear-gradient(90deg, ${purple} 0%, rgba(167,139,250,0.4) 100%)`, width: "100%" }} />
         <div style={{ padding: "10px 16px 14px", display: "flex", alignItems: "center", gap: 20, flexWrap: "wrap" }}>
           <div style={{ minWidth: 160 }}>
-            <div style={{ fontSize: 10, fontWeight: 700, color: purple, textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 3 }}>
-              🌙 Das Fundament · immer aktiv
+            <div style={{ fontSize: 10, fontWeight: 700, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 4 }}>
+              Das Fundament · immer aktiv
             </div>
-            <div style={{ fontSize: 13, fontWeight: 700, color: "var(--text)", lineHeight: 1.4 }}>Regeneration</div>
+            <div style={{ fontSize: 15, fontWeight: 800, color: purple }}>🌙 Regeneration</div>
             <div style={{ fontSize: 11, color: "var(--text-muted)", marginTop: 2 }}>trägt Ernährung & Bewegung — ohne Erholung kein Fortschritt</div>
           </div>
           <div style={{ display: "flex", gap: 20, flex: 1, flexWrap: "wrap" }}>
