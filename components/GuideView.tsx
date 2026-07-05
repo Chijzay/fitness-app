@@ -204,7 +204,8 @@ function RenderTokens({ tokens }: { tokens: Token[] }) {
           </ol>
         );
         if (tok.t === "table") {
-          const colWidths = tok.head.length === 3 ? ["130px", "190px", "auto"] : ["180px", "auto"];
+          // Description column always starts at 40% regardless of col count
+          const colWidths = tok.head.length === 3 ? ["18%", "22%", "60%"] : ["40%", "60%"];
           return (
             <div key={idx} style={{ overflowX: "auto", marginBottom: 16 }}>
               <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13, tableLayout: "fixed" }}>
