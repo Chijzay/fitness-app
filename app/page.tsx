@@ -131,6 +131,7 @@ export default function Home() {
     setRefreshKey(k => k + 1);
     setView(returnView);
   }
+  function onRefresh() { setRefreshKey(k => k + 1); }
 
   function goDetail(v: View) { setDetailRange(last30()); setView(v); }
 
@@ -178,7 +179,7 @@ export default function Home() {
         {view === "entry" && (
           <QuickEntry
             profile={profile} date={entryDate} setDate={setEntryDate}
-            logs={allLogs} onSaved={onSaved} onCancel={() => setView(returnView)}
+            logs={allLogs} onSaved={onSaved} onRefresh={onRefresh} onCancel={() => setView(returnView)}
           />
         )}
         {view === "profile" && (

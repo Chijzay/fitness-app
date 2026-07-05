@@ -384,6 +384,9 @@ tbody td { padding: 10px 14px; color: var(--text); }
   .guide-sidebar { display: none !important; }
   .guide-grid { grid-template-columns: 1fr !important; gap: 0 !important; }
   .guide-content-area { padding: 16px 14px !important; }
+  .glossar-col-mid { display: none !important; }
+  .glossar-col-term { width: 28% !important; }
+  .glossar-col-def  { width: 72% !important; }
 }
 
 /* ── Responsive: Portrait Phones (≤480px) ──────────────── */
@@ -460,6 +463,9 @@ tbody td { padding: 10px 14px; color: var(--text); }
   .guide-sidebar { display: none !important; }
   .guide-grid { grid-template-columns: 1fr !important; gap: 0 !important; }
   .guide-content-area { padding: 16px 14px !important; }
+  .glossar-col-mid { display: none !important; }
+  .glossar-col-term { width: 28% !important; }
+  .glossar-col-def  { width: 72% !important; }
 }
 
 /* ── Form-Grids ───────────────────────────────── */

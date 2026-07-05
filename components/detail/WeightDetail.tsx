@@ -137,11 +137,12 @@ export default function WeightDetail({ logs, allLogs, profile, range, setRange, 
             <Tooltip {...tt} formatter={(v: number, name: string) => [
               `${v} kg`, name === "weight" ? "Tagesgewicht" : "Ø Woche"
             ]} />
-            {/* Wochenavg als Balken (türkis-gedimmt) */}
-            <Bar dataKey="weekAvg" yAxisId="left" maxBarSize={28} radius={[6, 6, 0, 0]} fill="var(--teal)" fillOpacity={0.18} />
             {/* Tägliches Gewicht als Linie */}
             <Line type="monotone" dataKey="weight" yAxisId="left" stroke="var(--teal)" strokeWidth={2.5}
               dot={{ r: 4, fill: "var(--teal)", strokeWidth: 0 }} connectNulls activeDot={{ r: 6 }} />
+            {/* Wochenavg als gestrichelte Linie */}
+            <Line type="stepAfter" dataKey="weekAvg" yAxisId="left" stroke="var(--teal)" strokeWidth={1.5}
+              strokeDasharray="5 4" dot={false} connectNulls activeDot={false} />
           </ComposedChart>
         </ResponsiveContainer>
         <div style={{ display: "flex", gap: 16, marginTop: 8, fontSize: 12, color: "var(--text-muted)" }}>

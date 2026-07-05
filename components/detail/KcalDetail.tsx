@@ -226,8 +226,8 @@ export default function KcalDetail({ logs, allLogs, profile, range, setRange, on
                 name === "protein" ? "Eiweiß" : name === "carbs" ? "Kohlenhydrate" : "Fett",
               ]} />
               <Legend formatter={(v) => v === "protein" ? "Eiweiß" : v === "carbs" ? "Kohlenhydrate" : "Fett"} />
-              <Bar dataKey="carbs"   fill="var(--blue)"   fillOpacity={0.85} radius={[0, 0, 0, 0]} maxBarSize={20} stackId="a" />
               <Bar dataKey="protein" fill="var(--teal)"   fillOpacity={0.85} radius={[0, 0, 0, 0]} maxBarSize={20} stackId="a" />
+              <Bar dataKey="carbs"   fill="var(--blue)"   fillOpacity={0.85} radius={[0, 0, 0, 0]} maxBarSize={20} stackId="a" />
               <Bar dataKey="fat"     fill="var(--orange)" fillOpacity={0.85} radius={[3, 3, 0, 0]} maxBarSize={20} stackId="a" />
               {proteinTarget && <ReferenceLine y={proteinTarget} stroke="var(--teal)" strokeDasharray="4 3" strokeWidth={1.5} label={{ value: `Ziel ${proteinTarget}g`, fontSize: 10, fill: "var(--teal)", position: "right" }} />}
             </BarChart>

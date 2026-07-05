@@ -117,13 +117,14 @@ function Toggle({ active, onClick, children }: { active: boolean; onClick: () =>
 }
 
 export default function QuickEntry({
-  profile, date, setDate, logs, onSaved, onCancel,
+  profile, date, setDate, logs, onSaved, onRefresh, onCancel,
 }: {
   profile: Profile; date: string; setDate: (d: string) => void;
-  logs: DailyLog[]; onSaved: () => void; onCancel: () => void;
+  logs: DailyLog[]; onSaved: () => void; onRefresh?: () => void; onCancel: () => void;
 }) {
   const [form, setForm] = useState<FormState>(empty);
   const [saving, setSaving] = useState(false);
+  const [saved, setSaved] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [existingId, setExistingId] = useState<number | null>(null);
@@ -271,7 +272,13 @@ export default function QuickEntry({
       body: JSON.stringify(payload),
     });
     setSaving(false);
-    onSaved();
+    if (onRefresh) {
+      onRefresh();
+      setSaved(true);
+      setTimeout(() => setSaved(false), 2000);
+    } else {
+      onSaved();
+    }
   }
 
   const g3 = "form-g3";
@@ -280,12 +287,19 @@ export default function QuickEntry({
   return (
     <div style={{ margin: "0 auto" }}>
       {/* Header */}
-      <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 22 }}>
-        <div>
+      <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 22, flexWrap: "wrap" }}>
+        <div style={{ marginRight: 4 }}>
           <h2 style={{ fontSize: 18, fontWeight: 700, lineHeight: 1.2 }}>Tageseintrag</h2>
-          <p style={{ fontSize: 12.5, color: "var(--text-muted)", marginTop: 2 }}>Alle Felder sind optional · Doppelklick auf Wert in Tabellen zum Bearbeiten</p>
+          <p style={{ fontSize: 12.5, color: "var(--text-muted)", marginTop: 2 }}>Alle Felder sind optional</p>
         </div>
-        <input type="date" value={date} onChange={e => setDate(e.target.value)} style={{ width: 155, marginLeft: 8 }} />
+        {/* Date navigation */}
+        <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
+          <button className="btn btn-sm btn-secondary" style={{ padding: "4px 10px", fontSize: 16, lineHeight: 1 }}
+            onClick={() => { const d = new Date(date + "T12:00:00"); d.setDate(d.getDate() - 1); setDate(d.toISOString().split("T")[0]); }}>‹</button>
+          <input type="date" value={date} onChange={e => setDate(e.target.value)} style={{ width: 148 }} />
+          <button className="btn btn-sm btn-secondary" style={{ padding: "4px 10px", fontSize: 16, lineHeight: 1 }}
+            onClick={() => { const d = new Date(date + "T12:00:00"); d.setDate(d.getDate() + 1); setDate(d.toISOString().split("T")[0]); }}>›</button>
+        </div>
         <div style={{ flex: 1 }} />
         {existingId && !confirmDelete && (
           <button className="btn btn-sm btn-secondary" onClick={() => setConfirmDelete(true)}
@@ -295,7 +309,7 @@ export default function QuickEntry({
         )}
         {existingId && confirmDelete && (
           <>
-            <span style={{ fontSize: 12, color: "var(--red)" }}>Eintrag wirklich löschen?</span>
+            <span style={{ fontSize: 12, color: "var(--red)" }}>Wirklich löschen?</span>
             <button className="btn btn-sm btn-secondary" onClick={() => setConfirmDelete(false)}>Nein</button>
             <button className="btn btn-sm" onClick={deleteEntry} disabled={deleting}
               style={{ background: "var(--red)", color: "#fff", borderColor: "var(--red)", minWidth: 80 }}>
@@ -303,9 +317,9 @@ export default function QuickEntry({
             </button>
           </>
         )}
-        <button className="btn btn-sm btn-secondary" onClick={onCancel}>Abbrechen</button>
+        <button className="btn btn-sm btn-secondary" onClick={onCancel}>← Zurück</button>
         <button className="btn btn-primary" onClick={save} disabled={saving} style={{ minWidth: 110 }}>
-          {saving ? "Speichern…" : "✓ Speichern"}
+          {saving ? "Speichern…" : saved ? "✓ Gespeichert!" : "✓ Speichern"}
         </button>
       </div>
 
@@ -582,9 +596,9 @@ export default function QuickEntry({
               🗑 Ganzen Eintrag löschen
             </button>
           )}
-          <button className="btn btn-secondary" onClick={onCancel}>Abbrechen</button>
+          <button className="btn btn-secondary" onClick={onCancel}>← Zurück</button>
           <button className="btn btn-primary" onClick={save} disabled={saving} style={{ minWidth: 120 }}>
-            {saving ? "Speichern…" : "✓ Speichern"}
+            {saving ? "Speichern…" : saved ? "✓ Gespeichert!" : "✓ Speichern"}
           </button>
         </div>
       </div>

@@ -406,6 +406,27 @@ function VisualFormeln() {
         { name: "Max. Abnahme / Woche", formula: "0,7 % × Körpergewicht (kg)", note: "Muskelschutz" },
         { name: "Fettverlust (kcal → kg)", formula: "Defizit (kcal) ÷ 7.700", note: "≈ 1 kg Körperfett" },
         { name: "Zielgewicht (Broca)", formula: "Körpergröße (cm) − 100", note: "grober Richtwert" },
+        { name: "Wochen bis Ziel", formula: "Differenz (kg) ÷ (Defizit/Tag × 7 ÷ 7.700)", note: "bei konstantem Defizit" },
+        { name: "Tagesdefizit für Ziel", formula: "Zieldifferenz (kg) × 7.700 ÷ Wochen ÷ 7", note: "Umkehrrechnung" },
+      ],
+    },
+    {
+      name: "Muskelaufbau", color: "var(--purple)", icon: "💪",
+      rows: [
+        { name: "Max. Muskelzuwachs / Monat", formula: "0,5–1,0 % × Körpergewicht (kg)", note: "Anfänger; Fortge. ~0,25 %" },
+        { name: "Kalorienüberschuss (Lean Bulk)", formula: "TDEE + 200–300 kcal", note: "minimiert Fettansatz" },
+        { name: "Protein (Bulk)", formula: "1,6–2,2 g × Körpergewicht (kg)", note: "gleich wie Diät" },
+        { name: "Fettansatz-Verhältnis", formula: "≈ 1 kg Muskel : 0,5 kg Fett", note: "bei moderatem Überschuss" },
+        { name: "Creatine-Ladephase", formula: "4 × 5 g/Tag × 5–7 Tage", note: "optional, dann 3–5 g/Tag" },
+      ],
+    },
+    {
+      name: "Schlaf & Regeneration", color: "var(--blue)", icon: "😴",
+      rows: [
+        { name: "Schlafzyklen", formula: "90 min × Anzahl Zyklen", note: "5 Zyklen = 7,5 h optimal" },
+        { name: "Cortisol-Halbwertszeit", formula: "ca. 60–90 min nach Peak", note: "Training > 18 Uhr vermeiden" },
+        { name: "GH-Ausschüttung", formula: "Peak in Tiefschlaf (NREM 3)", note: "1. Zyklus am stärksten" },
+        { name: "Schlafbedarf Sportler", formula: "≥ 8–9 h / Nacht", note: "vs. 7–9 h Normalbev." },
       ],
     },
   ];
@@ -490,6 +511,28 @@ function VisualGlossar() {
       ],
     },
     {
+      name: "Hormone & Stoffwechsel", color: "var(--green)", icon: "🧬",
+      terms: [
+        { term: "Leptin", full: "", def: "Sättigungshormon, das vom Fettgewebe produziert wird. Sinkt bei Kaloriendefizit (nach 2–3 Wochen messbar) → Hungergefühl steigt, Stoffwechsel verlangsamt. Refeed-Tage heben Leptin kurzzeitig an." },
+        { term: "Ghrelin", full: "Hungerhormon", def: "Wird im Magen gebildet, steigt bei Kaloriendefizit und signalisiert dem Gehirn Hunger. Höchste Konzentration kurz vor typischen Mahlzeiten – Gewohnheiten prägen den Verlauf." },
+        { term: "Cortisol", full: "Stresshormon", def: "Kataboles Hormon: baut Muskeln ab, fördert Fettspeicherung (besonders Bauch). Erhöht durch Schlafmangel, Übertraining und psychischen Stress." },
+        { term: "Insulin", full: "", def: "Transporthormon für Glukose in die Zellen. Hemmt Fettabbau, solange es erhöht ist. Niedrige Insulinphasen (nüchtern, nach Sport) begünstigen Lipolyse." },
+        { term: "Testosteron", full: "", def: "Anaboles Hormon: fördert Muskelaufbau, Proteinsynthese und Fettabbau. Sinkt bei Schlafmangel, extremem Defizit (< 1.200 kcal/Tag) und hohem Stress." },
+        { term: "Adipokine", full: "", def: "Botenstoffe des Fettgewebes (inkl. Leptin, Adiponektin). Regulieren Insulinsensitivität, Entzündung und Energiehomöostase. Verbessern sich mit sinkendem Körperfettanteil." },
+      ],
+    },
+    {
+      name: "Trainingsmethoden", color: "var(--orange)", icon: "🏃",
+      terms: [
+        { term: "HIIT", full: "High Intensity Interval Training", def: "Wechsel zwischen Maximalbelastung (20–40 s) und kurzer Erholung. Hoher Nachbrenneffekt (EPOC), zeiteffizient, aber ZNS-intensiv — max. 2–3×/Woche." },
+        { term: "LISS", full: "Low Intensity Steady State", def: "Gleichmäßiges Ausdauertraining bei 50–65 % HFmax (z.B. 45 min Walken). Schont ZNS, ideal als aktive Erholung oder zur Schritterhöhung." },
+        { term: "EPOC", full: "Excess Post-Exercise Oxygen Consumption", def: "Nachbrenneffekt: erhöhter Kalorienverbrauch nach intensivem Training. Bei HIIT bis zu 24 h relevant, bei LISS minimal." },
+        { term: "1RM", full: "One Repetition Maximum", def: "Maximales Gewicht, das für eine Wiederholung bewegt werden kann. Trainingsgewichte werden oft als % des 1RM angegeben (z.B. 70–85 % für Hypertrophie)." },
+        { term: "Hypertrophie", full: "", def: "Muskelwachstum durch Vergrößerung der Muskelfasern. Optimaler Wiederholungsbereich: 6–20 pro Satz, bei 60–85 % 1RM. Volumen ist der Haupttreiber." },
+        { term: "Übertraining", full: "Overtraining Syndrome", def: "Anhaltend sinkende Leistung, Müdigkeit, schlechter Schlaf und erhöhte Infektanfälligkeit durch zu viel Training ohne ausreichende Erholung. Lösung: Deload oder Pause." },
+      ],
+    },
+    {
       name: "App-Konzepte", color: "var(--purple)", icon: "📱",
       terms: [
         { term: "Phase", full: "Diätphase", def: "Abschnitt mit definierten Zielen (Start-/Zielgewicht, Startdatum). Die App berechnet daraus Ziel-Defizit und Fortschritt. Mehrere Phasen können hintereinander angelegt werden." },
@@ -513,22 +556,22 @@ function VisualGlossar() {
           </div>
           <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
             <colgroup>
-              <col style={{ width: "14%" }} />
-              <col style={{ width: "22%" }} />
-              <col style={{ width: "64%" }} />
+              <col className="glossar-col-term" style={{ width: "14%" }} />
+              <col className="glossar-col-mid" style={{ width: "22%" }} />
+              <col className="glossar-col-def" style={{ width: "64%" }} />
             </colgroup>
             <thead>
               <tr>
-                {(["Kürzel", "Ausgeschrieben", "Bedeutung"] as const).map(h => (
-                  <th key={h} style={{ textAlign: "left", padding: "7px 14px", fontSize: 10, fontWeight: 700, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.07em", borderBottom: "1px solid var(--border)" }}>{h}</th>
-                ))}
+                <th style={{ textAlign: "left", padding: "7px 14px", fontSize: 10, fontWeight: 700, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.07em", borderBottom: "1px solid var(--border)" }}>Kürzel</th>
+                <th className="glossar-col-mid" style={{ textAlign: "left", padding: "7px 14px", fontSize: 10, fontWeight: 700, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.07em", borderBottom: "1px solid var(--border)" }}>Ausgeschrieben</th>
+                <th style={{ textAlign: "left", padding: "7px 14px", fontSize: 10, fontWeight: 700, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.07em", borderBottom: "1px solid var(--border)" }}>Bedeutung</th>
               </tr>
             </thead>
             <tbody>
               {cat.terms.map((r, j) => (
                 <tr key={j} style={{ borderBottom: j < cat.terms.length - 1 ? "1px solid var(--border)" : "none" }}>
                   <td style={{ ...tdCell, fontWeight: 700, color: cat.color, fontFamily: "monospace", fontSize: 12 }}>{r.term}</td>
-                  <td style={{ ...tdCell, fontWeight: 500, color: "var(--text-2)", fontSize: 12 }}>{r.full || "–"}</td>
+                  <td className="glossar-col-mid" style={{ ...tdCell, fontWeight: 500, color: "var(--text-2)", fontSize: 12 }}>{r.full || "–"}</td>
                   <td style={{ ...tdCell, color: "var(--text-muted)", lineHeight: 1.55 }}>{r.def}</td>
                 </tr>
               ))}
