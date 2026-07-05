@@ -203,32 +203,38 @@ function RenderTokens({ tokens }: { tokens: Token[] }) {
             {tok.items.map((item, j) => <li key={j} style={s.li}>{parseInline(item)}</li>)}
           </ol>
         );
-        if (tok.t === "table") return (
-          <div key={idx} style={{ overflowX: "auto", marginBottom: 16 }}>
-            <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
-              <thead>
-                <tr>
-                  {tok.head.map((h, j) => (
-                    <th key={j} style={{ textAlign: "left", padding: "8px 12px", background: "var(--surface2)", color: "var(--text-muted)", fontWeight: 700, fontSize: 11, textTransform: "uppercase", letterSpacing: "0.06em", borderBottom: "1px solid var(--border)" }}>
-                      {parseInline(h)}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {tok.rows.map((row, j) => (
-                  <tr key={j} style={{ borderBottom: "1px solid var(--border)" }}>
-                    {row.map((cell, k) => (
-                      <td key={k} style={{ padding: "8px 12px", color: k === 0 ? "var(--text)" : "var(--text-2)", fontWeight: k === 0 ? 500 : 400 }}>
-                        {parseInline(cell)}
-                      </td>
+        if (tok.t === "table") {
+          const colWidths = tok.head.length === 3 ? ["130px", "190px", "auto"] : ["180px", "auto"];
+          return (
+            <div key={idx} style={{ overflowX: "auto", marginBottom: 16 }}>
+              <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13, tableLayout: "fixed" }}>
+                <colgroup>
+                  {tok.head.map((_, j) => <col key={j} style={{ width: colWidths[j] ?? "auto" }} />)}
+                </colgroup>
+                <thead>
+                  <tr>
+                    {tok.head.map((h, j) => (
+                      <th key={j} style={{ textAlign: "left", padding: "8px 12px", background: "var(--surface2)", color: "var(--text-muted)", fontWeight: 700, fontSize: 11, textTransform: "uppercase", letterSpacing: "0.06em", borderBottom: "1px solid var(--border)", verticalAlign: "bottom" }}>
+                        {parseInline(h)}
+                      </th>
                     ))}
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        );
+                </thead>
+                <tbody>
+                  {tok.rows.map((row, j) => (
+                    <tr key={j} style={{ borderBottom: "1px solid var(--border)" }}>
+                      {row.map((cell, k) => (
+                        <td key={k} style={{ padding: "10px 12px", verticalAlign: "top", lineHeight: 1.55, color: k === 0 ? "var(--text)" : "var(--text-2)", fontWeight: k === 0 ? 600 : 400, wordBreak: "break-word" }}>
+                          {parseInline(cell)}
+                        </td>
+                      ))}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          );
+        }
         return null;
       })}
     </>
