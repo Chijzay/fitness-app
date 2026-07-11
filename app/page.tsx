@@ -75,11 +75,31 @@ export default function Home() {
   useEffect(() => {
     if (status === "unauthenticated") router.push("/login");
   }, [status, router]);
-  const [view, setView] = useState<View>("dashboard");
+  const [view, setViewRaw] = useState<View>(() => {
+    if (typeof window !== "undefined") {
+      const saved = sessionStorage.getItem("app_view") as View | null;
+      if (saved) return saved;
+    }
+    return "dashboard";
+  });
+  function setView(v: View) {
+    setViewRaw(v);
+    if (typeof window !== "undefined") sessionStorage.setItem("app_view", v);
+  }
   const [returnView, setReturnView] = useState<View>("dashboard");
   // dashRange wird jedes Mal neu aus dem aktuellen Datum berechnet
   const [today, setToday] = useState(todayStr());
-  const [detailRange, setDetailRange] = useState<DateRange>(last30());
+  const [detailRange, setDetailRangeRaw] = useState<DateRange>(() => {
+    if (typeof window !== "undefined") {
+      const saved = sessionStorage.getItem("app_detailRange");
+      if (saved) try { return JSON.parse(saved) as DateRange; } catch { /* ignore */ }
+    }
+    return last30();
+  });
+  function setDetailRange(r: DateRange) {
+    setDetailRangeRaw(r);
+    if (typeof window !== "undefined") sessionStorage.setItem("app_detailRange", JSON.stringify(r));
+  }
   const [allLogs, setAllLogs] = useState<DailyLog[]>([]);
   const [entryDate, setEntryDate] = useState(todayStr());
   const [refreshKey, setRefreshKey] = useState(0);
