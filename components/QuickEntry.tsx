@@ -125,10 +125,6 @@ export default function QuickEntry({
   const [form, setForm] = useState<FormState>(empty);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
-  const [hasDraft, setHasDraft] = useState(false);
-
-  function draftKey(d: string) { return `quickentry_draft_${d}`; }
-  function clearDraft(d: string) { localStorage.removeItem(draftKey(d)); setHasDraft(false); }
   const [deleting, setDeleting] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [existingId, setExistingId] = useState<number | null>(null);
@@ -177,20 +173,6 @@ export default function QuickEntry({
     }
     setConfirmDelete(false);
 
-    // Restore draft for new entries (no existing entry for this date)
-    if (!existing) {
-      const raw = localStorage.getItem(draftKey(date));
-      if (raw) {
-        try {
-          const draft = JSON.parse(raw) as FormState;
-          setForm(draft);
-          setHasDraft(true);
-        } catch { /* ignore corrupt draft */ }
-      }
-    } else {
-      setHasDraft(false);
-    }
-
     // Load measurements for this date
     fetch(`/api/measurements?from=${date}&to=${date}`)
       .then(r => r.json()).then((ms: { id: number; waist?: number; belly?: number; hip?: number; chest?: number; upperArm?: number; thigh?: number; neck?: number; notes?: string }[]) => {
@@ -221,14 +203,6 @@ export default function QuickEntry({
       setForm(f => ({ ...f, bodyFatPercent: est.toFixed(1) }));
     }
   }, [form.weight, form.bodyFatManual, profile]);
-
-  // Auto-save draft on every form change (only for new entries, not editing existing)
-  useEffect(() => {
-    if (existingId == null) {
-      localStorage.setItem(draftKey(date), JSON.stringify(form));
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [form]);
 
   useEffect(() => {
     if (form.weight && form.bodyFatPercent && !form.muscleMassManual) {
@@ -283,7 +257,6 @@ export default function QuickEntry({
   async function deleteEntry() {
     setDeleting(true);
     await fetch(`/api/logs?date=${date}`, { method: "DELETE" });
-    clearDraft(date);
     setDeleting(false);
     onSaved();
   }
@@ -381,7 +354,6 @@ export default function QuickEntry({
     }
     setCardioDeleted([]);
 
-    clearDraft(date);
     setSaving(false);
     if (onRefresh) {
       onRefresh();
@@ -401,10 +373,7 @@ export default function QuickEntry({
       <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 22, flexWrap: "wrap", width: "100%", boxSizing: "border-box" }}>
         <div style={{ marginRight: 4 }}>
           <h2 style={{ fontSize: 18, fontWeight: 700, lineHeight: 1.2 }}>Tageseintrag</h2>
-          <p style={{ fontSize: 12.5, color: "var(--text-muted)", marginTop: 2 }}>
-            Alle Felder sind optional
-            {hasDraft && <span style={{ marginLeft: 8, color: "var(--teal)", fontWeight: 600 }}>· Entwurf wiederhergestellt</span>}
-          </p>
+          <p style={{ fontSize: 12.5, color: "var(--text-muted)", marginTop: 2 }}>Alle Felder sind optional</p>
         </div>
         {/* Date navigation */}
         <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
