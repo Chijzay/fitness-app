@@ -150,18 +150,17 @@ export default function QuickEntry({
       setForm(logToForm(existing));
     } else {
       const sorted = [...logs].filter(l => !l.date.startsWith(date)).sort((a, b) => b.date.localeCompare(a.date));
+      const prevWeight   = sorted.find(l => l.weight != null);
       const prevBf       = sorted.find(l => !l.bodyFatEstimated && l.bodyFatPercent != null);
       const prevMm       = sorted.find(l => l.muscleMass != null);
       const prevSleep    = sorted.find(l => l.sleepQuality != null);
       const prevBmr      = sorted.find(l => l.bmrOverride != null);
-      const prevSteps    = sorted.find(l => l.stepsType != null && l.stepsType !== "Keine Aktivität");
       const sleepQualityMode: QualityMode = prevSleep
         ? (prevSleep.sleepQuality! > 5 ? "watch" : "manual")
         : "watch";
-      const prevStepsType = prevSteps?.stepsType ?? "";
-      const isCustomStepsType = prevStepsType && !STEPS_TYPES.slice(0, -1).includes(prevStepsType);
       setForm({
         ...empty,
+        weight:          prevWeight?.weight?.toString() ?? "",
         bodyFatPercent:  prevBf?.bodyFatPercent?.toString() ?? "",
         bodyFatManual:   prevBf != null,
         muscleMass:      prevMm?.muscleMass?.toString() ?? "",
@@ -169,8 +168,7 @@ export default function QuickEntry({
         sleepQualityMode,
         useBmrManual:    prevBmr != null,
         bmrManual:       prevBmr?.bmrOverride?.toString() ?? "",
-        stepsType:       isCustomStepsType ? "Eigene Eingabe" : (prevStepsType || "Keine Aktivität"),
-        stepsTypeCustom: isCustomStepsType ? prevStepsType : "",
+        stepsType:       "Keine Aktivität",
       });
     }
     setConfirmDelete(false);
@@ -183,11 +181,6 @@ export default function QuickEntry({
           setMeasForm({ waist: m.waist?.toString() ?? "", belly: m.belly?.toString() ?? "", hip: m.hip?.toString() ?? "", chest: m.chest?.toString() ?? "", upperArm: m.upperArm?.toString() ?? "", thigh: m.thigh?.toString() ?? "", neck: m.neck?.toString() ?? "", calf: (m as { calf?: number }).calf?.toString() ?? "", notes: m.notes ?? "", existingId: m.id });
         } else {
           setMeasForm(emptyMeas);
-          fetch("/api/measurements?from=2020-01-01&to=" + date)
-            .then(r => r.json()).then((all: { waist?: number; belly?: number; hip?: number; chest?: number; upperArm?: number; thigh?: number; neck?: number; calf?: number }[]) => {
-              const last = all.at(-1);
-              if (last) setMeasForm(f => ({ ...f, waist: last.waist?.toString() ?? "", belly: last.belly?.toString() ?? "", hip: last.hip?.toString() ?? "", chest: last.chest?.toString() ?? "", upperArm: last.upperArm?.toString() ?? "", thigh: last.thigh?.toString() ?? "", neck: last.neck?.toString() ?? "", calf: last.calf?.toString() ?? "" }));
-            }).catch(() => {});
         }
       }).catch(() => {});
 
@@ -419,8 +412,16 @@ export default function QuickEntry({
         <Section icon="⚖️" title="Gewicht & Körper">
           <div className={g3}>
             <Field label="Gewicht (kg)">
-              <input type="number" min="0" step="0.1" value={form.weight}
-                onChange={sp("weight")} placeholder="z.B. 85,5" />
+              <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
+                <button type="button"
+                  onClick={() => set("weight", String(Math.max(0, parseFloat(form.weight || "0") - 0.1).toFixed(1)))}
+                  style={{ padding: "6px 11px", borderRadius: 6, border: "1px solid var(--border2)", background: "var(--surface2)", cursor: "pointer", fontSize: 15, fontWeight: 700, color: "var(--text-2)", flexShrink: 0 }}>−</button>
+                <input type="number" min="0" step="0.1" value={form.weight}
+                  onChange={sp("weight")} placeholder="z.B. 85,5" style={{ flex: 1 }} />
+                <button type="button"
+                  onClick={() => set("weight", String((parseFloat(form.weight || "0") + 0.1).toFixed(1)))}
+                  style={{ padding: "6px 11px", borderRadius: 6, border: "1px solid var(--border2)", background: "var(--surface2)", cursor: "pointer", fontSize: 15, fontWeight: 700, color: "var(--text-2)", flexShrink: 0 }}>+</button>
+              </div>
             </Field>
             <Field label={
               <span style={{ display: "flex", alignItems: "center", gap: 6 }}>
@@ -430,9 +431,17 @@ export default function QuickEntry({
                 </Toggle>
               </span>
             }>
-              <input type="number" min="0" max="70" step="0.1" value={form.bodyFatPercent}
-                onChange={e => { sp("bodyFatPercent")(e); set("bodyFatManual", true); }}
-                placeholder={form.bodyFatManual ? "z.B. 22,0" : "wird berechnet"} />
+              <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
+                <button type="button"
+                  onClick={() => { set("bodyFatPercent", String(Math.max(0, parseFloat(form.bodyFatPercent || "0") - 0.1).toFixed(1))); set("bodyFatManual", true); }}
+                  style={{ padding: "6px 11px", borderRadius: 6, border: "1px solid var(--border2)", background: "var(--surface2)", cursor: "pointer", fontSize: 15, fontWeight: 700, color: "var(--text-2)", flexShrink: 0 }}>−</button>
+                <input type="number" min="0" max="70" step="0.1" value={form.bodyFatPercent}
+                  onChange={e => { sp("bodyFatPercent")(e); set("bodyFatManual", true); }}
+                  placeholder={form.bodyFatManual ? "z.B. 22,0" : "wird berechnet"} style={{ flex: 1 }} />
+                <button type="button"
+                  onClick={() => { set("bodyFatPercent", String(Math.min(70, parseFloat(form.bodyFatPercent || "0") + 0.1).toFixed(1))); set("bodyFatManual", true); }}
+                  style={{ padding: "6px 11px", borderRadius: 6, border: "1px solid var(--border2)", background: "var(--surface2)", cursor: "pointer", fontSize: 15, fontWeight: 700, color: "var(--text-2)", flexShrink: 0 }}>+</button>
+              </div>
             </Field>
             <Field label={
               <span style={{ display: "flex", alignItems: "center", gap: 6 }}>
@@ -442,9 +451,17 @@ export default function QuickEntry({
                 </Toggle>
               </span>
             }>
-              <input type="number" min="0" step="0.1" value={form.muscleMass}
-                onChange={e => { sp("muscleMass")(e); set("muscleMassManual", true); }}
-                placeholder={form.muscleMassManual ? "z.B. 38,0" : "wird geschätzt"} />
+              <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
+                <button type="button"
+                  onClick={() => { set("muscleMass", String(Math.max(0, parseFloat(form.muscleMass || "0") - 0.1).toFixed(1))); set("muscleMassManual", true); }}
+                  style={{ padding: "6px 11px", borderRadius: 6, border: "1px solid var(--border2)", background: "var(--surface2)", cursor: "pointer", fontSize: 15, fontWeight: 700, color: "var(--text-2)", flexShrink: 0 }}>−</button>
+                <input type="number" min="0" step="0.1" value={form.muscleMass}
+                  onChange={e => { sp("muscleMass")(e); set("muscleMassManual", true); }}
+                  placeholder={form.muscleMassManual ? "z.B. 38,0" : "wird geschätzt"} style={{ flex: 1 }} />
+                <button type="button"
+                  onClick={() => { set("muscleMass", String((parseFloat(form.muscleMass || "0") + 0.1).toFixed(1))); set("muscleMassManual", true); }}
+                  style={{ padding: "6px 11px", borderRadius: 6, border: "1px solid var(--border2)", background: "var(--surface2)", cursor: "pointer", fontSize: 15, fontWeight: 700, color: "var(--text-2)", flexShrink: 0 }}>+</button>
+              </div>
             </Field>
           </div>
         </Section>

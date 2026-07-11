@@ -17,7 +17,7 @@ export default function WeightDetail({ logs, allLogs, profile, range, setRange, 
   }, [allLogs]);
 
   const weightEntries = dates
-    .map(d => ({ raw: d, weight: logMap[d]?.weight ?? null, bf: logMap[d]?.bodyFatPercent ?? null }))
+    .map(d => ({ raw: d, weight: logMap[d]?.weight ?? null, bf: logMap[d]?.bodyFatPercent ?? null, muscleMass: logMap[d]?.muscleMass ?? null }))
     .filter(d => d.weight != null);
 
   // Wöchentliche Durchschnitte für Balken
@@ -42,6 +42,7 @@ export default function WeightDetail({ logs, allLogs, profile, range, setRange, 
       date: fmtShort(d), raw: d,
       weight: logMap[d]?.weight ?? null,
       bf: logMap[d]?.bodyFatPercent ?? null,
+      muscleMass: logMap[d]?.muscleMass ?? null,
       weekAvg: isMonday && weekAvg ? +(weekAvg.sum / weekAvg.count).toFixed(1) : null,
     };
   });
@@ -183,28 +184,51 @@ export default function WeightDetail({ logs, allLogs, profile, range, setRange, 
           )}
         </div>
 
-        {/* Wöchentliche Veränderung als Balkendiagramm */}
+        {/* Muskelmasse als Balken + Linie */}
         <div className="card card-pad">
-          <SectionHeader title="Wöchentlicher Durchschnitt" icon="📅" />
-          <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-            {weeklyBilanz.length > 0 ? weeklyBilanz.map((w, i) => {
-              const prev = weeklyBilanz[i - 1]?.avg ?? null;
-              const diff = prev != null ? +(w.avg - prev).toFixed(1) : null;
-              return (
-                <div key={w.week} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "9px 14px", background: "var(--surface2)", borderRadius: 8 }}>
-                  <span style={{ fontSize: 13, color: "var(--text-2)", fontWeight: 500 }}>{w.week}</span>
-                  <div style={{ textAlign: "right" }}>
-                    <div style={{ fontWeight: 700, fontSize: 14 }}>{w.avg} kg</div>
-                    {diff != null && (
-                      <div style={{ fontSize: 12, color: diff < 0 ? "var(--green)" : diff > 0 ? "var(--red)" : "var(--text-muted)" }}>
-                        {diff > 0 ? "+" : ""}{diff} kg zur Vorwoche
-                      </div>
-                    )}
-                  </div>
+          <SectionHeader title="Muskelmasse (kg)" icon="💪" />
+          {chartData.some(d => d.muscleMass) ? (
+            <ResponsiveContainer width="100%" height={200}>
+              <ComposedChart data={chartData.filter(d => d.muscleMass)} margin={{ top: 5, right: 10, left: -10, bottom: 0 }}>
+                <CartesianGrid {...gridStyle} />
+                <XAxis dataKey="date" tick={tickStyle} tickLine={false} />
+                <YAxis domain={["auto", "auto"]} tick={tickStyle} width={45} unit=" kg" />
+                <Tooltip {...tt} formatter={(v: number) => [`${v} kg`, "Muskelmasse"]} />
+                <Bar dataKey="muscleMass" maxBarSize={28} radius={[4, 4, 0, 0]} fill="var(--blue)" fillOpacity={0.22} />
+                <Line type="monotone" dataKey="muscleMass" stroke="var(--blue)" strokeWidth={2.5}
+                  dot={{ r: 4, fill: "var(--blue)", strokeWidth: 0 }} connectNulls />
+              </ComposedChart>
+            </ResponsiveContainer>
+          ) : (
+            <div style={{ padding: "30px 0", color: "var(--text-muted)", fontSize: 13 }}>
+              Keine Muskelmasse manuell eingetragen.<br />
+              <span style={{ fontSize: 12 }}>Magermasse (geschätzt): {leanMass ?? "–"} kg</span>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Wöchentlicher Durchschnitt — volle Breite unter den Charts */}
+      <div className="card card-pad" style={{ marginBottom: 16 }}>
+        <SectionHeader title="Wöchentlicher Durchschnitt" icon="📅" />
+        <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+          {weeklyBilanz.length > 0 ? weeklyBilanz.map((w, i) => {
+            const prev = weeklyBilanz[i - 1]?.avg ?? null;
+            const diff = prev != null ? +(w.avg - prev).toFixed(1) : null;
+            return (
+              <div key={w.week} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "9px 14px", background: "var(--surface2)", borderRadius: 8 }}>
+                <span style={{ fontSize: 13, color: "var(--text-2)", fontWeight: 500 }}>{w.week}</span>
+                <div style={{ textAlign: "right" }}>
+                  <div style={{ fontWeight: 700, fontSize: 14 }}>{w.avg} kg</div>
+                  {diff != null && (
+                    <div style={{ fontSize: 12, color: diff < 0 ? "var(--green)" : diff > 0 ? "var(--red)" : "var(--text-muted)" }}>
+                      {diff > 0 ? "+" : ""}{diff} kg zur Vorwoche
+                    </div>
+                  )}
                 </div>
-              );
-            }) : <p style={{ color: "var(--text-muted)", fontSize: 13 }}>Keine Wochendaten</p>}
-          </div>
+              </div>
+            );
+          }) : <p style={{ color: "var(--text-muted)", fontSize: 13 }}>Keine Wochendaten</p>}
         </div>
       </div>
 
