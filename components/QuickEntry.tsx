@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useCallback } from "react";
 import type { Profile, DailyLog } from "@/app/page";
 import { calcBMR, calcTDEE, estimateBodyFat, estimateMuscleMass, STEPS_TYPES, MOVEMENT_TYPES, calcWaterRecommendation } from "@/lib/calculations";
 
@@ -113,88 +113,6 @@ function Toggle({ active, onClick, children }: { active: boolean; onClick: () =>
       border: `1px solid ${active ? "var(--teal)" : "var(--border2)"}`,
       fontWeight: 600, cursor: "pointer",
     }}>{children}</button>
-  );
-}
-
-// ── Voice Dictation ──────────────────────────────────────────────────────────
-function VoiceDictation({ onResult }: { onResult: (text: string) => void }) {
-  const [listening, setListening] = useState(false);
-  const [interim, setInterim] = useState("");
-  const [error, setError] = useState("");
-  const recRef = useRef<InstanceType<typeof window.SpeechRecognition> | null>(null);
-  const finalRef = useRef("");
-
-  const supported = typeof window !== "undefined" && ("SpeechRecognition" in window || "webkitSpeechRecognition" in window);
-
-  function start() {
-    if (!supported) { setError("Diktierfunktion nicht unterstützt"); return; }
-    const SR = (window.SpeechRecognition ?? (window as unknown as { webkitSpeechRecognition: typeof SpeechRecognition }).webkitSpeechRecognition);
-    const rec = new SR();
-    rec.lang = "de-DE";
-    rec.continuous = true;
-    rec.interimResults = true;
-    rec.maxAlternatives = 1;
-    finalRef.current = "";
-    setInterim("");
-    setError("");
-
-    rec.onresult = (e: SpeechRecognitionEvent) => {
-      let fin = "";
-      let intr = "";
-      for (let i = 0; i < e.results.length; i++) {
-        if (e.results[i].isFinal) fin += e.results[i][0].transcript;
-        else intr += e.results[i][0].transcript;
-      }
-      finalRef.current = fin;
-      setInterim(intr);
-    };
-    rec.onerror = (e: SpeechRecognitionErrorEvent) => {
-      if (e.error !== "aborted") setError(`Fehler: ${e.error}`);
-    };
-    rec.onend = () => {
-      setListening(false);
-      setInterim("");
-      if (finalRef.current.trim()) onResult(finalRef.current.trim());
-    };
-
-    recRef.current = rec;
-    rec.start();
-    setListening(true);
-  }
-
-  function stop() {
-    recRef.current?.stop();
-  }
-
-  if (!supported) return null;
-
-  return (
-    <div style={{ marginTop: 8 }}>
-      <button
-        type="button"
-        onPointerDown={e => { e.preventDefault(); start(); }}
-        onPointerUp={stop}
-        onPointerLeave={stop}
-        style={{
-          display: "flex", alignItems: "center", gap: 8, padding: "10px 18px",
-          borderRadius: 24, border: `2px solid ${listening ? "var(--red)" : "var(--border2)"}`,
-          background: listening ? "rgba(239,68,68,.1)" : "var(--surface2)",
-          color: listening ? "var(--red)" : "var(--text-2)",
-          cursor: "pointer", fontSize: 13, fontWeight: 600,
-          transition: "all 0.15s", userSelect: "none", touchAction: "none",
-          boxShadow: listening ? "0 0 0 4px rgba(239,68,68,.15)" : "none",
-        }}
-      >
-        <span style={{ fontSize: 18 }}>{listening ? "⏹" : "🎙"}</span>
-        {listening ? "Loslassen zum Stoppen…" : "Halten & Diktieren"}
-      </button>
-      {listening && interim && (
-        <div style={{ marginTop: 6, padding: "6px 12px", borderRadius: 8, background: "var(--surface2)", fontSize: 13, color: "var(--text-muted)", fontStyle: "italic" }}>
-          {interim}…
-        </div>
-      )}
-      {error && <p style={{ fontSize: 12, color: "var(--red)", marginTop: 4 }}>{error}</p>}
-    </div>
   );
 }
 
@@ -798,14 +716,7 @@ export default function QuickEntry({
                 placeholder={waterRec ? waterRec.toString() : "z.B. 2500"} />
             </Field>
             <Field label="Tagesnotiz">
-              <textarea
-                value={form.notes}
-                onChange={e => set("notes", e.target.value)}
-                placeholder="Freitext…"
-                rows={3}
-                style={{ resize: "vertical", fontFamily: "inherit", fontSize: 13.5 }}
-              />
-              <VoiceDictation onResult={text => set("notes", (form.notes ? form.notes + " " : "") + text)} />
+              <input value={form.notes} onChange={e => set("notes", e.target.value)} placeholder="Freitext…" />
             </Field>
           </div>
           {waterRec && (
