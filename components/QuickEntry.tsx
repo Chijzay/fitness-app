@@ -208,6 +208,8 @@ export default function QuickEntry({
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [hasDraft, setHasDraft] = useState(false);
+  // Guard: prevents auto-save from firing during initialization (would overwrite the draft we're restoring)
+  const draftEnabledRef = useRef(false);
 
   function draftKey(d: string) { return `quickentry_draft_${d}`; }
   function clearDraft(d: string) { localStorage.removeItem(draftKey(d)); setHasDraft(false); }
@@ -230,48 +232,58 @@ export default function QuickEntry({
   const CARDIO_TYPES = ["Joggen", "Spazieren", "Radfahren", "Schwimmen", "Wandern", "Sonstiges"];
 
   useEffect(() => {
+    // Block auto-save during initialization so we don't overwrite the draft
+    draftEnabledRef.current = false;
+
     const existing = logs.find(l => l.date.startsWith(date));
     setExistingId(existing?.id ?? null);
     if (existing) {
       setForm(logToForm(existing));
+      setHasDraft(false);
     } else {
-      const sorted = [...logs].filter(l => !l.date.startsWith(date)).sort((a, b) => b.date.localeCompare(a.date));
-      const prevWeight   = sorted.find(l => l.weight != null);
-      const prevBf       = sorted.find(l => !l.bodyFatEstimated && l.bodyFatPercent != null);
-      const prevMm       = sorted.find(l => l.muscleMass != null);
-      const prevSleep    = sorted.find(l => l.sleepQuality != null);
-      const prevBmr      = sorted.find(l => l.bmrOverride != null);
-      const sleepQualityMode: QualityMode = prevSleep
-        ? (prevSleep.sleepQuality! > 5 ? "watch" : "manual")
-        : "watch";
-      setForm({
-        ...empty,
-        weight:          prevWeight?.weight?.toString() ?? "",
-        bodyFatPercent:  prevBf?.bodyFatPercent?.toString() ?? "",
-        bodyFatManual:   prevBf != null,
-        muscleMass:      prevMm?.muscleMass?.toString() ?? "",
-        muscleMassManual: prevMm != null,
-        sleepQualityMode,
-        useBmrManual:    prevBmr != null,
-        bmrManual:       prevBmr?.bmrOverride?.toString() ?? "",
-        stepsType:       "Keine Aktivität",
-      });
-    }
-    setConfirmDelete(false);
-
-    // Restore draft for new entries (no existing entry for this date)
-    if (!existing) {
+      // Check for a saved draft first — if one exists, use it directly
       const raw = localStorage.getItem(draftKey(date));
       if (raw) {
         try {
           const draft = JSON.parse(raw) as FormState;
           setForm(draft);
           setHasDraft(true);
-        } catch { /* ignore corrupt draft */ }
+        } catch {
+          localStorage.removeItem(draftKey(date));
+          setHasDraft(false);
+        }
+      } else {
+        // No draft — set carry-forward values
+        const sorted = [...logs].filter(l => !l.date.startsWith(date)).sort((a, b) => b.date.localeCompare(a.date));
+        const prevWeight   = sorted.find(l => l.weight != null);
+        const prevBf       = sorted.find(l => !l.bodyFatEstimated && l.bodyFatPercent != null);
+        const prevMm       = sorted.find(l => l.muscleMass != null);
+        const prevSleep    = sorted.find(l => l.sleepQuality != null);
+        const prevBmr      = sorted.find(l => l.bmrOverride != null);
+        const sleepQualityMode: QualityMode = prevSleep
+          ? (prevSleep.sleepQuality! > 5 ? "watch" : "manual")
+          : "watch";
+        setForm({
+          ...empty,
+          weight:          prevWeight?.weight?.toString() ?? "",
+          bodyFatPercent:  prevBf?.bodyFatPercent?.toString() ?? "",
+          bodyFatManual:   prevBf != null,
+          muscleMass:      prevMm?.muscleMass?.toString() ?? "",
+          muscleMassManual: prevMm != null,
+          sleepQualityMode,
+          useBmrManual:    prevBmr != null,
+          bmrManual:       prevBmr?.bmrOverride?.toString() ?? "",
+          stepsType:       "Keine Aktivität",
+        });
+        setHasDraft(false);
       }
-    } else {
-      setHasDraft(false);
     }
+    setConfirmDelete(false);
+
+    // Re-enable auto-save after React has applied all the setForm calls above.
+    // setTimeout(0) runs after the current render + all batched state updates.
+    const t = setTimeout(() => { draftEnabledRef.current = true; }, 0);
+    return () => { clearTimeout(t); draftEnabledRef.current = false; };
 
     // Load measurements for this date
     fetch(`/api/measurements?from=${date}&to=${date}`)
@@ -304,11 +316,12 @@ export default function QuickEntry({
     }
   }, [form.weight, form.bodyFatManual, profile]);
 
-  // Auto-save draft on every form change (only for new entries, not editing existing)
+  // Auto-save draft on every user-triggered form change.
+  // draftEnabledRef is false during initialization so we never overwrite a restored draft.
   useEffect(() => {
-    if (existingId == null) {
-      localStorage.setItem(draftKey(date), JSON.stringify(form));
-    }
+    if (!draftEnabledRef.current) return;
+    if (existingId != null) return; // don't draft-save when editing an already-saved entry
+    localStorage.setItem(draftKey(date), JSON.stringify(form));
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [form]);
 
