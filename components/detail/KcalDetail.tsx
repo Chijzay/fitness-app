@@ -34,6 +34,7 @@ export default function KcalDetail({ logs, allLogs, profile, range, setRange, on
       consumed: log?.kcalConsumed ?? null,
       burned: log?.kcalBurned ?? null,
       bmr: bmr ? Math.round(bmr) : null,
+      tdeeDay,
       deficit,
       protein: log?.proteinG ?? null,
       carbs: log?.carbsG ?? null,
@@ -137,7 +138,28 @@ export default function KcalDetail({ logs, allLogs, profile, range, setRange, on
             <CartesianGrid {...gridStyle} />
             <XAxis dataKey="date" tick={tickStyle} tickLine={false} />
             <YAxis tick={tickStyle} width={55} />
-            <Tooltip {...tt} formatter={(v: number) => [`${v > 0 ? "+" : ""}${Math.round(v)} kcal`, "Bilanz"]} />
+            <Tooltip content={({ active, payload }) => {
+              if (!active || !payload?.length) return null;
+              const d = payload[0]?.payload as typeof dayData[0];
+              if (d.deficit == null) return null;
+              const bal = Math.round(d.deficit);
+              return (
+                <div style={{ ...tt.contentStyle, padding: "10px 14px", fontSize: 13, minWidth: 190 }}>
+                  <p style={{ fontWeight: 700, marginBottom: 8, color: "var(--text)" }}>{d.full}</p>
+                  {d.consumed != null && <p style={{ color: "var(--text-2)", marginBottom: 3 }}>🍽 Gegessen: <b>{d.consumed} kcal</b></p>}
+                  {d.tdeeDay != null && <p style={{ color: "var(--text-2)", marginBottom: 3 }}>⚙️ TDEE: <b>{d.tdeeDay} kcal</b></p>}
+                  {d.burned != null && d.burned > 0 && <p style={{ color: "var(--text-2)", marginBottom: 3 }}>🏃 Extra verbrannt: <b>−{d.burned} kcal</b></p>}
+                  <div style={{ borderTop: "1px solid var(--border2)", marginTop: 6, paddingTop: 6 }}>
+                    <p style={{ fontWeight: 700, color: bal <= 0 ? "var(--green)" : "var(--red)" }}>
+                      📊 Bilanz: {bal > 0 ? "+" : ""}{bal} kcal
+                    </p>
+                    {d.deficit != null && <p style={{ fontSize: 11, color: "var(--text-muted)", marginTop: 2 }}>
+                      ≈ {calcFatKgFromKcal(d.deficit).toFixed(3)} kg Fett
+                    </p>}
+                  </div>
+                </div>
+              );
+            }} />
             <ReferenceLine y={0} stroke="var(--border2)" strokeWidth={1.5} />
             {maxDeficit && <ReferenceLine y={-maxDeficit} stroke="var(--orange)" strokeDasharray="4 3" label={{ value: "Max. Defizit", fontSize: 10, fill: "var(--orange)", position: "right" }} />}
             <Bar dataKey="deficit" radius={[5, 5, 0, 0]} maxBarSize={40}>

@@ -42,6 +42,8 @@ export default function WeightDetail({ logs, allLogs, profile, range, setRange, 
       date: fmtShort(d), raw: d,
       weight: logMap[d]?.weight ?? null,
       bf: logMap[d]?.bodyFatPercent ?? null,
+      fatKg: (logMap[d]?.weight && logMap[d]?.bodyFatPercent)
+        ? +(logMap[d].weight! * logMap[d].bodyFatPercent! / 100).toFixed(1) : null,
       muscleMass: logMap[d]?.muscleMass ?? null,
       weekAvg: isMonday && weekAvg ? +(weekAvg.sum / weekAvg.count).toFixed(1) : null,
     };
@@ -159,20 +161,30 @@ export default function WeightDetail({ logs, allLogs, profile, range, setRange, 
       </div>
 
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 16 }}>
-        {/* Körperfett als Balken + Linie */}
+        {/* Körperfett als Balken + Linie — Y-Achse in kg, Tooltip zeigt % + kg */}
         <div className="card card-pad">
-          <SectionHeader title="Körperfett %" icon="🏃" />
-          {chartData.some(d => d.bf) ? (
+          <SectionHeader title="Körperfett (% + kg)" icon="🏃" />
+          {chartData.some(d => d.fatKg) ? (
             <ResponsiveContainer width="100%" height={200}>
-              <ComposedChart data={chartData.filter(d => d.bf)} margin={{ top: 5, right: 10, left: -10, bottom: 0 }}>
+              <ComposedChart data={chartData.filter(d => d.fatKg)} margin={{ top: 5, right: 10, left: -10, bottom: 0 }}>
                 <CartesianGrid {...gridStyle} />
                 <XAxis dataKey="date" tick={tickStyle} tickLine={false} />
-                <YAxis domain={["auto", "auto"]} tick={tickStyle} width={40} unit="%" />
-                <Tooltip {...tt} formatter={(v: number) => [`${v} %`, "Körperfett"]} />
-                <ReferenceLine y={25} stroke="var(--orange)" strokeDasharray="4 3"
-                  label={{ value: "25%", fontSize: 10, fill: "var(--orange)" }} />
-                <Bar dataKey="bf" maxBarSize={28} radius={[4, 4, 0, 0]} fill="var(--orange)" fillOpacity={0.22} />
-                <Line type="monotone" dataKey="bf" stroke="var(--orange)" strokeWidth={2.5}
+                <YAxis domain={["auto", "auto"]} tick={tickStyle} width={45} unit=" kg" />
+                <Tooltip content={({ active, payload }) => {
+                  if (!active || !payload?.length) return null;
+                  const d = payload[0]?.payload as { date: string; bf: number | null; fatKg: number | null };
+                  return (
+                    <div style={{ ...tt.contentStyle, padding: "10px 14px", fontSize: 13 }}>
+                      <p style={{ fontWeight: 700, marginBottom: 6, color: "var(--text)" }}>{d.date}</p>
+                      {d.bf != null && <p style={{ color: "var(--orange)" }}>Körperfett: {d.bf} %</p>}
+                      {d.fatKg != null && <p style={{ color: "var(--orange)" }}>Fettmasse: {d.fatKg} kg</p>}
+                    </div>
+                  );
+                }} />
+                <ReferenceLine y={25 * ((chartData.find(d => d.weight)?.weight ?? 80) / 100)}
+                  stroke="var(--orange)" strokeDasharray="4 3" />
+                <Bar dataKey="fatKg" maxBarSize={28} radius={[4, 4, 0, 0]} fill="var(--orange)" fillOpacity={0.22} />
+                <Line type="monotone" dataKey="fatKg" stroke="var(--orange)" strokeWidth={2.5}
                   dot={{ r: 4, fill: "var(--orange)", strokeWidth: 0 }} connectNulls />
               </ComposedChart>
             </ResponsiveContainer>

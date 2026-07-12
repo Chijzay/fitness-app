@@ -180,7 +180,13 @@ export default function QuickEntry({
           const m = ms[0];
           setMeasForm({ waist: m.waist?.toString() ?? "", belly: m.belly?.toString() ?? "", hip: m.hip?.toString() ?? "", chest: m.chest?.toString() ?? "", upperArm: m.upperArm?.toString() ?? "", thigh: m.thigh?.toString() ?? "", neck: m.neck?.toString() ?? "", calf: (m as { calf?: number }).calf?.toString() ?? "", notes: m.notes ?? "", existingId: m.id });
         } else {
-          setMeasForm(emptyMeas);
+          // Carry-forward last measurement when no entry exists for today
+          fetch("/api/measurements?from=2020-01-01&to=" + date)
+            .then(r => r.json()).then((all: { waist?: number; belly?: number; hip?: number; chest?: number; upperArm?: number; thigh?: number; neck?: number; calf?: number }[]) => {
+              const last = all.at(-1);
+              if (last) setMeasForm(f => ({ ...f, waist: last.waist?.toString() ?? "", belly: last.belly?.toString() ?? "", hip: last.hip?.toString() ?? "", chest: last.chest?.toString() ?? "", upperArm: last.upperArm?.toString() ?? "", thigh: last.thigh?.toString() ?? "", neck: last.neck?.toString() ?? "", calf: last.calf?.toString() ?? "" }));
+              else setMeasForm(emptyMeas);
+            }).catch(() => setMeasForm(emptyMeas));
         }
       }).catch(() => {});
 
@@ -698,16 +704,31 @@ export default function QuickEntry({
         {/* Körpermaße */}
         <Section icon="📏" title="Körpermaße (cm)">
           <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 12 }}>
-            <Field label="Taille"><input type="number" min="0" step="0.1" value={measForm.waist} onChange={e => setM("waist", e.target.value)} placeholder="z.B. 85" /></Field>
-            <Field label="Bauch"><input type="number" min="0" step="0.1" value={measForm.belly} onChange={e => setM("belly", e.target.value)} placeholder="z.B. 92" /></Field>
-            <Field label="Hüfte"><input type="number" min="0" step="0.1" value={measForm.hip} onChange={e => setM("hip", e.target.value)} placeholder="z.B. 100" /></Field>
-            <Field label="Brust"><input type="number" min="0" step="0.1" value={measForm.chest} onChange={e => setM("chest", e.target.value)} placeholder="z.B. 98" /></Field>
-            <Field label="Oberarm"><input type="number" min="0" step="0.1" value={measForm.upperArm} onChange={e => setM("upperArm", e.target.value)} placeholder="z.B. 34" /></Field>
-            <Field label="Oberschenkel"><input type="number" min="0" step="0.1" value={measForm.thigh} onChange={e => setM("thigh", e.target.value)} placeholder="z.B. 58" /></Field>
-            <Field label="Nacken"><input type="number" min="0" step="0.1" value={measForm.neck} onChange={e => setM("neck", e.target.value)} placeholder="z.B. 38" /></Field>
-            <Field label="Wade"><input type="number" min="0" step="0.1" value={measForm.calf} onChange={e => setM("calf", e.target.value)} placeholder="z.B. 38" /></Field>
+            {([
+              { label: "Taille", key: "waist", placeholder: "85" },
+              { label: "Bauch", key: "belly", placeholder: "92" },
+              { label: "Hüfte", key: "hip", placeholder: "100" },
+              { label: "Brust", key: "chest", placeholder: "98" },
+              { label: "Oberarm", key: "upperArm", placeholder: "34" },
+              { label: "Oberschenkel", key: "thigh", placeholder: "58" },
+              { label: "Nacken", key: "neck", placeholder: "38" },
+              { label: "Wade", key: "calf", placeholder: "38" },
+            ] as { label: string; key: keyof MeasForm; placeholder: string }[]).map(({ label, key, placeholder }) => (
+              <Field key={key} label={label}>
+                <div style={{ display: "flex", alignItems: "center", gap: 3 }}>
+                  <button type="button"
+                    onClick={() => setM(key, String(Math.max(0, parseFloat((measForm[key] as string) || "0") - 0.1).toFixed(1)))}
+                    style={{ padding: "5px 9px", borderRadius: 6, border: "1px solid var(--border2)", background: "var(--surface2)", cursor: "pointer", fontSize: 14, fontWeight: 700, color: "var(--text-2)", flexShrink: 0 }}>−</button>
+                  <input type="number" min="0" step="0.1" value={measForm[key] as string}
+                    onChange={e => setM(key, e.target.value)} placeholder={placeholder} style={{ flex: 1, minWidth: 0 }} />
+                  <button type="button"
+                    onClick={() => setM(key, String((parseFloat((measForm[key] as string) || "0") + 0.1).toFixed(1)))}
+                    style={{ padding: "5px 9px", borderRadius: 6, border: "1px solid var(--border2)", background: "var(--surface2)", cursor: "pointer", fontSize: 14, fontWeight: 700, color: "var(--text-2)", flexShrink: 0 }}>+</button>
+                </div>
+              </Field>
+            ))}
           </div>
-          <p style={{ fontSize: 11, color: "var(--text-muted)", marginTop: 8 }}>Alle Felder optional — nur ausfüllen wenn gemessen. Letzte Messung wird vorausgefüllt.</p>
+          <p style={{ fontSize: 11, color: "var(--text-muted)", marginTop: 8 }}>Letzte Messung wird vorausgefüllt — Werte mit den Pfeilen anpassen oder direkt eingeben.</p>
         </Section>
 
         {/* Cardio */}
