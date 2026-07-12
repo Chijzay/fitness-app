@@ -160,7 +160,7 @@ export default function MeasurementsDetail({
                     <tr key={row.id} style={{ borderBottom: "1px solid var(--border)", cursor: onEditDate ? "pointer" : undefined }}
                       onDoubleClick={() => onEditDate?.(row.date.split("T")[0])}>
                       <td style={{ padding: "9px 14px", fontWeight: 600, color: "var(--text)", whiteSpace: "nowrap" }}>
-                        {new Date(row.date + "T12:00:00").toLocaleDateString("de-DE", { weekday: "short", day: "2-digit", month: "2-digit", year: "2-digit" })}
+                        {new Date(row.date.split("T")[0] + "T12:00:00").toLocaleDateString("de-DE", { weekday: "short", day: "2-digit", month: "2-digit", year: "2-digit" })}
                       </td>
                       {METRICS.map(m => {
                         const val = row[m.key] as number | undefined;

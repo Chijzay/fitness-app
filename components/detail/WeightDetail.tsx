@@ -45,6 +45,8 @@ export default function WeightDetail({ logs, allLogs, profile, range, setRange, 
       fatKg: (logMap[d]?.weight && logMap[d]?.bodyFatPercent)
         ? +(logMap[d].weight! * logMap[d].bodyFatPercent! / 100).toFixed(1) : null,
       muscleMass: logMap[d]?.muscleMass ?? null,
+      musclePct: (logMap[d]?.muscleMass && logMap[d]?.weight)
+        ? +(logMap[d].muscleMass! / logMap[d].weight! * 100).toFixed(1) : null,
       weekAvg: isMonday && weekAvg ? +(weekAvg.sum / weekAvg.count).toFixed(1) : null,
     };
   });
@@ -196,16 +198,26 @@ export default function WeightDetail({ logs, allLogs, profile, range, setRange, 
           )}
         </div>
 
-        {/* Muskelmasse als Balken + Linie */}
+        {/* Muskelmasse als Balken + Linie — Tooltip zeigt kg + % */}
         <div className="card card-pad">
-          <SectionHeader title="Muskelmasse (kg)" icon="💪" />
+          <SectionHeader title="Muskelmasse (kg + %)" icon="💪" />
           {chartData.some(d => d.muscleMass) ? (
             <ResponsiveContainer width="100%" height={200}>
               <ComposedChart data={chartData.filter(d => d.muscleMass)} margin={{ top: 5, right: 10, left: -10, bottom: 0 }}>
                 <CartesianGrid {...gridStyle} />
                 <XAxis dataKey="date" tick={tickStyle} tickLine={false} />
                 <YAxis domain={["auto", "auto"]} tick={tickStyle} width={45} unit=" kg" />
-                <Tooltip {...tt} formatter={(v: number) => [`${v} kg`, "Muskelmasse"]} />
+                <Tooltip content={({ active, payload }) => {
+                  if (!active || !payload?.length) return null;
+                  const d = payload[0]?.payload as { date: string; muscleMass: number | null; musclePct: number | null };
+                  return (
+                    <div style={{ ...tt.contentStyle, padding: "10px 14px", fontSize: 13 }}>
+                      <p style={{ fontWeight: 700, marginBottom: 6, color: "var(--text)" }}>{d.date}</p>
+                      {d.muscleMass != null && <p style={{ color: "var(--blue)" }}>Muskelmasse: {d.muscleMass} kg</p>}
+                      {d.musclePct != null && <p style={{ color: "var(--blue)" }}>Muskelanteil: {d.musclePct} %</p>}
+                    </div>
+                  );
+                }} />
                 <Bar dataKey="muscleMass" maxBarSize={28} radius={[4, 4, 0, 0]} fill="var(--blue)" fillOpacity={0.22} />
                 <Line type="monotone" dataKey="muscleMass" stroke="var(--blue)" strokeWidth={2.5}
                   dot={{ r: 4, fill: "var(--blue)", strokeWidth: 0 }} connectNulls />
@@ -259,22 +271,24 @@ export default function WeightDetail({ logs, allLogs, profile, range, setRange, 
                   <th style={{ textAlign: "right" }}>Gewicht (kg)</th>
                   <th style={{ textAlign: "right" }}>Körperfett %</th>
                   <th style={{ textAlign: "right" }}>Fettmasse (kg)</th>
-                  <th style={{ textAlign: "right" }}>Magermasse (kg)</th>
+                  <th style={{ textAlign: "right" }}>Muskelmasse (kg)</th>
+                  <th style={{ textAlign: "right" }}>Muskelanteil %</th>
                 </tr>
               </thead>
               <tbody>
                 {weightEntries.map(d => {
                   const fatM = d.weight && d.bf ? +(d.weight * d.bf / 100).toFixed(1) : null;
-                  const leanM = d.weight && fatM ? +(d.weight - fatM).toFixed(1) : null;
+                  const muscPct = d.weight && d.muscleMass ? +(d.muscleMass / d.weight * 100).toFixed(1) : null;
                   return (
                     <tr key={d.raw} onDoubleClick={() => onEditDate?.(d.raw)}
                       style={{ cursor: onEditDate ? "pointer" : undefined }}
                       title={onEditDate ? "Doppelklick zum Bearbeiten" : undefined}>
                       <td style={{ color: "var(--text-2)" }}>{fmtFull(d.raw)}</td>
                       <td style={{ textAlign: "right", fontWeight: 700 }}>{d.weight}</td>
-                      <td style={{ textAlign: "right", color: "var(--text-muted)" }}>{d.bf ? `${d.bf} %` : "–"}</td>
-                      <td style={{ textAlign: "right", color: "var(--orange)" }}>{fatM ?? "–"}</td>
-                      <td style={{ textAlign: "right", color: "var(--blue)" }}>{leanM ?? "–"}</td>
+                      <td style={{ textAlign: "right", color: "var(--orange)" }}>{d.bf ? `${d.bf} %` : "–"}</td>
+                      <td style={{ textAlign: "right", color: "var(--orange)" }}>{fatM != null ? `${fatM} kg` : "–"}</td>
+                      <td style={{ textAlign: "right", color: "var(--blue)" }}>{d.muscleMass != null ? `${d.muscleMass} kg` : "–"}</td>
+                      <td style={{ textAlign: "right", color: "var(--blue)" }}>{muscPct != null ? `${muscPct} %` : "–"}</td>
                     </tr>
                   );
                 })}
