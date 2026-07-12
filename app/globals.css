@@ -235,7 +235,7 @@ thead th {
 tbody tr { border-bottom: 1px solid var(--border); transition: background 0.1s; }
 tbody tr:last-child { border-bottom: none; }
 tbody tr:hover { background: var(--surface2); }
-tbody td { padding: 10px 14px; color: var(--text); }
+tbody td { padding: 10px 14px; color: var(--text); white-space: nowrap; }
 
 /* ── Stat-Chip ─────────────────────────────────── */
 .kpi-card {

@@ -208,7 +208,7 @@ function RenderTokens({ tokens }: { tokens: Token[] }) {
           const colWidths = tok.head.length === 3 ? ["18%", "22%", "60%"] : ["40%", "60%"];
           return (
             <div key={idx} style={{ overflowX: "auto", marginBottom: 16 }}>
-              <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13, tableLayout: "fixed" }}>
+              <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
                 <colgroup>
                   {tok.head.map((_, j) => <col key={j} style={{ width: colWidths[j] ?? "auto" }} />)}
                 </colgroup>
@@ -225,7 +225,7 @@ function RenderTokens({ tokens }: { tokens: Token[] }) {
                   {tok.rows.map((row, j) => (
                     <tr key={j} style={{ borderBottom: "1px solid var(--border)" }}>
                       {row.map((cell, k) => (
-                        <td key={k} style={{ padding: "10px 12px", verticalAlign: "top", lineHeight: 1.55, color: k === 0 ? "var(--text)" : "var(--text-2)", fontWeight: k === 0 ? 600 : 400, wordBreak: "break-word" }}>
+                        <td key={k} style={{ padding: "10px 12px", verticalAlign: "top", lineHeight: 1.55, color: k === 0 ? "var(--text)" : "var(--text-2)", fontWeight: k === 0 ? 600 : 400, wordBreak: "break-word", whiteSpace: "normal" }}>
                           {parseInline(cell)}
                         </td>
                       ))}
@@ -484,9 +484,9 @@ function VisualFormeln() {
             <tbody>
               {cat.rows.map((r, j) => (
                 <tr key={j} style={{ borderBottom: j < cat.rows.length - 1 ? "1px solid var(--border)" : "none" }}>
-                  <td style={{ padding: "9px 14px", fontWeight: 600, color: "var(--text)", wordBreak: "break-word" }}>{r.name}</td>
-                  <td style={{ padding: "9px 14px", fontFamily: "monospace", fontSize: 12, color: cat.color, background: "var(--surface2)", wordBreak: "break-word", whiteSpace: "normal" }}>{r.formula}</td>
-                  <td style={{ padding: "9px 14px", fontSize: 11, color: "var(--text-muted)", wordBreak: "break-word" }}>{r.note}</td>
+                  <td style={{ padding: "9px 14px", fontWeight: 600, color: "var(--text)", whiteSpace: "normal", wordBreak: "break-word" }}>{r.name}</td>
+                  <td style={{ padding: "9px 14px", fontFamily: "monospace", fontSize: 12, color: cat.color, background: "var(--surface2)", whiteSpace: "normal", wordBreak: "break-word" }}>{r.formula}</td>
+                  <td style={{ padding: "9px 14px", fontSize: 11, color: "var(--text-muted)", whiteSpace: "normal", wordBreak: "break-word" }}>{r.note}</td>
                 </tr>
               ))}
             </tbody>
@@ -601,9 +601,9 @@ function VisualGlossar() {
             <tbody>
               {cat.terms.map((r, j) => (
                 <tr key={j} style={{ borderBottom: j < cat.terms.length - 1 ? "1px solid var(--border)" : "none" }}>
-                  <td style={{ ...tdCell, fontWeight: 700, color: cat.color, wordBreak: "break-word", minWidth: 80 }}>{r.term}</td>
-                  <td style={{ ...tdCell, fontWeight: 500, color: "var(--text-2)", fontSize: 12, wordBreak: "break-word", minWidth: 100 }}>{r.full || "–"}</td>
-                  <td style={{ ...tdCell, color: "var(--text-muted)", lineHeight: 1.6, wordBreak: "break-word", minWidth: 180 }}>{r.def}</td>
+                  <td style={{ ...tdCell, fontWeight: 700, color: cat.color, whiteSpace: "nowrap" }}>{r.term}</td>
+                  <td style={{ ...tdCell, fontWeight: 500, color: "var(--text-2)", fontSize: 12, whiteSpace: "nowrap" }}>{r.full || "–"}</td>
+                  <td style={{ ...tdCell, color: "var(--text-muted)", lineHeight: 1.6, whiteSpace: "normal", wordBreak: "break-word" }}>{r.def}</td>
                 </tr>
               ))}
             </tbody>

@@ -332,13 +332,13 @@ export default function Dashboard({ logs, allLogs, profile, range, today: todayP
             <h1 style={{ fontSize: 24, fontWeight: 800, letterSpacing: "-0.025em", color: "var(--text)" }}>
               Dashboard
             </h1>
-            <span style={{ fontSize: 13, color: "var(--text-muted)" }}>
+            <span style={{ fontSize: 13, color: "var(--text-muted)", whiteSpace: "nowrap" }}>
               {new Date(range.from + "T12:00:00").toLocaleDateString("de-DE", { day: "2-digit", month: "short" })} –{" "}
               {new Date(range.to + "T12:00:00").toLocaleDateString("de-DE", { day: "2-digit", month: "short", year: "numeric" })}
             </span>
             {streak > 0 && (
               <span title={`${streak} Tag${streak !== 1 ? "e" : ""} in Folge mit Eintrag`}
-                style={{ display: "inline-flex", alignItems: "center", gap: 5, fontSize: 12.5, fontWeight: 700, padding: "3px 12px", borderRadius: 20, background: streak >= 7 ? "var(--teal-dim)" : "var(--surface2)", color: streak >= 7 ? "var(--teal)" : "var(--text-muted)", border: `1px solid ${streak >= 7 ? "var(--teal)" : "var(--border2)"}` }}>
+                style={{ display: "inline-flex", alignItems: "center", gap: 5, fontSize: 12.5, fontWeight: 700, padding: "3px 12px", borderRadius: 20, whiteSpace: "nowrap", background: streak >= 7 ? "var(--teal-dim)" : "var(--surface2)", color: streak >= 7 ? "var(--teal)" : "var(--text-muted)", border: `1px solid ${streak >= 7 ? "var(--teal)" : "var(--border2)"}` }}>
                 🔥 {streak} Tag{streak !== 1 ? "e" : ""} Streak
               </span>
             )}
@@ -364,10 +364,11 @@ export default function Dashboard({ logs, allLogs, profile, range, today: todayP
 
       {/* Heute-Statusleiste — nur Metriken mit gesetztem Ziel */}
       {goalsLoaded && goals.length > 0 && (
-        <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginBottom: 18, alignItems: "center" }}>
-          <span style={{ fontSize: 11, fontWeight: 700, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.08em", marginRight: 2 }}>
+        <div style={{ display: "flex", flexDirection: "column", gap: 6, marginBottom: 18 }}>
+          <span style={{ fontSize: 11, fontWeight: 700, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.08em" }}>
             {selectedDate === todayProp ? "Heute" : new Date(selectedDate + "T12:00:00").toLocaleDateString("de-DE", { weekday: "short", day: "2-digit", month: "2-digit" })}
           </span>
+          <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
           {([
             {
               goalType: "weight",
@@ -422,6 +423,7 @@ export default function Dashboard({ logs, allLogs, profile, range, today: todayP
                 </button>
               );
             })}
+          </div>
         </div>
       )}
 
@@ -710,7 +712,7 @@ export default function Dashboard({ logs, allLogs, profile, range, today: todayP
       </div>
 
       {/* ── Wöchentliche Zusammenfassung + Benchmarks + Notizen ── */}
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 16, marginBottom: 22 }}>
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 22 }}>
 
         {/* Letzte Woche */}
         <div className="card card-pad">
@@ -792,7 +794,7 @@ export default function Dashboard({ logs, allLogs, profile, range, today: todayP
         </div>
 
         {/* Notizen heute */}
-        <div className="card card-pad">
+        <div className="card card-pad" style={{ gridColumn: "1 / -1" }}>
           <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 14 }}>
             <div className="section-head-icon">📝</div>
             <span style={{ fontWeight: 700, fontSize: 14 }}>Notiz heute</span>
