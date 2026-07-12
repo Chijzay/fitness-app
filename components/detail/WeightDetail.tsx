@@ -44,9 +44,9 @@ export default function WeightDetail({ logs, allLogs, profile, range, setRange, 
       bf: logMap[d]?.bodyFatPercent ?? null,
       fatKg: (logMap[d]?.weight && logMap[d]?.bodyFatPercent)
         ? +(logMap[d].weight! * logMap[d].bodyFatPercent! / 100).toFixed(1) : null,
-      muscleMass: logMap[d]?.muscleMass ?? null,
-      musclePct: (logMap[d]?.muscleMass && logMap[d]?.weight)
-        ? +(logMap[d].muscleMass! / logMap[d].weight! * 100).toFixed(1) : null,
+      musclePct: logMap[d]?.muscleMass ?? null,
+      muscleMassKg: (logMap[d]?.muscleMass && logMap[d]?.weight)
+        ? +(logMap[d].weight! * logMap[d].muscleMass! / 100).toFixed(1) : null,
       weekAvg: isMonday && weekAvg ? +(weekAvg.sum / weekAvg.count).toFixed(1) : null,
     };
   });
@@ -198,34 +198,34 @@ export default function WeightDetail({ logs, allLogs, profile, range, setRange, 
           )}
         </div>
 
-        {/* Muskelmasse als Balken + Linie — Tooltip zeigt kg + % */}
+        {/* Muskelmasse als Balken + Linie — Y-Achse kg, Tooltip zeigt % + kg */}
         <div className="card card-pad">
-          <SectionHeader title="Muskelmasse (kg + %)" icon="💪" />
-          {chartData.some(d => d.muscleMass) ? (
+          <SectionHeader title="Muskelmasse (% + kg)" icon="💪" />
+          {chartData.some(d => d.muscleMassKg) ? (
             <ResponsiveContainer width="100%" height={200}>
-              <ComposedChart data={chartData.filter(d => d.muscleMass)} margin={{ top: 5, right: 10, left: -10, bottom: 0 }}>
+              <ComposedChart data={chartData.filter(d => d.muscleMassKg)} margin={{ top: 5, right: 10, left: -10, bottom: 0 }}>
                 <CartesianGrid {...gridStyle} />
                 <XAxis dataKey="date" tick={tickStyle} tickLine={false} />
                 <YAxis domain={["auto", "auto"]} tick={tickStyle} width={45} unit=" kg" />
                 <Tooltip content={({ active, payload }) => {
                   if (!active || !payload?.length) return null;
-                  const d = payload[0]?.payload as { date: string; muscleMass: number | null; musclePct: number | null };
+                  const d = payload[0]?.payload as { date: string; musclePct: number | null; muscleMassKg: number | null };
                   return (
                     <div style={{ ...tt.contentStyle, padding: "10px 14px", fontSize: 13 }}>
                       <p style={{ fontWeight: 700, marginBottom: 6, color: "var(--text)" }}>{d.date}</p>
-                      {d.muscleMass != null && <p style={{ color: "var(--blue)" }}>Muskelmasse: {d.muscleMass} kg</p>}
                       {d.musclePct != null && <p style={{ color: "var(--blue)" }}>Muskelanteil: {d.musclePct} %</p>}
+                      {d.muscleMassKg != null && <p style={{ color: "var(--blue)" }}>Muskelmasse: {d.muscleMassKg} kg</p>}
                     </div>
                   );
                 }} />
-                <Bar dataKey="muscleMass" maxBarSize={28} radius={[4, 4, 0, 0]} fill="var(--blue)" fillOpacity={0.22} />
-                <Line type="monotone" dataKey="muscleMass" stroke="var(--blue)" strokeWidth={2.5}
+                <Bar dataKey="muscleMassKg" maxBarSize={28} radius={[4, 4, 0, 0]} fill="var(--blue)" fillOpacity={0.22} />
+                <Line type="monotone" dataKey="muscleMassKg" stroke="var(--blue)" strokeWidth={2.5}
                   dot={{ r: 4, fill: "var(--blue)", strokeWidth: 0 }} connectNulls />
               </ComposedChart>
             </ResponsiveContainer>
           ) : (
             <div style={{ padding: "30px 0", color: "var(--text-muted)", fontSize: 13 }}>
-              Keine Muskelmasse manuell eingetragen.<br />
+              Kein Muskelanteil manuell eingetragen.<br />
               <span style={{ fontSize: 12 }}>Magermasse (geschätzt): {leanMass ?? "–"} kg</span>
             </div>
           )}
@@ -271,14 +271,14 @@ export default function WeightDetail({ logs, allLogs, profile, range, setRange, 
                   <th style={{ textAlign: "right" }}>Gewicht (kg)</th>
                   <th style={{ textAlign: "right" }}>Körperfett %</th>
                   <th style={{ textAlign: "right" }}>Fettmasse (kg)</th>
-                  <th style={{ textAlign: "right" }}>Muskelmasse (kg)</th>
                   <th style={{ textAlign: "right" }}>Muskelanteil %</th>
+                  <th style={{ textAlign: "right" }}>Muskelmasse (kg)</th>
                 </tr>
               </thead>
               <tbody>
                 {weightEntries.map(d => {
                   const fatM = d.weight && d.bf ? +(d.weight * d.bf / 100).toFixed(1) : null;
-                  const muscPct = d.weight && d.muscleMass ? +(d.muscleMass / d.weight * 100).toFixed(1) : null;
+                  const muscKg = d.weight && d.muscleMass ? +(d.weight * d.muscleMass / 100).toFixed(1) : null;
                   return (
                     <tr key={d.raw} onDoubleClick={() => onEditDate?.(d.raw)}
                       style={{ cursor: onEditDate ? "pointer" : undefined }}
@@ -287,8 +287,8 @@ export default function WeightDetail({ logs, allLogs, profile, range, setRange, 
                       <td style={{ textAlign: "right", fontWeight: 700 }}>{d.weight}</td>
                       <td style={{ textAlign: "right", color: "var(--orange)" }}>{d.bf ? `${d.bf} %` : "–"}</td>
                       <td style={{ textAlign: "right", color: "var(--orange)" }}>{fatM != null ? `${fatM} kg` : "–"}</td>
-                      <td style={{ textAlign: "right", color: "var(--blue)" }}>{d.muscleMass != null ? `${d.muscleMass} kg` : "–"}</td>
-                      <td style={{ textAlign: "right", color: "var(--blue)" }}>{muscPct != null ? `${muscPct} %` : "–"}</td>
+                      <td style={{ textAlign: "right", color: "var(--blue)" }}>{d.muscleMass != null ? `${d.muscleMass} %` : "–"}</td>
+                      <td style={{ textAlign: "right", color: "var(--blue)" }}>{muscKg != null ? `${muscKg} kg` : "–"}</td>
                     </tr>
                   );
                 })}

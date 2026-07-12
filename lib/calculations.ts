@@ -24,11 +24,11 @@ export function calcTDEE(bmr: number, activityLevel: number): number {
   return bmr * activityLevel;
 }
 
-// Schätzung Muskelmasse aus Körpergewicht und Körperfett (Skelettmuskel ≈ 60% LBM)
+// Schätzung Muskelanteil in % aus Körpergewicht und Körperfett (Skelettmuskel ≈ 60% LBM)
 export function estimateMuscleMass(weightKg: number, bodyFatPercent: number, gender: string): number {
-  const leanMass = weightKg * (1 - bodyFatPercent / 100);
+  const lbmPct = 1 - bodyFatPercent / 100;
   const factor = gender === "male" ? 0.60 : 0.55;
-  return Math.round(leanMass * factor * 10) / 10;
+  return Math.round(lbmPct * factor * 100 * 10) / 10; // gibt % zurück
 }
 
 // Schätzung Körperfett% aus BMI (Deurenberg-Formel)

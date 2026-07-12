@@ -451,7 +451,7 @@ export default function QuickEntry({
             </Field>
             <Field label={
               <span style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                Muskelmasse (kg)
+                Muskelmasse %
                 <Toggle active={form.muscleMassManual} onClick={() => set("muscleMassManual", !form.muscleMassManual)}>
                   {form.muscleMassManual ? "Manuell" : "Auto"}
                 </Toggle>
@@ -461,11 +461,11 @@ export default function QuickEntry({
                 <button type="button"
                   onClick={() => { set("muscleMass", String(Math.max(0, parseFloat(form.muscleMass || "0") - 0.1).toFixed(1))); set("muscleMassManual", true); }}
                   style={{ padding: "6px 11px", borderRadius: 6, border: "1px solid var(--border2)", background: "var(--surface2)", cursor: "pointer", fontSize: 15, fontWeight: 700, color: "var(--text-2)", flexShrink: 0 }}>−</button>
-                <input type="number" min="0" step="0.1" value={form.muscleMass}
+                <input type="number" min="0" max="70" step="0.1" value={form.muscleMass}
                   onChange={e => { sp("muscleMass")(e); set("muscleMassManual", true); }}
-                  placeholder={form.muscleMassManual ? "z.B. 38,0" : "wird geschätzt"} style={{ flex: 1 }} />
+                  placeholder={form.muscleMassManual ? "z.B. 42,0" : "wird geschätzt"} style={{ flex: 1 }} />
                 <button type="button"
-                  onClick={() => { set("muscleMass", String((parseFloat(form.muscleMass || "0") + 0.1).toFixed(1))); set("muscleMassManual", true); }}
+                  onClick={() => { set("muscleMass", String(Math.min(70, parseFloat(form.muscleMass || "0") + 0.1).toFixed(1))); set("muscleMassManual", true); }}
                   style={{ padding: "6px 11px", borderRadius: 6, border: "1px solid var(--border2)", background: "var(--surface2)", cursor: "pointer", fontSize: 15, fontWeight: 700, color: "var(--text-2)", flexShrink: 0 }}>+</button>
               </div>
             </Field>
