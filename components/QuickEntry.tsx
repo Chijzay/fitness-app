@@ -703,7 +703,7 @@ export default function QuickEntry({
 
         {/* Körpermaße */}
         <Section icon="📏" title="Körpermaße (cm)">
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 12 }}>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(160px, 1fr))", gap: 12 }}>
             {([
               { label: "Taille", key: "waist", placeholder: "85" },
               { label: "Bauch", key: "belly", placeholder: "92" },

@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 import { useEffect, useState, useMemo } from "react";
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, BarChart, Bar } from "recharts";
 import { RangeSelector, SectionHeader, PageHeader, tickStyle, gridStyle, tooltipStyle } from "@/lib/chartHelpers";
@@ -214,7 +214,7 @@ export default function WorkoutDetail({
                   <div>
                     <div style={{ fontSize: 11, color: "var(--text-muted)", fontWeight: 700, textTransform: "uppercase", marginBottom: 8 }}>Maximales Gewicht (kg)</div>
                     <ResponsiveContainer width="100%" height={160}>
-                      <LineChart data={progressionData} margin={{ top: 4, right: 8, left: -16, bottom: 0 }}>
+                      <LineChart data={progressionData} margin={{ top: 4, right: 8, left: 0, bottom: 0 }}>
                         <CartesianGrid {...gridStyle} />
                         <XAxis dataKey="date" tick={tickStyle} tickLine={false} />
                         <YAxis tick={tickStyle} unit=" kg" />
@@ -228,7 +228,7 @@ export default function WorkoutDetail({
                   <div>
                     <div style={{ fontSize: 11, color: "var(--text-muted)", fontWeight: 700, textTransform: "uppercase", marginBottom: 8 }}>Volumen (kg × Wdh.)</div>
                     <ResponsiveContainer width="100%" height={160}>
-                      <LineChart data={progressionData} margin={{ top: 4, right: 8, left: -8, bottom: 0 }}>
+                      <LineChart data={progressionData} margin={{ top: 4, right: 8, left: 0, bottom: 0 }}>
                         <CartesianGrid {...gridStyle} />
                         <XAxis dataKey="date" tick={tickStyle} tickLine={false} />
                         <YAxis tick={tickStyle} unit=" kg" />
@@ -266,7 +266,7 @@ export default function WorkoutDetail({
             <div className="card card-pad">
               <SectionHeader title="Volumen pro Session" icon="🏗️" />
               <ResponsiveContainer width="100%" height={180}>
-                <BarChart data={volumePerSession} margin={{ top: 5, right: 10, left: -10, bottom: 0 }}>
+                <BarChart data={volumePerSession} margin={{ top: 5, right: 10, left: 5, bottom: 0 }}>
                   <CartesianGrid {...gridStyle} />
                   <XAxis dataKey="date" tick={tickStyle} tickLine={false} />
                   <YAxis tick={tickStyle} unit=" kg" width={52} />

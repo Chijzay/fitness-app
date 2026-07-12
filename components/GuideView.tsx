@@ -472,7 +472,8 @@ function VisualFormeln() {
             <span>{cat.icon}</span>
             <span style={{ fontSize: 13, fontWeight: 700, color: cat.color }}>{cat.name}</span>
           </div>
-          <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
+          <div style={{ overflowX: "auto" }}>
+          <table style={{ width: "100%", minWidth: 400, borderCollapse: "collapse", fontSize: 13 }}>
             <thead>
               <tr>
                 <th style={{ ...th, width: "28%" }}>Name</th>
@@ -483,13 +484,14 @@ function VisualFormeln() {
             <tbody>
               {cat.rows.map((r, j) => (
                 <tr key={j} style={{ borderBottom: j < cat.rows.length - 1 ? "1px solid var(--border)" : "none" }}>
-                  <td style={{ padding: "9px 14px", fontWeight: 600, color: "var(--text)" }}>{r.name}</td>
-                  <td style={{ padding: "9px 14px", fontFamily: "monospace", fontSize: 12, color: cat.color, background: "var(--surface2)" }}>{r.formula}</td>
-                  <td style={{ padding: "9px 14px", fontSize: 11, color: "var(--text-muted)" }}>{r.note}</td>
+                  <td style={{ padding: "9px 14px", fontWeight: 600, color: "var(--text)", wordBreak: "break-word" }}>{r.name}</td>
+                  <td style={{ padding: "9px 14px", fontFamily: "monospace", fontSize: 12, color: cat.color, background: "var(--surface2)", wordBreak: "break-word", whiteSpace: "normal" }}>{r.formula}</td>
+                  <td style={{ padding: "9px 14px", fontSize: 11, color: "var(--text-muted)", wordBreak: "break-word" }}>{r.note}</td>
                 </tr>
               ))}
             </tbody>
           </table>
+          </div>
         </div>
       ))}
     </div>
@@ -587,12 +589,8 @@ function VisualGlossar() {
             <span>{cat.icon}</span>
             <span style={{ fontSize: 13, fontWeight: 700, color: cat.color }}>{cat.name}</span>
           </div>
-          <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13, tableLayout: "fixed" }}>
-            <colgroup>
-              <col style={{ width: "26%" }} />
-              <col style={{ width: "20%" }} />
-              <col style={{ width: "54%" }} />
-            </colgroup>
+          <div style={{ overflowX: "auto" }}>
+          <table style={{ width: "100%", minWidth: 480, borderCollapse: "collapse", fontSize: 13 }}>
             <thead>
               <tr>
                 {["Kürzel", "Ausgeschrieben", "Bedeutung"].map(h => (
@@ -603,13 +601,14 @@ function VisualGlossar() {
             <tbody>
               {cat.terms.map((r, j) => (
                 <tr key={j} style={{ borderBottom: j < cat.terms.length - 1 ? "1px solid var(--border)" : "none" }}>
-                  <td style={{ ...tdCell, fontWeight: 700, color: cat.color, wordBreak: "break-word" }}>{r.term}</td>
-                  <td style={{ ...tdCell, fontWeight: 500, color: "var(--text-2)", fontSize: 12, wordBreak: "break-word" }}>{r.full || "–"}</td>
-                  <td style={{ ...tdCell, color: "var(--text-muted)", lineHeight: 1.6, wordBreak: "break-word" }}>{r.def}</td>
+                  <td style={{ ...tdCell, fontWeight: 700, color: cat.color, wordBreak: "break-word", minWidth: 80 }}>{r.term}</td>
+                  <td style={{ ...tdCell, fontWeight: 500, color: "var(--text-2)", fontSize: 12, wordBreak: "break-word", minWidth: 100 }}>{r.full || "–"}</td>
+                  <td style={{ ...tdCell, color: "var(--text-muted)", lineHeight: 1.6, wordBreak: "break-word", minWidth: 180 }}>{r.def}</td>
                 </tr>
               ))}
             </tbody>
           </table>
+          </div>
         </div>
       ))}
     </div>

@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 import { useMemo } from "react";
 import { BarChart, Bar, ComposedChart, LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, ReferenceLine, Cell } from "recharts";
 import type { DailyLog, DateRange } from "@/app/page";
@@ -113,7 +113,7 @@ export default function SleepDetail({ logs, allLogs, range, setRange, onEditDate
       <div className="card card-pad" style={{ marginBottom: 16 }}>
         <SectionHeader title="Schlafdauer (Nächte)" icon="📈" />
         <ResponsiveContainer width="100%" height={240}>
-          <BarChart data={sleepData} margin={{ top: 5, right: 10, left: -10, bottom: 0 }} barCategoryGap="25%">
+          <BarChart data={sleepData} margin={{ top: 5, right: 10, left: 5, bottom: 0 }} barCategoryGap="25%">
             <CartesianGrid {...gridStyle} />
             <XAxis dataKey="date" tick={tickStyle} tickLine={false} />
             <YAxis tick={tickStyle} width={42} tickFormatter={v => fmtHours(v)} />
@@ -174,7 +174,7 @@ export default function SleepDetail({ logs, allLogs, range, setRange, onEditDate
         <div className="card card-pad">
           <SectionHeader title="Schlaf-Score Verlauf" icon="⭐" />
           <ResponsiveContainer width="100%" height={180}>
-            <LineChart data={sleepData.filter(d => d.score != null)} margin={{ top: 5, right: 10, left: -10, bottom: 0 }}>
+            <LineChart data={sleepData.filter(d => d.score != null)} margin={{ top: 5, right: 10, left: 5, bottom: 0 }}>
               <CartesianGrid {...gridStyle} />
               <XAxis dataKey="date" tick={tickStyle} tickLine={false} />
               <YAxis domain={[0, 100]} tick={tickStyle} width={40} />

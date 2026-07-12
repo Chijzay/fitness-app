@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 import { useEffect, useState, useMemo } from "react";
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, Legend } from "recharts";
 import { RangeSelector, KpiCard, SectionHeader, PageHeader, tickStyle, gridStyle, tooltipStyle } from "@/lib/chartHelpers";
@@ -126,7 +126,7 @@ export default function MeasurementsDetail({
               ))}
             </div>
             <ResponsiveContainer width="100%" height={240}>
-              <LineChart data={chartData} margin={{ top: 5, right: 16, left: -10, bottom: 0 }}>
+              <LineChart data={chartData} margin={{ top: 5, right: 16, left: 5, bottom: 0 }}>
                 <CartesianGrid {...gridStyle} />
                 <XAxis dataKey="date" tick={tickStyle} tickLine={false} />
                 <YAxis tick={tickStyle} unit=" cm" width={52} domain={["auto", "auto"]} />

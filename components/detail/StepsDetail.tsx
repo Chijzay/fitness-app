@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 import { useMemo } from "react";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell, CartesianGrid, ReferenceLine, LineChart, Line } from "recharts";
 import type { DailyLog, DateRange } from "@/app/page";
@@ -87,7 +87,7 @@ export default function StepsDetail({ logs, allLogs, range, setRange, onEditDate
       <div className="card card-pad" style={{ marginBottom: 16 }}>
         <SectionHeader title="Tägliche Schritte" icon="📈" />
         <ResponsiveContainer width="100%" height={220}>
-          <BarChart data={stepsData} margin={{ top: 5, right: 10, left: -10, bottom: 0 }}>
+          <BarChart data={stepsData} margin={{ top: 5, right: 10, left: 5, bottom: 0 }}>
             <CartesianGrid {...gridStyle} />
             <XAxis dataKey="date" tick={tickStyle} tickLine={false} />
             <YAxis tick={tickStyle} width={50} />
@@ -107,7 +107,7 @@ export default function StepsDetail({ logs, allLogs, range, setRange, onEditDate
           <SectionHeader title="Wöchentliche Gesamtschritte" icon="📅" />
           {weeklyData.length > 0 ? (
             <ResponsiveContainer width="100%" height={180}>
-              <BarChart data={weeklyData} margin={{ top: 5, right: 10, left: -10, bottom: 0 }}>
+              <BarChart data={weeklyData} margin={{ top: 5, right: 10, left: 5, bottom: 0 }}>
                 <CartesianGrid {...gridStyle} />
                 <XAxis dataKey="week" tick={tickStyle} tickLine={false} />
                 <YAxis tick={tickStyle} width={55} />

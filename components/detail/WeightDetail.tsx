@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 import { useMemo } from "react";
 import { ComposedChart, AreaChart, Area, Bar, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, ReferenceLine, Cell } from "recharts";
 import type { DailyLog, DateRange, Profile } from "@/app/page";
@@ -128,7 +128,7 @@ export default function WeightDetail({ logs, allLogs, profile, range, setRange, 
       <div className="card card-pad" style={{ marginBottom: 16 }}>
         <SectionHeader title="Gewicht: Tagesverlauf (Linie) + Wochenavg (Balken)" icon="📊" />
         <ResponsiveContainer width="100%" height={240}>
-          <ComposedChart data={chartData} margin={{ top: 5, right: 15, left: -10, bottom: 0 }}>
+          <ComposedChart data={chartData} margin={{ top: 5, right: 15, left: 5, bottom: 0 }}>
             <defs>
               <linearGradient id="wGrad" x1="0" y1="0" x2="0" y2="1">
                 <stop offset="5%" stopColor="var(--teal)" stopOpacity={0.3} />
@@ -168,7 +168,7 @@ export default function WeightDetail({ logs, allLogs, profile, range, setRange, 
           <SectionHeader title="Körperfett (% + kg)" icon="🏃" />
           {chartData.some(d => d.fatKg) ? (
             <ResponsiveContainer width="100%" height={200}>
-              <ComposedChart data={chartData.filter(d => d.fatKg)} margin={{ top: 5, right: 10, left: -10, bottom: 0 }}>
+              <ComposedChart data={chartData.filter(d => d.fatKg)} margin={{ top: 5, right: 10, left: 5, bottom: 0 }}>
                 <CartesianGrid {...gridStyle} />
                 <XAxis dataKey="date" tick={tickStyle} tickLine={false} />
                 <YAxis domain={["auto", "auto"]} tick={tickStyle} width={45} unit=" kg" />
@@ -203,7 +203,7 @@ export default function WeightDetail({ logs, allLogs, profile, range, setRange, 
           <SectionHeader title="Muskelmasse (% + kg)" icon="💪" />
           {chartData.some(d => d.muscleMassKg) ? (
             <ResponsiveContainer width="100%" height={200}>
-              <ComposedChart data={chartData.filter(d => d.muscleMassKg)} margin={{ top: 5, right: 10, left: -10, bottom: 0 }}>
+              <ComposedChart data={chartData.filter(d => d.muscleMassKg && d.muscleMassKg > 10)} margin={{ top: 5, right: 10, left: 5, bottom: 0 }}>
                 <CartesianGrid {...gridStyle} />
                 <XAxis dataKey="date" tick={tickStyle} tickLine={false} />
                 <YAxis domain={["auto", "auto"]} tick={tickStyle} width={45} unit=" kg" />

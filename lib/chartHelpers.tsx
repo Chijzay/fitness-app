@@ -30,14 +30,16 @@ export function RangeSelector({ range, setRange }: { range: DateRange; setRange:
     setRange({ from: dateStr(from), to: dateStr(to) });
   }
   return (
-    <div style={{ display: "flex", alignItems: "center", gap: 5, flexWrap: "wrap" }}>
-      {PRESETS_DEF.map(p => (
-        <button key={p.days} className={`btn btn-xs ${days === p.days ? "btn-primary" : "btn-secondary"}`}
-          onClick={() => setPreset(p.days)}>{p.label}</button>
-      ))}
-      <div className="range-date-inputs" style={{ display: "flex", alignItems: "center", gap: 5, marginLeft: 4 }}>
-        <input type="date" value={range.from} onChange={e => setRange({ ...range, from: e.target.value })
-        } style={{ width: 130, fontSize: 12 }} />
+    <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+      <div style={{ display: "flex", gap: 5, flexWrap: "wrap" }}>
+        {PRESETS_DEF.map(p => (
+          <button key={p.days} className={`btn btn-xs ${days === p.days ? "btn-primary" : "btn-secondary"}`}
+            onClick={() => setPreset(p.days)}>{p.label}</button>
+        ))}
+      </div>
+      <div style={{ display: "flex", alignItems: "center", gap: 5 }}>
+        <input type="date" value={range.from} onChange={e => setRange({ ...range, from: e.target.value })}
+          style={{ width: 130, fontSize: 12 }} />
         <span style={{ color: "var(--text-muted)" }}>–</span>
         <input type="date" value={range.to} onChange={e => setRange({ ...range, to: e.target.value })}
           style={{ width: 130, fontSize: 12 }} />

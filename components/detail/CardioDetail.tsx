@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 import { useEffect, useState, useMemo } from "react";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, Cell, Legend } from "recharts";
 import { RangeSelector, KpiCard, SectionHeader, PageHeader, tickStyle, gridStyle, tooltipStyle } from "@/lib/chartHelpers";
@@ -113,7 +113,7 @@ export default function CardioDetail({
             <div className="card card-pad">
               <SectionHeader title="Strecke pro Session (km)" icon="📍" />
               <ResponsiveContainer width="100%" height={200}>
-                <BarChart data={sessionChart} margin={{ top: 5, right: 10, left: -10, bottom: 0 }}>
+                <BarChart data={sessionChart} margin={{ top: 5, right: 10, left: 5, bottom: 0 }}>
                   <CartesianGrid {...gridStyle} />
                   <XAxis dataKey="date" tick={tickStyle} tickLine={false} />
                   <YAxis tick={tickStyle} unit=" km" width={44} />
@@ -131,7 +131,7 @@ export default function CardioDetail({
             <div className="card card-pad">
               <SectionHeader title="Kalorienverbrauch pro Session" icon="🔥" />
               <ResponsiveContainer width="100%" height={200}>
-                <BarChart data={sessionChart} margin={{ top: 5, right: 10, left: -10, bottom: 0 }}>
+                <BarChart data={sessionChart} margin={{ top: 5, right: 10, left: 5, bottom: 0 }}>
                   <CartesianGrid {...gridStyle} />
                   <XAxis dataKey="date" tick={tickStyle} tickLine={false} />
                   <YAxis tick={tickStyle} unit=" kcal" width={52} />

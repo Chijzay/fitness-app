@@ -1,4 +1,4 @@
-"use client";
+﻿﻿"use client";
 import { useEffect, useMemo, useState } from "react";
 import { AreaChart, Area, BarChart, LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, ReferenceLine, ComposedChart, Bar, Cell } from "recharts";
 import type { DailyLog, DateRange, Profile } from "@/app/page";
@@ -122,7 +122,7 @@ export default function DietProgress({ allLogs, profile, range, setRange, onEdit
     estimatedWeeks = Math.ceil((currentWeight - goalWeight) / Math.abs(weeklyTrend));
     const d = new Date();
     d.setDate(d.getDate() + estimatedWeeks * 7);
-    estimatedDate = d.toLocaleDateString("de-DE", { day: "2-digit", month: "short", year: "2-digit" });
+    estimatedDate = d.toLocaleDateString("de-DE", { day: "numeric", month: "long", year: "numeric" });
   }
 
   const kcalLogs = phaseLogs.filter(l => l.kcalConsumed);
@@ -147,7 +147,7 @@ export default function DietProgress({ allLogs, profile, range, setRange, onEdit
     estimatedWeeks = Math.ceil((currentWeight - goalWeight) / kgPerWeek);
     const d = new Date();
     d.setDate(d.getDate() + estimatedWeeks * 7);
-    estimatedDate = d.toLocaleDateString("de-DE", { day: "2-digit", month: "short", year: "2-digit" });
+    estimatedDate = d.toLocaleDateString("de-DE", { day: "numeric", month: "long", year: "numeric" });
   }
 
   const avgDeficit = avgDeficitEarly;
@@ -363,7 +363,7 @@ export default function DietProgress({ allLogs, profile, range, setRange, onEdit
       <div className="card card-pad" style={{ marginBottom: 16 }}>
         <SectionHeader title="Gewichtsverlauf mit Ziel" icon="📈" />
         <ResponsiveContainer width="100%" height={240}>
-          <ComposedChart data={chartData} margin={{ top: 5, right: 20, left: -10, bottom: 0 }}>
+          <ComposedChart data={chartData} margin={{ top: 5, right: 20, left: 5, bottom: 0 }}>
             <defs>
               <linearGradient id="weightGrad" x1="0" y1="0" x2="0" y2="1">
                 <stop offset="5%" stopColor="var(--teal)" stopOpacity={0.25} />
@@ -389,7 +389,7 @@ export default function DietProgress({ allLogs, profile, range, setRange, onEdit
         <div className="card card-pad">
           <SectionHeader title="Tägliche Kalorienbilanz" icon="🔥" />
           <ResponsiveContainer width="100%" height={200}>
-            <BarChart data={kcalData} margin={{ top: 5, right: 10, left: -15, bottom: 0 }}>
+            <BarChart data={kcalData} margin={{ top: 5, right: 10, left: 5, bottom: 0 }}>
               <CartesianGrid {...gridStyle} />
               <XAxis dataKey="date" tick={tickStyle} tickLine={false} />
               <YAxis tick={tickStyle} width={55} />
