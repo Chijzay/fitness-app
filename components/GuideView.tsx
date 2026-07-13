@@ -1,5 +1,16 @@
 "use client";
 import { useEffect, useState, useRef } from "react";
+import katex from "katex";
+
+function Tex({ children, display = false }: { children: string; display?: boolean }) {
+  let html = "";
+  try {
+    html = katex.renderToString(children, { throwOnError: false, displayMode: display });
+  } catch {
+    html = children;
+  }
+  return <span dangerouslySetInnerHTML={{ __html: html }} />;
+}
 
 // ── Minimal Markdown → React renderer ─────────────────────────────────────────
 
@@ -417,60 +428,60 @@ function VisualFormeln() {
     {
       name: "Energie & Verbrauch", color: "var(--teal)", icon: "🔥",
       rows: [
-        { name: "BMR Männer", formula: "10 × kg + 6,25 × cm − 5 × Alter + 5", note: "Mifflin-St-Jeor" },
-        { name: "BMR Frauen", formula: "10 × kg + 6,25 × cm − 5 × Alter − 161", note: "Mifflin-St-Jeor" },
-        { name: "TDEE", formula: "BMR × Aktivitätsfaktor", note: "1,2 / 1,375 / 1,55 / 1,725 / 1,9" },
-        { name: "Tagesdefizit", formula: "Gegessen − TDEE − Sport-kcal", note: "negativ = Defizit" },
+        { name: "BMR Männer", formula: "10m + 6{,}25h - 5a + 5", note: "Mifflin-St-Jeor" },
+        { name: "BMR Frauen", formula: "10m + 6{,}25h - 5a - 161", note: "Mifflin-St-Jeor" },
+        { name: "TDEE", formula: "\\text{BMR} \\times \\text{PAL}", note: "PAL: 1,2 / 1,375 / 1,55 / 1,725 / 1,9" },
+        { name: "Tagesdefizit", formula: "E_{\\text{ges}} - \\text{TDEE} - E_{\\text{Sport}}", note: "negativ = Defizit" },
       ],
     },
     {
       name: "Körperzusammensetzung", color: "var(--blue)", icon: "📊",
       rows: [
-        { name: "BMI", formula: "Gewicht (kg) ÷ Größe (m)²", note: "" },
-        { name: "Körperfett % (Deurenberg)", formula: "1,2 × BMI + 0,23 × Alter − 10,8 × G − 5,4", note: "G: 1 = Mann, 0 = Frau" },
-        { name: "Magergewicht (LBM)", formula: "Gewicht × (1 − KF% ÷ 100)", note: "" },
-        { name: "Muskelmasse (Skelett)", formula: "LBM × 0,60 ♂  ·  LBM × 0,55 ♀", note: "Schätzwert" },
+        { name: "BMI", formula: "\\dfrac{m\\,[\\text{kg}]}{h^2\\,[\\text{m}^2]}", note: "Normalbereich 18,5–24,9" },
+        { name: "Körperfett % (Deurenberg)", formula: "1{,}2 \\cdot \\text{BMI} + 0{,}23 \\cdot a - 10{,}8 \\cdot G - 5{,}4", note: "G = 1 ♂, G = 0 ♀" },
+        { name: "Magergewicht (LBM)", formula: "m \\cdot \\left(1 - \\tfrac{\\text{KF\\%}}{100}\\right)", note: "" },
+        { name: "Muskelmasse (Skelett)", formula: "\\text{LBM} \\times 0{,}60\\;(♂)\\;/\\;0{,}55\\;(♀)", note: "Schätzwert" },
       ],
     },
     {
       name: "Ernährungsziele", color: "var(--green)", icon: "🥩",
       rows: [
-        { name: "Protein (Minimum Diät)", formula: "≥ 1,6 g × Körpergewicht (kg)", note: "Muskelschutz" },
-        { name: "Protein (Optimum)", formula: "2,0–2,2 g × Körpergewicht (kg)", note: "" },
-        { name: "Wasserempfehlung", formula: "35 ml × Körpergewicht (kg)", note: "Minimum 1.500 ml" },
-        { name: "Thermischer Effekt (TEF)", formula: "Protein ~25 %  ·  KH ~6 %  ·  Fett ~2 %", note: "der jeweil. Kalorien" },
+        { name: "Protein (Minimum Diät)", formula: "\\geq 1{,}6\\,\\text{g} \\times m\\,[\\text{kg}]", note: "Muskelschutz" },
+        { name: "Protein (Optimum)", formula: "2{,}0\\text{–}2{,}2\\,\\text{g} \\times m\\,[\\text{kg}]", note: "" },
+        { name: "Wasserempfehlung", formula: "35\\,\\text{ml} \\times m\\,[\\text{kg}]", note: "Minimum 1.500 ml" },
+        { name: "Thermischer Effekt (TEF)", formula: "\\text{P} {\\approx}25\\%\\;\\cdot\\;\\text{KH} {\\approx}6\\%\\;\\cdot\\;\\text{F} {\\approx}2\\%", note: "der jeweil. Kalorien" },
       ],
     },
     {
       name: "Fortschritt & Ziele", color: "var(--orange)", icon: "📉",
       rows: [
-        { name: "Max. Defizit / Tag", formula: "Fettmasse (kg) × 70 kcal", note: "nach Alpert" },
-        { name: "Max. Abnahme / Woche", formula: "0,7 % × Körpergewicht (kg)", note: "Muskelschutz" },
-        { name: "Fettverlust (kcal → kg)", formula: "Defizit (kcal) ÷ 7.700", note: "≈ 1 kg Körperfett" },
-        { name: "Zielgewicht (Broca)", formula: "Körpergröße (cm) − 100", note: "grober Richtwert" },
-        { name: "Wochen bis Ziel", formula: "Differenz (kg) ÷ (Defizit/Tag × 7 ÷ 7.700)", note: "bei konstantem Defizit" },
-        { name: "Tagesdefizit für Ziel", formula: "Zieldifferenz (kg) × 7.700 ÷ Wochen ÷ 7", note: "Umkehrrechnung" },
+        { name: "Max. Defizit / Tag", formula: "m_{\\text{Fett}}\\,[\\text{kg}] \\times 70\\,\\text{kcal}", note: "nach Alpert" },
+        { name: "Max. Abnahme / Woche", formula: "0{,}7\\% \\times m\\,[\\text{kg}]", note: "Muskelschutz" },
+        { name: "Fettverlust (kcal → kg)", formula: "\\dfrac{\\Delta E\\,[\\text{kcal}]}{7700}", note: "≈ 1 kg Körperfett" },
+        { name: "Zielgewicht (Broca)", formula: "h\\,[\\text{cm}] - 100", note: "grober Richtwert" },
+        { name: "Wochen bis Ziel", formula: "\\dfrac{\\Delta m}{\\text{Defizit/Tag} \\times 7 \\div 7700}", note: "bei konstantem Defizit" },
+        { name: "Tagesdefizit für Ziel", formula: "\\dfrac{\\Delta m \\times 7700}{\\text{Wochen} \\times 7}", note: "Umkehrrechnung" },
       ],
     },
     {
       name: "Muskelaufbau", color: "var(--purple)", icon: "💪",
       rows: [
-        { name: "Max. Muskelzuwachs / Monat", formula: "0,5–1,0 % × Körpergewicht (kg)", note: "Anfänger; Fortge. ~0,25 %" },
-        { name: "Kalorienüberschuss (Lean Bulk)", formula: "TDEE + 200–300 kcal", note: "minimiert Fettansatz" },
-        { name: "Protein (Bulk)", formula: "1,6–2,2 g × Körpergewicht (kg)", note: "gleich wie Diät" },
-        { name: "Fettansatz-Verhältnis", formula: "≈ 1 kg Muskel : 0,5 kg Fett", note: "bei moderatem Überschuss" },
-        { name: "Creatine-Ladephase", formula: "4 × 5 g/Tag × 5–7 Tage", note: "optional, dann 3–5 g/Tag" },
+        { name: "Max. Muskelzuwachs / Monat", formula: "0{,}5\\text{–}1{,}0\\% \\times m\\,[\\text{kg}]", note: "Anfänger; Fortge. ~0,25 %" },
+        { name: "Kalorienüberschuss (Lean Bulk)", formula: "\\text{TDEE} + 200\\text{–}300\\,\\text{kcal}", note: "minimiert Fettansatz" },
+        { name: "Protein (Bulk)", formula: "1{,}6\\text{–}2{,}2\\,\\text{g} \\times m\\,[\\text{kg}]", note: "gleich wie Diät" },
+        { name: "Fettansatz-Verhältnis", formula: "\\approx 1\\,\\text{kg Muskel} : 0{,}5\\,\\text{kg Fett}", note: "bei moderatem Überschuss" },
+        { name: "Creatine-Ladephase", formula: "4 \\times 5\\,\\text{g/d} \\times 5\\text{–}7\\,\\text{Tage}", note: "dann 3–5 g/Tag" },
       ],
     },
     {
       name: "Schlaf & Regeneration", color: "var(--blue)", icon: "😴",
       rows: [
-        { name: "Schlafzyklen", formula: "90 min × Anzahl Zyklen", note: "5 Zyklen = 7,5 h optimal" },
-        { name: "Cortisol-Halbwertszeit", formula: "ca. 60–90 min nach Peak", note: "Training > 18 Uhr vermeiden" },
-        { name: "GH-Ausschüttung", formula: "Peak in Tiefschlaf (NREM 3)", note: "1. Zyklus am stärksten" },
-        { name: "Schlafbedarf Sportler", formula: "≥ 8–9 h / Nacht", note: "vs. 7–9 h Normalbev." },
-        { name: "Schlaf-Score (nur Dauer)", formula: "(Schlafzeit ÷ 480 min) × 100", note: "8 h = 100 Punkte" },
-        { name: "Schlaf-Score (mit Tiefschlaf)", formula: "(Schlafzeit ÷ 480) × 60 + (Tiefschlaf ÷ Bettzeit ÷ 0,22) × 40", note: "60 % Dauer + 40 % Tiefschlafanteil (Ziel: 22 %)" },
+        { name: "Schlafzyklen", formula: "90\\,\\text{min} \\times n_{\\text{Zyklen}}", note: "5 Zyklen = 7,5 h optimal" },
+        { name: "Cortisol-Halbwertszeit", formula: "t_{1/2} \\approx 60\\text{–}90\\,\\text{min}", note: "Training > 18 Uhr vermeiden" },
+        { name: "GH-Ausschüttung", formula: "\\text{Peak in NREM}_3", note: "1. Zyklus am stärksten" },
+        { name: "Schlafbedarf Sportler", formula: "\\geq 8\\text{–}9\\,\\text{h/Nacht}", note: "vs. 7–9 h Normalbev." },
+        { name: "Schlaf-Score (Dauer)", formula: "\\dfrac{t_{\\text{Schlaf}}}{480} \\times 100", note: "8 h = 100 Punkte" },
+        { name: "Schlaf-Score (Tiefschlaf)", formula: "\\dfrac{t_{\\text{Schlaf}}}{480} \\times 60 + \\dfrac{t_{\\text{Tief}}}{t_{\\text{Bett}} \\cdot 0{,}22} \\times 40", note: "60 % Dauer + 40 % Tiefschlaf" },
       ],
     },
   ];
@@ -501,7 +512,9 @@ function VisualFormeln() {
               {cat.rows.map((r, j) => (
                 <tr key={j} style={{ borderBottom: j < cat.rows.length - 1 ? "1px solid var(--border)" : "none" }}>
                   <td style={{ padding: "9px 14px", fontWeight: 600, color: "var(--text)", whiteSpace: "normal", wordBreak: "break-word" }}>{r.name}</td>
-                  <td style={{ padding: "9px 14px", fontFamily: "monospace", fontSize: 12, color: cat.color, background: "var(--surface2)", whiteSpace: "normal", wordBreak: "break-word" }}>{r.formula}</td>
+                  <td style={{ padding: "9px 14px", background: "var(--surface2)", whiteSpace: "normal", wordBreak: "break-word", lineHeight: 2 }}>
+                    <Tex>{r.formula}</Tex>
+                  </td>
                   <td style={{ padding: "9px 14px", fontSize: 11, color: "var(--text-muted)", whiteSpace: "normal", wordBreak: "break-word" }}>{r.note}</td>
                 </tr>
               ))}
