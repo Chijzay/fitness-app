@@ -173,14 +173,14 @@ Diese Berechnung dient ausschließlich als theoretische Orientierung und stellt 
 
 **Praktischer Orientierungswert – Methode 2: Körpergewicht**
 
-Eine weitere Möglichkeit besteht darin, die angestrebte Abnahme am aktuellen Körpergewicht auszurichten. Als moderater Richtwert können etwa 0,7 Prozent des Körpergewichts pro Woche dienen. Dieses Tempo ermöglicht in vielen Fällen einen gut kontrollierbaren Fettverlust und kann in Kombination mit einer ausreichenden Proteinzufuhr und regelmäßigem Krafttraining dazu beitragen, möglichst viel Muskelmasse zu erhalten.
+Eine weitere Möglichkeit besteht darin, die angestrebte Abnahme am aktuellen Körpergewicht auszurichten. Als moderater Richtwert können etwa 0,7 bis 1 Prozent des Körpergewichts pro Woche dienen. Dieses Tempo ermöglicht in vielen Fällen einen gut kontrollierbaren Fettverlust und kann in Kombination mit einer ausreichenden Proteinzufuhr und regelmäßigem Krafttraining dazu beitragen, möglichst viel Muskelmasse zu erhalten.
 
-| Körpergewicht | Zielabnahme pro Woche | Rechnerisches Defizit pro Tag |
-| ------------: | --------------------: | ----------------------------: |
-|        120 kg |             ca. 840 g |                  ca. 840 kcal |
-|        100 kg |             ca. 700 g |                  ca. 700 kcal |
-|         80 kg |             ca. 560 g |                  ca. 560 kcal |
-|         60 kg |             ca. 420 g |                  ca. 420 kcal |
+| Körpergewicht | Zielabnahme pro Woche         | Rechnerisches Defizit pro Tag |
+| ------------: | --------------------:         | ----------------------------: |
+|        120 kg |             ca. 840-1.200 g |                  ca. 840-1.200 kcal |
+|        100 kg |             ca. 700-1.000 g |                  ca. 700-1.000 kcal |
+|         80 kg |             ca. 560-800 g   |                  ca. 560-800 kcal |
+|         60 kg |             ca. 420-600 g   |                  ca. 420-600 kcal |
 
 Die angegebenen Defizite basieren auf der vereinfachten Annahme, dass ein Kilogramm Gewichtsverlust einem Energiedefizit von ungefähr 7.000 Kilokalorien entspricht. Sie dienen daher lediglich als Ausgangspunkt. Der tatsächliche Gewichtsverlauf wird zusätzlich durch den Wasserhaushalt, den Darminhalt, körperliche Anpassungen und die Zusammensetzung der verlorenen Körpermasse beeinflusst.
 
