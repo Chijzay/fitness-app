@@ -410,19 +410,19 @@ function VisualBausteine() {
 
 function VisualTDEE() {
   const parts = [
-    { label: "BMR", pct: 60-70, desc: "Grundumsatz", color: "var(--teal)" },
-    { label: "NEAT", pct: 15-50, desc: "Alltagsbewegung", color: "var(--blue)" },
-    { label: "EAT", pct: 15-30, desc: "Sport / Training", color: "var(--purple)" },
-    { label: "TEF", pct: 5-15, desc: "Verdauung", color: "var(--orange)" },
+    { label: "BMR", range: "60–70 %", barPct: 65, desc: "Grundumsatz", color: "var(--teal)" },
+    { label: "NEAT", range: "15–50 %", barPct: 20, desc: "Alltagsbewegung", color: "var(--blue)" },
+    { label: "EAT", range: "15–30 %", barPct: 10, desc: "Sport / Training", color: "var(--purple)" },
+    { label: "TEF", range: "5–15 %", barPct: 5, desc: "Verdauung", color: "var(--orange)" },
   ];
   return (
     <div style={{ margin: "16px 0 24px", padding: "16px 20px", background: "var(--surface2)", borderRadius: 12, border: "1px solid var(--border)" }}>
       <div style={{ fontSize: 11, fontWeight: 700, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 12 }}>
-        TDEE = Tagesgesamtverbrauch · Beispiel: leicht aktive Person
+        TDEE = Tagesgesamtverbrauch · typische Bandbreiten
       </div>
       <div style={{ display: "flex", height: 30, borderRadius: 8, overflow: "hidden", marginBottom: 14, gap: 2 }}>
         {parts.map((p, i) => (
-          <div key={i} style={{ width: `${p.pct}%`, background: p.color, display: "flex", alignItems: "center", justifyContent: "center", borderRadius: i === 0 ? "6px 0 0 6px" : i === parts.length - 1 ? "0 6px 6px 0" : 0 }}>
+          <div key={i} style={{ width: `${p.barPct}%`, background: p.color, display: "flex", alignItems: "center", justifyContent: "center", borderRadius: i === 0 ? "6px 0 0 6px" : i === parts.length - 1 ? "0 6px 6px 0" : 0 }}>
             <span style={{ fontSize: 10.5, fontWeight: 800, color: "#000" }}>{p.label}</span>
           </div>
         ))}
@@ -432,8 +432,8 @@ function VisualTDEE() {
           <div key={i} style={{ display: "flex", alignItems: "center", gap: 7 }}>
             <div style={{ width: 10, height: 10, borderRadius: 3, background: p.color, flexShrink: 0 }} />
             <span style={{ fontSize: 12.5, color: "var(--text-2)" }}>
-              <strong style={{ color: p.color }}>{p.label}</strong> – {p.desc}{" "}
-              <span style={{ color: "var(--text-muted)" }}>~{p.pct} %</span>
+              <strong style={{ color: p.color }}>{p.label}</strong> – {p.desc}<br />
+              <span style={{ color: "var(--text-muted)", fontSize: 11 }}>{p.range}</span>
             </span>
           </div>
         ))}
