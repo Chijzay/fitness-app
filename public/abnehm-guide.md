@@ -13,8 +13,15 @@
     - [2.2 Proteine](#2-2-proteine)
     - [2.3 Lebensmittelauswahl](#2-3-lebensmittelauswahl)
 - [3. Bewegung](#3-bewegung)
+    - [3.1 Krafttraining](#3-1-krafttraining)
+    - [3.2 Alltagsbewegung](#3-2-alltagsbewegung)
+    - [3.3 Ausdauersport](#3-3-ausdauersport)
 - [4. Regeneration](#4-regeneration)
+    - [4.1 Schlaf](#4-1-schlaf)
+    - [4.1 Pause](#4-1-pause)
 - [5. Durchführung anhand eines Beispiels](#5-durchführung-anhand-eines-beispiels)
+    - [5.1 Zielgewicht definieren](#5-1-zielgewicht-definieren)
+    - [5.2 Kennzahlen definieren und tracken](#5-2-kennzahlen-definieren-und-tracken)
 - [6. Formelreferenz](#6-formelreferenz)
 - [7. Glossar](#7-glossar)
 
@@ -182,7 +189,7 @@ Eine weitere Möglichkeit besteht darin, die angestrebte Abnahme am aktuellen K�
 |         80 kg |             ca. 560-800 g   |                  ca. 560-800 kcal |
 |         60 kg |             ca. 420-600 g   |                  ca. 420-600 kcal |
 
-Die angegebenen Defizite basieren auf der vereinfachten Annahme, dass ein Kilogramm Gewichtsverlust einem Energiedefizit von ungefähr 7.000 Kilokalorien entspricht. Sie dienen daher lediglich als Ausgangspunkt. Der tatsächliche Gewichtsverlauf wird zusätzlich durch den Wasserhaushalt, den Darminhalt, körperliche Anpassungen und die Zusammensetzung der verlorenen Körpermasse beeinflusst.
+Die angegebenen Defizite basieren auf der vereinfachten Annahme, dass ein Kilogramm Gewichtsverlust einem Energiedefizit von ungefähr 7.000 bis 7.700 Kilokalorien entspricht. Sie dienen daher lediglich als Ausgangspunkt. Der tatsächliche Gewichtsverlauf wird zusätzlich durch den Wasserhaushalt, den Darminhalt, körperliche Anpassungen und die Zusammensetzung der verlorenen Körpermasse beeinflusst.
 
 Je höher der Körperfettanteil ist, desto eher kann eine Abnahme am oberen Ende des empfohlenen Bereichs sinnvoll sein. Bereits schlanke oder sehr gut trainierte Personen sollten dagegen meist langsamer vorgehen, um Leistungsfähigkeit, Regeneration und Muskelmasse bestmöglich zu erhalten.
 
