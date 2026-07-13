@@ -7,16 +7,16 @@
 ---
 
 ## Inhaltsverzeichnis
-[1. Einführung](#1-einführung)
-[2. Ernährung](#2-ernährung)
-    [2.1 Energiebilanz](#2-1-energiebilanz)
-    [2.2 Proteine](#2-2-proteine)
-    [2.3 Lebensmittelauswahl](#2-3-lebensmittelauswahl)
-[3. Bewegung](#3-bewegung)
-[4. Regeneration](#4-regeneration)
-[5. Durchführung anhand eines Beispiels](#5-durchführung-anhand-eines-beispiels)
-[6. Formelreferenz](#6-formelreferenz)
-[7. Glossar](#7-glossar)
+- [1. Einführung](#1-einführung)
+- [2. Ernährung](#2-ernährung)
+    - [2.1 Energiebilanz](#2-1-energiebilanz)
+    - [2.2 Proteine](#2-2-proteine)
+    - [2.3 Lebensmittelauswahl](#2-3-lebensmittelauswahl)
+- [3. Bewegung](#3-bewegung)
+- [4. Regeneration](#4-regeneration)
+- [5. Durchführung anhand eines Beispiels](#5-durchführung-anhand-eines-beispiels)
+- [6. Formelreferenz](#6-formelreferenz)
+- [7. Glossar](#7-glossar)
 
 ---
 
@@ -134,7 +134,7 @@ Eine der wissenschaftlich am besten untersuchten und häufig empfohlenen Formeln
 <!-- visual:vars-bmr -->
 
 > *Beispiel: Mann, 86 kg, 182 cm, 35 Jahre:* 
-$10 \times 86 + 6{,}25 \times 182 - 5 \times 35 + 5 = \mathbf{1.828\ \text{kcal BMR}}$
+> $10 \times 86 + 6{,}25 \times 182 - 5 \times 35 + 5 = \mathbf{1.828\ \text{kcal BMR}}$
 
 Der Grundumsatz ist kurzfristig nur begrenzt beeinflussbar, während sich vor allem der Leistungsumsatz gezielt steigern lässt. Krafttraining erhöht den Energieverbrauch durch sportliche Aktivität (ca. 500 Kalorien in der Stunde), während mehr Bewegung im Alltag, beispielsweise durch zusätzliche Schritte (10.000 Schritte ca. 500 Kalorien), Treppensteigen oder häufigeres Gehen den NEAT erhöht. Wie viele Kalorien dabei tatsächlich verbraucht werden, hängt unter anderem von Körpergewicht, Trainingsintensität, Tempo und Dauer der Aktivität ab.
 
@@ -146,19 +146,24 @@ In der Praxis ist es meist sinnvoller, mehrere kleine Stellschrauben gleichzeiti
 Für die meisten Menschen ist ein moderates Kaloriendefizit der sinnvollste Ausgangspunkt. Als praktische Orientierung können etwa 300 bis 600 Kilokalorien pro Tag beziehungsweise eine wöchentliche Gewichtsabnahme von rund 0,5 bis 1 Prozent des Körpergewichts dienen. Je niedriger der Körperfettanteil und je wichtiger der Erhalt der Muskelmasse ist, desto eher sollte das untere Ende dieses Bereichs angestrebt werden. Ein moderates Defizit erleichtert die langfristige Umsetzung und kann das Risiko für starken Hunger, Leistungseinbußen, eine hohe psychische Belastung und einen unnötigen Verlust fettfreier Masse reduzieren.
 
 
+**Empfohlener Bereich für das Kaloriendefizit**
+
+Für die meisten Menschen ist ein tägliches Kaloriendefizit von etwa 300 bis 600 Kilokalorien ein sinnvoller Ausgangspunkt. Rein rechnerisch entspricht dies ungefähr einer Gewichtsabnahme von 250 bis 300 bzw. 550 bis 600 Gramm pro Woche. Häufig verwendete allgemeine Empfehlungen nennen auch eine Abnahme von etwa 0,5 bis 1 Kilogramm pro Woche, wofür theoretisch ein tägliches Defizit von ungefähr 500 bis 1.000 Kilokalorien erforderlich wäre. Die tatsächliche Entwicklung verläuft jedoch nicht exakt linear, da sich unter anderem der Energieverbrauch, der Wasserhaushalt und die Alltagsbewegung verändern können.
+
+> **Wichtig:** Je größer und damit aggresiver das Defizit ausfällt, desto höher ist das Risiko für starken Hunger, eine nachlassende Trainingsleistung, unzureichende Regeneration und den Verlust fettfreier Masse. Eine längerfristig zu geringe Energieverfügbarkeit kann zudem körperliche und psychische Funktionen beeinträchtigen. Bei Frauen können unter anderem Veränderungen des Menstruationszyklus auftreten, wobei grundsätzlich auch Männer von einer zu niedrigen Energieverfügbarkeit betroffen sein können.
+
+**Theoretische Obergrenze – Methode 1: Berechnung anhand der Fettmasse**
+
+Der Körper kann pro Tag nur eine begrenzte Energiemenge aus seinen Fettreserven mobilisieren. Nach einem theoretischen Modell von Alpert liegt diese Grenze bei ungefähr **70 Kilokalorien pro Kilogramm vorhandener Fettmasse und Tag**. Die überschlägige Berechnung lautet daher:
+
+**Fettmasse in Kilogramm × 70 Kilokalorien = theoretisch mobilisierbare Energie pro Tag**
+
+Eine Person mit 15 Kilogramm Fettmasse könnte demnach theoretisch etwa 1.050 Kilokalorien pro Tag aus ihren Fettreserven bereitstellen. Übersteigt das Energiedefizit diese Menge, steigt nach dem Modell die Wahrscheinlichkeit, dass zusätzlich fettfreie Masse zur Energiebereitstellung herangezogen wird.
+
+Diese Berechnung stellt jedoch **keine Empfehlung für die Höhe des Kaloriendefizits** und keine exakt bestimmbare individuelle Grenze dar. Sie dient lediglich als theoretische Orientierung. Für die Praxis sind ein moderates Defizit, eine ausreichende Proteinzufuhr, Krafttraining sowie die regelmäßige Beobachtung von Gewichtsverlauf, Leistungsfähigkeit, Hunger und Wohlbefinden entscheidender.
 
 
 
-
-
-
-
-
-**Empfohlener Bereich:** 300–600 kcal/Tag für die meisten Menschen. Das entspricht ~300 g bis ~600 g Gewichtsverlust pro Woche. Viele Leitlinien orientieren sich an 0,5–1,0 kg Abnahme pro Woche, was einem Defizit von ca. 500–1.000 kcal/Tag entspricht.
-
-> **Wichtig:** Sehr aggressive Defizite erhöhen das Risiko, dass Schlaf, Stimmung, Trainingsleistung, Hungerregulation und (bei Frauen besonders relevant) die hormonelle Situation leiden.
-
-**Theoretische Obergrenze – Methode 1: Körperfettanteil**
 
 Aus Körperfett kann pro Tag nur eine begrenzte Energiemenge mobilisiert werden: ca. **70 kcal pro kg Fettmasse und Tag** (nach Alpert).
 
