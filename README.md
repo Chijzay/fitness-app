@@ -78,7 +78,7 @@ Nach der Installation erscheint die App als eigenes Icon auf dem Startbildschirm
 | Diagramme | Recharts |
 | Formeldarstellung | KaTeX |
 | Styling | Custom CSS + Tailwind CSS |
-| Deployment | Fly.io |
+| Deployment | vercel.com |
 
 ---
 
