@@ -33,10 +33,31 @@ function slugify(s: string) {
 }
 
 function parseInline(text: string): React.ReactNode {
-  // Handle **bold**, *italic*, `code`, and escaped chars
   const parts: React.ReactNode[] = [];
   let i = 0;
   while (i < text.length) {
+    // $$...$$ display math
+    if (text[i] === "$" && text[i + 1] === "$") {
+      const end = text.indexOf("$$", i + 2);
+      if (end !== -1) {
+        const latex = text.slice(i + 2, end);
+        let html = "";
+        try { html = katex.renderToString(latex, { throwOnError: false, displayMode: true }); } catch { html = latex; }
+        parts.push(<span key={i} dangerouslySetInnerHTML={{ __html: html }} />);
+        i = end + 2; continue;
+      }
+    }
+    // $...$ inline math
+    if (text[i] === "$") {
+      const end = text.indexOf("$", i + 1);
+      if (end !== -1) {
+        const latex = text.slice(i + 1, end);
+        let html = "";
+        try { html = katex.renderToString(latex, { throwOnError: false, displayMode: false }); } catch { html = latex; }
+        parts.push(<span key={i} dangerouslySetInnerHTML={{ __html: html }} />);
+        i = end + 1; continue;
+      }
+    }
     if (text[i] === "*" && text[i + 1] === "*") {
       const end = text.indexOf("**", i + 2);
       if (end !== -1) {
@@ -81,7 +102,7 @@ function parseInline(text: string): React.ReactNode {
     }
     // Collect plain text
     let j = i + 1;
-    while (j < text.length && text[j] !== "*" && text[j] !== "`") j++;
+    while (j < text.length && text[j] !== "*" && text[j] !== "`" && text[j] !== "$" && text[j] !== "[") j++;
     parts.push(text.slice(i, j));
     i = j;
   }
