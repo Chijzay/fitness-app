@@ -133,8 +133,8 @@ Eine der wissenschaftlich am besten untersuchten und häufig empfohlenen Formeln
 
 <!-- visual:vars-bmr -->
 
-> *Beispiel: Mann, 86 kg, 182 cm, 35 Jahre:* 
-> $10 \times 86 + 6{,}25 \times 182 - 5 \times 35 + 5 = \mathbf{1.828\ \text{kcal BMR}}$
+> *Beispiel: Mann, 86 kg, 182 cm, 35 Jahre:* <br>
+$10 \times 86 + 6{,}25 \times 182 - 5 \times 35 + 5 = \mathbf{1.828\ \text{kcal BMR}}$
 
 Der Grundumsatz ist kurzfristig nur begrenzt beeinflussbar, während sich vor allem der Leistungsumsatz gezielt steigern lässt. Krafttraining erhöht den Energieverbrauch durch sportliche Aktivität (ca. 500 Kalorien in der Stunde), während mehr Bewegung im Alltag, beispielsweise durch zusätzliche Schritte (10.000 Schritte ca. 500 Kalorien), Treppensteigen oder häufigeres Gehen den NEAT erhöht. Wie viele Kalorien dabei tatsächlich verbraucht werden, hängt unter anderem von Körpergewicht, Trainingsintensität, Tempo und Dauer der Aktivität ab.
 
@@ -172,26 +172,33 @@ Eine Person mit 15 Kilogramm Fettmasse könnte demnach theoretisch etwa 1.050 Ki
 Diese Berechnung dient ausschließlich als theoretische Orientierung und stellt weder eine konkrete Empfehlung noch eine exakt bestimmbare individuelle Obergrenze für das Kaloriendefizit dar. Grundsätzlich können Menschen mit einem höheren Körperfettanteil meist ein größeres Defizit besser verkraften, da mehr Energiereserven zur Verfügung stehen. Je niedriger der Körperfettanteil ist, desto vorsichtiger sollte das Defizit gewählt werden, da das Risiko für Leistungseinbußen, eine unzureichende Regeneration und den Verlust fettfreier Masse steigt. Ein zu aggressives Vorgehen kann dazu führen, dass neben Körperfett auch Muskulatur verloren geht und das gewünschte straffe Erscheinungsbild ausbleibt. In der Praxis sind daher ein moderates Defizit, eine ausreichende Proteinzufuhr, regelmäßiges Krafttraining sowie die Beobachtung von Gewichtsverlauf, Leistungsfähigkeit, Hunger und Wohlbefinden entscheidend.
 
 
+**Praktischer Orientierungswert – Methode 2: Körpergewicht**
 
+Eine weitere Möglichkeit besteht darin, die angestrebte Abnahme am aktuellen Körpergewicht auszurichten. Als moderater Richtwert können etwa 0,7 Prozent des Körpergewichts pro Woche dienen. Dieses Tempo ermöglicht in vielen Fällen einen gut kontrollierbaren Fettverlust und kann in Kombination mit einer ausreichenden Proteinzufuhr und regelmäßigem Krafttraining dazu beitragen, möglichst viel Muskelmasse zu erhalten.
 
+| Körpergewicht | Zielabnahme pro Woche | Rechnerisches Defizit pro Tag |
+| ------------: | --------------------: | ----------------------------: |
+|        120 kg |             ca. 840 g |                  ca. 840 kcal |
+|        100 kg |             ca. 700 g |                  ca. 700 kcal |
+|         80 kg |             ca. 560 g |                  ca. 560 kcal |
+|         60 kg |             ca. 420 g |                  ca. 420 kcal |
 
+Die angegebenen Defizite basieren auf der vereinfachten Annahme, dass ein Kilogramm Gewichtsverlust einem Energiedefizit von ungefähr 7.000 Kilokalorien entspricht. Sie dienen daher lediglich als Ausgangspunkt. Der tatsächliche Gewichtsverlauf wird zusätzlich durch den Wasserhaushalt, den Darminhalt, körperliche Anpassungen und die Zusammensetzung der verlorenen Körpermasse beeinflusst.
 
+Je höher der Körperfettanteil ist, desto eher kann eine Abnahme am oberen Ende des empfohlenen Bereichs sinnvoll sein. Bereits schlanke oder sehr gut trainierte Personen sollten dagegen meist langsamer vorgehen, um Leistungsfähigkeit, Regeneration und Muskelmasse bestmöglich zu erhalten.
 
-
-**Theoretische Obergrenze – Methode 2: Körpergewicht**
-
-Für ein gesundes Abnehmen bei maximalem Erhalt der Muskelmasse wird eine wöchentliche Abnahme von **0,7 % des Körpergewichts** empfohlen:
-
-| Gewicht | Abnahme/Woche | Defizit/Tag |
-|---|---|---|
-| 120 kg | 840 g | ~840 kcal |
-| 100 kg | 700 g | ~700 kcal |
-| 80 kg | 560 g | ~560 kcal |
-| 60 kg | 420 g | ~420 kcal |
-
-**Fazit:** Mit dem Körper arbeiten, nicht gegen ihn. Moderates Defizit + ausreichend Protein + Krafttraining = nachhaltiger Fettverlust bei maximalem Muskelerhalt.
+**Fazit:** Arbeite mit deinem Körper und nicht gegen ihn. Ein moderates Kaloriendefizit, eine ausreichende Proteinzufuhr und regelmäßiges Krafttraining bilden gemeinsam die Grundlage für einen nachhaltigen Fettverlust bei bestmöglichem Muskelerhalt.
 
 ---
+
+
+
+
+
+
+
+
+
 
 ### 2.2 Proteine
 
