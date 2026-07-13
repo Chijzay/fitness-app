@@ -2,7 +2,7 @@
 
 Persönliche Web-App zur Fitness- und Diätverfolgung, entwickelt mit Next.js. Konzipiert für langfristiges Gewichtsmanagement, Körperzusammensetzung und Trainingsfortschritt.
 
-> **Privates Projekt** — entwickelt für den persönlichen Gebrauch, kein öffentliches Produkt.
+> **Privates Projekt**, entwickelt für den persönlichen Gebrauch, kein öffentliches Produkt.
 
 ---
 
