@@ -204,18 +204,27 @@ function RenderTokens({ tokens }: { tokens: Token[] }) {
           </ol>
         );
         if (tok.t === "table") {
-          // Description column always starts at 40% regardless of col count
-          const colWidths = tok.head.length === 3 ? ["18%", "22%", "60%"] : ["40%", "60%"];
+          const n = tok.head.length;
+          // Fixed column widths so layout is stable regardless of content
+          let colWidths: string[];
+          if (n === 2) colWidths = ["40%", "60%"];
+          else if (n === 3) colWidths = ["18%", "22%", "60%"];
+          else {
+            // Many-column tables (e.g. weekly schedule): first col wider, rest equal
+            const firstW = 28;
+            const restW = ((100 - firstW) / (n - 1)).toFixed(1);
+            colWidths = [firstW + "%", ...Array(n - 1).fill(restW + "%")];
+          }
           return (
             <div key={idx} style={{ overflowX: "auto", marginBottom: 16 }}>
-              <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
+              <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13, tableLayout: "fixed" }}>
                 <colgroup>
-                  {tok.head.map((_, j) => <col key={j} style={{ width: colWidths[j] ?? "auto" }} />)}
+                  {tok.head.map((_, j) => <col key={j} style={{ width: colWidths[j] }} />)}
                 </colgroup>
                 <thead>
                   <tr>
                     {tok.head.map((h, j) => (
-                      <th key={j} style={{ textAlign: "left", padding: "8px 12px", background: "var(--surface2)", color: "var(--text-muted)", fontWeight: 700, fontSize: 11, textTransform: "uppercase", letterSpacing: "0.06em", borderBottom: "1px solid var(--border)", verticalAlign: "bottom" }}>
+                      <th key={j} style={{ textAlign: j === 0 ? "left" : "center", padding: "8px 12px", background: "var(--surface2)", color: "var(--text-muted)", fontWeight: 700, fontSize: 11, textTransform: "uppercase", letterSpacing: "0.06em", borderBottom: "1px solid var(--border)", verticalAlign: "bottom", whiteSpace: "nowrap", overflow: "hidden" }}>
                         {parseInline(h)}
                       </th>
                     ))}
@@ -225,7 +234,7 @@ function RenderTokens({ tokens }: { tokens: Token[] }) {
                   {tok.rows.map((row, j) => (
                     <tr key={j} style={{ borderBottom: "1px solid var(--border)" }}>
                       {row.map((cell, k) => (
-                        <td key={k} style={{ padding: "10px 12px", verticalAlign: "top", lineHeight: 1.55, color: k === 0 ? "var(--text)" : "var(--text-2)", fontWeight: k === 0 ? 600 : 400, wordBreak: "break-word", whiteSpace: "normal" }}>
+                        <td key={k} style={{ padding: "10px 12px", verticalAlign: "top", lineHeight: 1.55, textAlign: k === 0 ? "left" : "center", color: k === 0 ? "var(--text)" : "var(--text-2)", fontWeight: k === 0 ? 600 : 400, wordBreak: "break-word", whiteSpace: "normal", overflow: "hidden" }}>
                           {parseInline(cell)}
                         </td>
                       ))}
@@ -475,12 +484,17 @@ function VisualFormeln() {
             <span style={{ fontSize: 13, fontWeight: 700, color: cat.color }}>{cat.name}</span>
           </div>
           <div style={{ overflowX: "auto" }}>
-          <table style={{ width: "100%", minWidth: 400, borderCollapse: "collapse", fontSize: 13 }}>
+          <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13, tableLayout: "fixed" }}>
+            <colgroup>
+              <col style={{ width: "28%" }} />
+              <col style={{ width: "46%" }} />
+              <col style={{ width: "26%" }} />
+            </colgroup>
             <thead>
               <tr>
-                <th style={{ ...th, width: "28%" }}>Name</th>
-                <th style={{ ...th, width: "46%" }}>Formel</th>
-                <th style={{ ...th, width: "26%" }}>Hinweis</th>
+                <th style={{ ...th }}>Name</th>
+                <th style={{ ...th }}>Formel</th>
+                <th style={{ ...th }}>Hinweis</th>
               </tr>
             </thead>
             <tbody>
@@ -592,19 +606,24 @@ function VisualGlossar() {
             <span style={{ fontSize: 13, fontWeight: 700, color: cat.color }}>{cat.name}</span>
           </div>
           <div style={{ overflowX: "auto" }}>
-          <table style={{ width: "100%", minWidth: 480, borderCollapse: "collapse", fontSize: 13 }}>
+          <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13, tableLayout: "fixed" }}>
+            <colgroup>
+              <col style={{ width: "18%" }} />
+              <col style={{ width: "27%" }} />
+              <col style={{ width: "55%" }} />
+            </colgroup>
             <thead>
               <tr>
-                {["Kürzel", "Ausgeschrieben", "Bedeutung"].map(h => (
-                  <th key={h} style={{ textAlign: "left", padding: "7px 14px", fontSize: 10, fontWeight: 700, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.07em", borderBottom: "1px solid var(--border)" }}>{h}</th>
+                {["Kürzel", "Ausgeschrieben", "Bedeutung"].map((h, hi) => (
+                  <th key={h} style={{ textAlign: "left", padding: "7px 14px", fontSize: 10, fontWeight: 700, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.07em", borderBottom: "1px solid var(--border)", whiteSpace: hi < 2 ? "nowrap" : "normal" }}>{h}</th>
                 ))}
               </tr>
             </thead>
             <tbody>
               {cat.terms.map((r, j) => (
                 <tr key={j} style={{ borderBottom: j < cat.terms.length - 1 ? "1px solid var(--border)" : "none" }}>
-                  <td style={{ ...tdCell, fontWeight: 700, color: cat.color, whiteSpace: "nowrap" }}>{r.term}</td>
-                  <td style={{ ...tdCell, fontWeight: 500, color: "var(--text-2)", fontSize: 12, whiteSpace: "nowrap" }}>{r.full || "–"}</td>
+                  <td style={{ ...tdCell, fontWeight: 700, color: cat.color, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{r.term}</td>
+                  <td style={{ ...tdCell, fontWeight: 500, color: "var(--text-2)", fontSize: 12, whiteSpace: "normal", wordBreak: "break-word" }}>{r.full || "–"}</td>
                   <td style={{ ...tdCell, color: "var(--text-muted)", lineHeight: 1.6, whiteSpace: "normal", wordBreak: "break-word" }}>{r.def}</td>
                 </tr>
               ))}
