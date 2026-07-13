@@ -109,6 +109,13 @@ function parseInline(text: string): React.ReactNode {
   return parts.length === 1 ? parts[0] : <>{parts}</>;
 }
 
+function normalizeDepths(items: ListItem[]): ListItem[] {
+  const levels = [...new Set(items.map(x => x.depth))].sort((a, b) => a - b);
+  const map: Record<number, number> = {};
+  levels.forEach((d, i) => { map[d] = i; });
+  return items.map(x => ({ ...x, depth: map[x.depth] }));
+}
+
 function tokenize(md: string): Token[] {
   const lines = md.split("\n");
   const tokens: Token[] = [];
@@ -156,30 +163,28 @@ function tokenize(md: string): Token[] {
 
     // Unordered list
     if (trimmed.startsWith("- ") || trimmed.startsWith("* ")) {
-      const items: ListItem[] = [];
+      const rawItems: ListItem[] = [];
       while (i < lines.length) {
         const raw = lines[i];
         const t = raw.trim();
         if (!t.startsWith("- ") && !t.startsWith("* ")) break;
-        const depth = Math.floor((raw.length - raw.trimStart().length) / 2);
-        items.push({ text: t.slice(2), depth });
+        rawItems.push({ text: t.slice(2), depth: raw.length - raw.trimStart().length });
         i++;
       }
-      tokens.push({ t: "ul", items }); continue;
+      tokens.push({ t: "ul", items: normalizeDepths(rawItems) }); continue;
     }
 
     // Ordered list
     if (/^\d+\.\s/.test(trimmed)) {
-      const items: ListItem[] = [];
+      const rawItems: ListItem[] = [];
       while (i < lines.length) {
         const raw = lines[i];
         const t = raw.trim();
         if (!/^\d+\.\s/.test(t)) break;
-        const depth = Math.floor((raw.length - raw.trimStart().length) / 4);
-        items.push({ text: t.replace(/^\d+\.\s/, ""), depth });
+        rawItems.push({ text: t.replace(/^\d+\.\s/, ""), depth: raw.length - raw.trimStart().length });
         i++;
       }
-      tokens.push({ t: "ol", items }); continue;
+      tokens.push({ t: "ol", items: normalizeDepths(rawItems) }); continue;
     }
 
     // Skip TOC links [text](#anchor)
