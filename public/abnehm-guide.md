@@ -115,23 +115,19 @@ Wie hoch dieser Effekt ausfällt, hängt unter anderem von der Zusammensetzung d
 
 Vereinfacht ausgedrückt bedeutet das: Von 100 aufgenommenen Kilokalorien aus Protein benötigt der Körper etwa 20 bis 30 Kilokalorien für die Verdauung und Verstoffwechselung. Dadurch verbleibt ein Nettoenergiebeitrag von ungefähr 70 bis 80 Kilokalorien. Bei Fett liegt der thermische Effekt dagegen nur bei etwa null bis drei Prozent, sodass von 100 aufgenommenen Kilokalorien rund 97 bis 100 Kilokalorien verbleiben. Protein besitzt damit den höchsten thermischen Effekt der drei Makronährstoffe. Eine proteinreiche Ernährung kann den täglichen Energieverbrauch daher geringfügig erhöhen und gleichzeitig die Sättigung unterstützen.
 
-**Täglicher Gesamtenergieverbrauch (TDEE – Total Daily Energy Expenditure)**
+**Täglicher Gesamtenergieverbrauch (auch Gesamtumsatz, TDEE – Total Daily Energy Expenditure)**
 
 Der TDEE beschreibt die gesamte Energiemenge, die dein Körper innerhalb eines Tages verbraucht. Er setzt sich aus dem Grundumsatz, dem Leistungsumsatz und dem thermischen Effekt der Nahrung zusammen. Wie hoch der tatsächliche Tagesverbrauch ausfällt, hängt unter anderem von Körpergewicht, Muskelmasse, Alltagsbewegung, Training und Ernährung ab und kann deshalb von Tag zu Tag schwanken. Gleichzeitig ergeben sich daraus verschiedene Stellschrauben, mit denen sich der Energieverbrauch gezielt beeinflussen lässt. Während der Grundumsatz nur begrenzt und langfristig veränderbar ist, können vor allem Alltagsbewegung, Training und die Zusammensetzung der Ernährung bewusst gesteuert werden. Werden diese Faktoren planvoll und auf das persönliche Ziel abgestimmt eingesetzt, können sie die Gewichtsreduktion unterstützen und die Umsetzung im Alltag nachhaltig erleichtern.
 
-
-
-
-
-
-
-**Gesamtumsatz (TDEE = Total Daily Energy Expenditure):**
-
-```
-TDEE = BMR (60-70%) + EAT  (15-30%) +  NEAT (15-50%) + TEF (5-15%) 
-```
-
 <!-- visual:tdee -->
+
+
+
+
+
+
+
+
 
 **BMR-Berechnung (Mifflin-St-Jeor-Formel):**
 
