@@ -7,7 +7,7 @@
 ---
 
 ## Inhaltsverzeichnis
-- [1. Einführung](#einführung)
+- [1. Einführung](#1. Einführung)
 - [2. Ernährung](#ernährung)
     - [2.1 Energiebilanz](#21-energiebilanz)
     - [2.2 Proteine](#22-proteine)
