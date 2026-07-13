@@ -391,10 +391,10 @@ function VisualBausteine() {
 
 function VisualTDEE() {
   const parts = [
-    { label: "BMR", pct: 65, desc: "Grundumsatz", color: "var(--teal)" },
-    { label: "NEAT", pct: 20, desc: "Alltagsbewegung", color: "var(--blue)" },
-    { label: "EAT", pct: 10, desc: "Sport / Training", color: "var(--purple)" },
-    { label: "TEF", pct: 5, desc: "Verdauung", color: "var(--orange)" },
+    { label: "BMR", pct: 60-70, desc: "Grundumsatz", color: "var(--teal)" },
+    { label: "NEAT", pct: 15-50, desc: "Alltagsbewegung", color: "var(--blue)" },
+    { label: "EAT", pct: 15-30, desc: "Sport / Training", color: "var(--purple)" },
+    { label: "TEF", pct: 5-15, desc: "Verdauung", color: "var(--orange)" },
   ];
   return (
     <div style={{ margin: "16px 0 24px", padding: "16px 20px", background: "var(--surface2)", borderRadius: 12, border: "1px solid var(--border)" }}>
