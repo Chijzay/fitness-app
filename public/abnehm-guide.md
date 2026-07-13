@@ -131,14 +131,24 @@ Eine der wissenschaftlich am besten untersuchten und häufig empfohlenen Formeln
 | Männer | $10\times m + 6{,}25\times h - 5\times a + 5$ |
 | Frauen | $10\times m + 6{,}25\times h - 5\times a - 161$ |
 
-*$m=Gewicht, h=Größe, a=Alter$*
+$m=Gewicht, h=Größe, a=Alter$
 
 *Beispiel Mann, 86 kg, 182 cm, 35 Jahre:* $10 \times 86 + 6{,}25 \times 182 - 5 \times 35 + 5 = \mathbf{1.828\ \text{kcal BMR}}$
 
+Der Grundumsatz ist kurzfristig nur begrenzt beeinflussbar, während sich vor allem der Leistungsumsatz gezielt steigern lässt. Krafttraining erhöht den Energieverbrauch durch sportliche Aktivität (ca. 500 Kalorien in der Stunde), während mehr Bewegung im Alltag, beispielsweise durch zusätzliche Schritte (10.000 Schritte ca. 500 Kalorien), Treppensteigen oder häufigeres Gehen den NEAT erhöht. Wie viele Kalorien dabei tatsächlich verbraucht werden, hängt unter anderem von Körpergewicht, Trainingsintensität, Tempo und Dauer der Aktivität ab.
+
+In der Praxis ist es meist sinnvoller, mehrere kleine Stellschrauben gleichzeitig zu nutzen, anstatt einen einzelnen Bereich radikal zu verändern. Regelmäßiges Krafttraining, mehr Alltagsbewegung und eine angepasste Ernährung ergeben gemeinsam eine nachhaltige und gut umsetzbare Strategie.
 
 
 
-Der BMR ist der einzige fixe Wert – aber jeder Faktor kann als Hebel genutzt werden: Krafttraining erhöht den EAT (~500 kcal/Stunde), Alltagsbewegung erhöht den NEAT (~500 kcal/Tag bei 10.000 Schritten). Ideal ist es, überall kleine Anpassungen vorzunehmen, statt alles auf einmal radikal verändern zu wollen.
+
+
+
+
+
+
+
+
 
 
 #### 2.1.2 Kaloriendefizit definieren
