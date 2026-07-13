@@ -55,7 +55,7 @@ Bereits ein vermeintlich kleiner täglicher Kalorienüberschuss kann sich langfr
 
 Dies gilt selbstverständlich auch in die andere Richtung. Werden täglich etwa 250 Kilokalorien eingespart, ergibt sich rechnerisch ein wöchentliches Defizit von 1.750 Kilokalorien. Vereinfacht betrachtet könnte dies langfristig einer Gewichtsabnahme von rund einem Kilogramm pro Monat beziehungsweise bis zu zwölf Kilogramm pro Jahr entsprechen. In der Praxis verläuft auch diese Entwicklung jedoch nicht immer linear, da sich unter anderem der Energieverbrauch, die Alltagsbewegung und das Körpergewicht im Laufe der Zeit verändern und der Körper sich zunehmend an die neuen Bedingungen anpasst.
 
-Dennoch zeigt dieses Beispiel, dass Gewichtsreduktion weder ein Geheimnis noch Magie ist. **Merke: Es gibt keine Wundermittel.** Sie folgt klaren biologischen und physikalischen Grundprinzipien: Wird über einen längeren Zeitraum weniger Energie (Kalorien) zugeführt als verbraucht, verliert der Körper Masse. Die entscheidende Frage lautet daher nicht, _ob_ eine Gewichtsreduktion stattfindet, sondern unter welchen Bedingungen sie erfolgt. Dabei stehen insbesondere vier Fragen im Mittelpunkt:
+Dennoch zeigt dieses Beispiel, dass Gewichtsreduktion weder ein Geheimnis noch Magie ist. Sie folgt klaren biologischen und physikalischen Grundprinzipien: Wird über einen längeren Zeitraum weniger Energie (Kalorien) zugeführt als verbraucht, verliert der Körper Masse. Die entscheidende Frage lautet daher nicht, _ob_ eine Gewichtsreduktion stattfindet, sondern unter welchen Bedingungen sie erfolgt. Dabei stehen insbesondere vier Fragen im Mittelpunkt:
 
 1. Welche Körpermasse wird überwiegend abgebaut: Fett oder Muskulatur?
 2. Wie schnell erfolgt der Gewichtsverlust?
@@ -66,41 +66,58 @@ Ohne ein gezieltes Kaloriendefizit ist ein nachhaltiger Fettverlust nicht mögli
 
 Stelle dir daher während des gesamten Prozesses regelmäßig diese Frage: *»Kann ich das, was ich gerade mache, auch noch in einem, zwei oder gar in fünf Jahren genau so weitermachen?«* Lautet die Antwort nein, ist die gewählte Vorgehensweise wahrscheinlich nicht nachhaltig. In diesem Fall steigt das Risiko, in alte Gewohnheiten zurückzufallen und das verlorene Gewicht im Sinne des Jo-Jo-Effekts wieder zuzunehmen.
 
-
-
-
-
-
-
+**Merke: Es gibt keine Wundermittel.**
 
 
 #### 2.1.1 Kalorienverbrauch
 
-Dein täglicher Kalorienverbrauch setzt sich aus mehreren Bausteinen zusammen:
+Dein täglicher Kalorienverbrauch ist keine feste Größe und setzt sich aus mehreren unterschiedlichen Komponenten zusammen. Neben dem Energiebedarf, den dein Körper zur Aufrechterhaltung lebenswichtiger Funktionen benötigt, spielen auch Alltagsbewegung, sportliche Aktivität und die Verarbeitung der aufgenommenen Nahrung eine Rolle. Wie hoch dein tatsächlicher Gesamtverbrauch ausfällt, hängt dabei von verschiedenen individuellen Faktoren ab.
 
-**1. Grundumsatz (BMR – Basal Metabolic Rate)**
-Die Energiemenge, die dein Körper in völliger Ruhe benötigt – nur um am Leben zu bleiben. Dazu gehören Atmung, Herzschlag, Körpertemperatur, Gehirn- und Organfunktionen. Er macht meist 60–70 % deines Tagesverbrauchs aus. Gehirn und Leber sind dabei besonders energiehungrig und verbrauchen in Ruhe rund 40 % der Energie.
+Im Folgenden werden die einzelnen Bestandteile des täglichen Kalorienverbrauchs genauer betrachtet.
+
+**1. Grundumsatz (BMR – Basal Metabolic Rate, auch RMR – Resting Metabolic Rate)**
+
+Der Grundumsatz beschreibt die Energiemenge, die dein Körper in vollständiger Ruhe benötigt, um lebenswichtige Funktionen aufrechtzuerhalten. Dazu zählen unter anderem Atmung, Herzschlag, die Regulierung der Körpertemperatur sowie die Tätigkeit des Gehirns und der inneren Organe. Bei vielen Menschen macht der Grundumsatz etwa 60 bis 70 Prozent des gesamten täglichen Energieverbrauchs aus. 
+
+Besonders energieintensiv sind dabei das Gehirn und die Leber. Obwohl sie nur einen vergleichsweise kleinen Anteil des Körpergewichts ausmachen, sind sie in Ruhe gemeinsam für rund 40 Prozent des Grundumsatzes verantwortlich. Was das konkret bedeutet, lässt sich anhand zweier vereinfachter Beispiele verdeutlichen:
+
+- Bei einer Frau mit einem Grundumsatz von 1.400 Kilokalorien entfallen rechnerisch etwa 560 Kilokalorien auf das Gehirn und die Leber. Das entspricht rein energetisch ungefähr einem Big Mac, der rund 545 Kilokalorien liefert. Bei einem Mann mit einem Grundumsatz von 1.800 Kilokalorien sind es etwa 720 Kilokalorien.
+
+Diese Zahlen dienen lediglich der Veranschaulichung. Der individuelle Grundumsatz hängt nicht allein vom Geschlecht ab und wird sowohl von Körpergröße, Körpergewicht, Alter als auch der Körperzusammensetzung beeinflusst.
 
 **2. Leistungsumsatz (AEE – Activity Energy Expenditure)**
-Die Energie, die zusätzlich zum Grundumsatz durch Aktivität entsteht:
-- **NEAT** (Non-Exercise Activity Thermogenesis): Alltagsbewegung ohne Sport wie Gehen, Treppenstiegen, Haushalt, Arbeit.
-- **EAT** (Exercise Activity Thermogenesis): Sport und Training wie Krafttraining, Joggen, Radfahren.
+
+Der Leistungsumsatz umfasst die Energie, die dein Körper zusätzlich zum Grundumsatz durch körperliche Aktivität verbraucht. Er lässt sich in zwei Bereiche unterteilen:
+
+- **NEAT (Non-Exercise Activity Thermogenesis):** Dazu zählt jede Form der Alltagsbewegung, die nicht als gezielter Sport ausgeführt wird, beispielsweise Gehen, Treppensteigen, Hausarbeit, berufliche Tätigkeiten oder unbewusste Bewegungen wie häufiges Aufstehen und Positionswechsel.
+
+- **EAT (Exercise Activity Thermogenesis):** Dieser Bereich beschreibt den Energieverbrauch durch gezielte sportliche Aktivitäten und Training, beispielsweise Krafttraining, Joggen, Radfahren oder Schwimmen.
+
+Wie hoch der Leistungsumsatz ausfällt, kann von Tag zu Tag stark schwanken. Besonders die Alltagsbewegung wird häufig unterschätzt, obwohl sie einen erheblichen Einfluss auf den gesamten täglichen Kalorienverbrauch haben kann.
 
 **3. Thermischer Effekt der Nahrung (TEF – Thermic Effect of Food)**
-Wenn du isst, verbraucht dein Körper Energie für Verdauung, Aufnahme und Verarbeitung. Im Schnitt ca. 10 % des Tagesverbrauchs. Je höher die Proteinaufnahme, desto höher der TEF-Wert:
+
+Auch die Verarbeitung der Nahrung kostet den Körper Energie. Der thermische Effekt der Nahrung beschreibt den Kalorienverbrauch, der durch die Verdauung, Aufnahme, den Transport und die Verstoffwechselung der aufgenommenen Nährstoffe entsteht. Bei einer gewöhnlichen Mischkost werden dafür durchschnittlich etwa zehn Prozent der aufgenommenen Energie benötigt.
+
+Wie hoch dieser Effekt ausfällt, hängt unter anderem von der Zusammensetzung der Nahrung ab:
 
 | Makronährstoff | Thermischer Effekt |
 |---|---|
-| Fett | ~0–3 % |
-| Kohlenhydrate | ~4–8 % |
-| Protein | ~20–30 % |
+| Protein | etwa 20–30 % |
+| Kohlenhydrate | etwa 5–10 % |
+| Fett | etwa 0–3 % |
 
-Das heißt: Am Ende kommen von 100 gegessenen Kalorien aus Protein nur etwa 70 bis 80 Kalorien tatsächlich im Körper an. Bei 100 Kalorien aus Fett sind es dagegen etwa 97 bis 100 Kalorien.
+Vereinfacht ausgedrückt bedeutet das: Von 100 aufgenommenen Kilokalorien aus Protein benötigt der Körper etwa 20 bis 30 Kilokalorien für die Verdauung und Verstoffwechselung. Dadurch verbleibt ein Nettoenergiebeitrag von ungefähr 70 bis 80 Kilokalorien. Bei Fett liegt der thermische Effekt dagegen nur bei etwa null bis drei Prozent, sodass von 100 aufgenommenen Kilokalorien rund 97 bis 100 Kilokalorien verbleiben. Protein besitzt damit den höchsten thermischen Effekt der drei Makronährstoffe. Eine proteinreiche Ernährung kann den täglichen Energieverbrauch daher geringfügig erhöhen und gleichzeitig die Sättigung unterstützen.
+
+
+
+
+
 
 **Gesamtumsatz (TDEE = Total Daily Energy Expenditure):**
 
 ```
-TDEE = BMR + TEF + NEAT + EAT
+TDEE = BMR (60-70%) + EAT  (15-30%) +  NEAT (15-50%) + TEF (5-15%) 
 ```
 
 <!-- visual:tdee -->
