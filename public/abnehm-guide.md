@@ -154,27 +154,29 @@ Für die meisten Menschen ist ein tägliches Kaloriendefizit von etwa 300 bis 60
 
 **Theoretische Obergrenze – Methode 1: Berechnung anhand der Fettmasse**
 
-Der Körper kann pro Tag nur eine begrenzte Energiemenge aus seinen Fettreserven mobilisieren. Nach einem theoretischen Modell von Alpert liegt diese Grenze bei ungefähr **70 Kilokalorien pro Kilogramm vorhandener Fettmasse und Tag**. Die überschlägige Berechnung lautet daher:
+Der Körper kann pro Tag nur eine begrenzte Energiemenge aus seinen Fettreserven mobilisieren. Nach einem theoretischen Modell von Alpert liegt diese Grenze bei ungefähr 70 Kilokalorien pro Kilogramm vorhandener Fettmasse und Tag. Die überschlägige Berechnung lautet daher:
 
-**Fettmasse in Kilogramm × 70 Kilokalorien = theoretisch mobilisierbare Energie pro Tag**
+> Fettmasse in Kilogramm $\times$ 70 Kilokalorien $=$ theoretisch mobilisierbare Energie pro Tag
 
-Eine Person mit 15 Kilogramm Fettmasse könnte demnach theoretisch etwa 1.050 Kilokalorien pro Tag aus ihren Fettreserven bereitstellen. Übersteigt das Energiedefizit diese Menge, steigt nach dem Modell die Wahrscheinlichkeit, dass zusätzlich fettfreie Masse zur Energiebereitstellung herangezogen wird.
+Zur besseren Orientierung folgen einige konkrete Beispiele.
 
-Diese Berechnung stellt jedoch **keine Empfehlung für die Höhe des Kaloriendefizits** und keine exakt bestimmbare individuelle Grenze dar. Sie dient lediglich als theoretische Orientierung. Für die Praxis sind ein moderates Defizit, eine ausreichende Proteinzufuhr, Krafttraining sowie die regelmäßige Beobachtung von Gewichtsverlauf, Leistungsfähigkeit, Hunger und Wohlbefinden entscheidender.
-
-
-
-
-Aus Körperfett kann pro Tag nur eine begrenzte Energiemenge mobilisiert werden: ca. **70 kcal pro kg Fettmasse und Tag** (nach Alpert).
-
-| Fettmasse | Max. Defizit/Tag |
+| Fettmasse | Maximales Defizit pro Tag |
 |---|---|
 | 20 kg | 1.400 kcal |
 | 15 kg | 1.050 kcal |
 | 10 kg | 700 kcal |
 | 5 kg | 350 kcal |
 
-Je höher der Körperfettanteil, desto größer kann das Defizit sein. Je geringer das Körperfett, desto mehr geht der Körper in den Überlebensmodus und baut Muskulatur ab, um Energie zu sparen. Das Ergebnis: normalgewichtig, aber weich und undefiniert (*skinny fat*).
+Eine Person mit 15 Kilogramm Fettmasse könnte demnach theoretisch etwa 1.050 Kilokalorien pro Tag aus ihren Fettreserven bereitstellen. Übersteigt das Energiedefizit diese Menge, steigt nach dem Modell die Wahrscheinlichkeit, dass zusätzlich fettfreie Masse zur Energiebereitstellung herangezogen wird.
+
+Diese Berechnung dient ausschließlich als theoretische Orientierung und stellt weder eine konkrete Empfehlung noch eine exakt bestimmbare individuelle Obergrenze für das Kaloriendefizit dar. Grundsätzlich können Menschen mit einem höheren Körperfettanteil meist ein größeres Defizit besser verkraften, da mehr Energiereserven zur Verfügung stehen. Je niedriger der Körperfettanteil ist, desto vorsichtiger sollte das Defizit gewählt werden, da das Risiko für Leistungseinbußen, eine unzureichende Regeneration und den Verlust fettfreier Masse steigt. Ein zu aggressives Vorgehen kann dazu führen, dass neben Körperfett auch Muskulatur verloren geht und das gewünschte straffe Erscheinungsbild ausbleibt. In der Praxis sind daher ein moderates Defizit, eine ausreichende Proteinzufuhr, regelmäßiges Krafttraining sowie die Beobachtung von Gewichtsverlauf, Leistungsfähigkeit, Hunger und Wohlbefinden entscheidend.
+
+
+
+
+
+
+
 
 **Theoretische Obergrenze – Methode 2: Körpergewicht**
 
