@@ -7,16 +7,16 @@
 ---
 
 ## Inhaltsverzeichnis
-- [1. Einführung](#einführung)
-- [2. Ernährung](#ernährung)
-    - [2.1 Energiebilanz](#21-energiebilanz)
-    - [2.2 Proteine](#22-proteine)
-    - [2.3 Lebensmittelauswahl](#23-lebensmittelauswahl)
-- [3. Bewegung](#bewegung)
-- [4. Regeneration](#regeneration)
-- [5. Durchführung anhand eines Beispiels](#durchführung)
-- [6. Formelreferenz](#formelreferenz)
-- [7. Glossar](#glossar)
+[1. Einführung](#einführung)
+[2. Ernährung](#ernährung)
+    [2.1 Energiebilanz](#21-energiebilanz)
+    [2.2 Proteine](#22-proteine)
+    [2.3 Lebensmittelauswahl](#23-lebensmittelauswahl)
+[3. Bewegung](#bewegung)
+[4. Regeneration](#regeneration)
+[5. Durchführung anhand eines Beispiels](#durchführung)
+[6. Formelreferenz](#formelreferenz)
+[7. Glossar](#glossar)
 
 ---
 
@@ -135,7 +135,7 @@ Eine der wissenschaftlich am besten untersuchten und häufig empfohlenen Formeln
 
 *Beispiel Mann, 86 kg, 182 cm, 35 Jahre:* 
 
-$10 \times 86 + 6{,}25 \times 182 - 5 \times 35 + 5 = \mathbf{1.828\ \text{kcal BMR}}$
+> $10 \times 86 + 6{,}25 \times 182 - 5 \times 35 + 5 = \mathbf{1.828\ \text{kcal BMR}}$
 
 Der Grundumsatz ist kurzfristig nur begrenzt beeinflussbar, während sich vor allem der Leistungsumsatz gezielt steigern lässt. Krafttraining erhöht den Energieverbrauch durch sportliche Aktivität (ca. 500 Kalorien in der Stunde), während mehr Bewegung im Alltag, beispielsweise durch zusätzliche Schritte (10.000 Schritte ca. 500 Kalorien), Treppensteigen oder häufigeres Gehen den NEAT erhöht. Wie viele Kalorien dabei tatsächlich verbraucht werden, hängt unter anderem von Körpergewicht, Trainingsintensität, Tempo und Dauer der Aktivität ab.
 
