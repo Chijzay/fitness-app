@@ -544,7 +544,7 @@ function VisualFormeln() {
     { sym: "G", label: "Geschlecht (1 = ♂, 0 = ♀)" },
     { sym: "n", label: "Anzahl" },
     { sym: "\\Delta", label: "Differenz / Veränderung" },
-    { sym: "t", label: "Zeit (mit Index: z. B. t_{\\text{Schlaf}})" },
+    { sym: "t", label: "Zeit (mit Index: z. B. $t_{\\text{Schlaf}})$ },
   ];
 
   return (
