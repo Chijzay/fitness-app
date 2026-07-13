@@ -198,36 +198,41 @@ function tokenize(md: string): Token[] {
   return tokens;
 }
 
-function NestedList({ items, ordered, depth = 0, liStyle }: {
-  items: ListItem[]; ordered: boolean; depth?: number; liStyle: React.CSSProperties;
+function NestedList({ items, ordered, depth = 0, liStyle, orderedStart = 1 }: {
+  items: ListItem[]; ordered: boolean; depth?: number; liStyle: React.CSSProperties; orderedStart?: number;
 }): React.ReactElement {
-  const Tag = ordered ? "ol" : "ul";
   const result: React.ReactElement[] = [];
   let i = 0;
+  let counter = orderedStart;
   while (i < items.length) {
     if (items[i].depth !== depth) { i++; continue; }
-    // collect sub-items that follow at depth+1
     let k = i + 1;
     while (k < items.length && items[k].depth > depth) k++;
     const sub = items.slice(i + 1, k).filter(x => x.depth > depth);
+    const marker = ordered
+      ? <span style={{ minWidth: depth === 0 ? 20 : 16, color: "var(--teal)", fontWeight: 700, flexShrink: 0, fontSize: depth === 0 ? 14 : 13 }}>{counter++}.</span>
+      : <span style={{ minWidth: depth === 0 ? 16 : 12, color: "var(--teal)", flexShrink: 0, fontSize: depth === 0 ? 16 : 14, lineHeight: 1 }}>–</span>;
     result.push(
-      <li key={i} style={{ ...liStyle, marginBottom: 3 }}>
-        {parseInline(items[i].text)}
-        {sub.length > 0 && <NestedList items={sub} ordered={ordered} depth={depth + 1} liStyle={liStyle} />}
+      <li key={i} style={{ ...liStyle, marginBottom: depth === 0 ? 6 : 3, listStyle: "none", display: "flex", alignItems: "flex-start", gap: 6 }}>
+        {marker}
+        <span>
+          {parseInline(items[i].text)}
+          {sub.length > 0 && <NestedList items={sub} ordered={ordered} depth={depth + 1} liStyle={liStyle} />}
+        </span>
       </li>
     );
     i = k;
   }
   return (
-    <Tag style={{
-      paddingLeft: depth === 0 ? 24 : 20,
-      marginBottom: depth === 0 ? 14 : 6,
+    <ul style={{
+      padding: 0,
+      margin: 0,
+      marginBottom: depth === 0 ? 14 : 4,
       marginTop: depth === 0 ? 0 : 6,
-      listStyleType: ordered ? "decimal" : "disc",
-      listStylePosition: "outside",
+      paddingLeft: depth === 0 ? 0 : 16,
     }}>
       {result}
-    </Tag>
+    </ul>
   );
 }
 
@@ -725,11 +730,30 @@ function VisualGlossar() {
   );
 }
 
+function VisualVarsBMR() {
+  const vars = [
+    { sym: "m", label: "Körpergewicht in kg" },
+    { sym: "h", label: "Körpergröße in cm" },
+    { sym: "a", label: "Alter in Jahren" },
+  ];
+  return (
+    <div style={{ display: "flex", flexWrap: "wrap", gap: 8, margin: "10px 0 16px" }}>
+      {vars.map(v => (
+        <div key={v.sym} style={{ display: "flex", alignItems: "center", gap: 8, background: "var(--surface2)", border: "1px solid var(--border)", borderRadius: 8, padding: "5px 12px" }}>
+          <span style={{ fontFamily: "monospace" }}><Tex>{v.sym}</Tex></span>
+          <span style={{ fontSize: 12, color: "var(--text-muted)" }}>= {v.label}</span>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 function VisualBlock({ name }: { name: string }) {
   if (name === "bausteine") return <VisualBausteine />;
   if (name === "tdee") return <VisualTDEE />;
   if (name === "formeln") return <VisualFormeln />;
   if (name === "glossar") return <VisualGlossar />;
+  if (name === "vars-bmr") return <VisualVarsBMR />;
   return null;
 }
 
