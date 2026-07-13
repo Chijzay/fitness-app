@@ -129,7 +129,7 @@ export default function SleepDetail({ logs, allLogs, range, setRange, onEditDate
                 <div style={{ ...tt.contentStyle, padding: "10px 14px", fontSize: 13, minWidth: 180 }}>
                   <p style={{ fontWeight: 700, marginBottom: 8, color: "var(--text)" }}>{d.full}</p>
                   {d.total != null && <p style={{ color: "var(--text-2)", marginBottom: 3 }}>🛏 Im Bett: <b>{fmtHours(d.total)}</b></p>}
-                  {d.actual != null && <p style={{ color: (d.actual >= 420 ? "var(--purple)" : "var(--blue)"), marginBottom: 3 }}>💤 Geschlafen: <b>{fmtHours(d.actual)}</b></p>}
+                  {d.actual != null && <p style={{ color: "var(--blue)", marginBottom: 3 }}>💤 Geschlafen: <b>{fmtHours(d.actual)}</b></p>}
                   {d.deep != null && <p style={{ color: "var(--green)", marginBottom: 3 }}>🌊 Tiefschlaf: <b>{formatMinutes(d.deep)}</b>{deepPct != null ? ` (${deepPct} %)` : ""}</p>}
                   {d.quality != null && <p style={{ color: "var(--text-muted)", marginBottom: 3 }}>⭐ Qualität: <b>{d.quality}/100</b></p>}
                   {d.score != null && (
