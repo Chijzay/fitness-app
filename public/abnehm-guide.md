@@ -61,13 +61,13 @@ Dies gilt selbstverständlich auch in die andere Richtung. Werden täglich etwa 
 
 Dennoch zeigt dieses Beispiel, dass Gewichtsreduktion weder ein Geheimnis noch Magie ist. Sie folgt klaren biologischen und physikalischen Grundprinzipien: Wird über einen längeren Zeitraum weniger Energie (Kalorien) zugeführt als verbraucht, verliert der Körper Masse. Die entscheidende Frage lautet daher nicht, _ob_ eine Gewichtsreduktion stattfindet, sondern unter welchen Bedingungen sie erfolgt. Dabei stehen insbesondere vier Fragen im Mittelpunkt:
 
-1. Welche Körpermasse wird überwiegend abgebaut: Fett oder Muskulatur?
-2. Wie schnell erfolgt der Gewichtsverlust?
-3. Wie hoch sollte das Kaloriendefizit gewählt werden?
-    1. Gewicht halten: Kalorienaufnahme = Kalorienverbrauch
-    2. Gewicht verlieren: Kalorienaufnahme < Kalorienverbrauch
-    3. Gewicht zunehmen: Kalorienaufnahme > Kalorienverbrauch
-5. Wie nachhaltig und alltagstauglich ist die gewählte Vorgehensweise?
+- Welche Körpermasse wird überwiegend abgebaut: Fett oder Muskulatur?
+- Wie schnell erfolgt der Gewichtsverlust?
+- Wie hoch sollte das Kaloriendefizit gewählt werden?
+    - Gewicht halten: Kalorienaufnahme = Kalorienverbrauch
+    - Gewicht verlieren: Kalorienaufnahme < Kalorienverbrauch
+    - Gewicht zunehmen: Kalorienaufnahme > Kalorienverbrauch
+- Wie nachhaltig und alltagstauglich ist die gewählte Vorgehensweise?
 
 Ohne ein gezieltes Kaloriendefizit ist ein nachhaltiger Fettverlust nicht möglich. Ernährungsformen wie Intervallfasten, Low Carb, Keto, Clean Eating, FDH und so weiter können die Umsetzung zwar unterstützen, entscheidend ist jedoch, dass die gewählte Ernährungsweise individuell passend ist und über einen längeren Zeitraum zuverlässig ein Kaloriendefizit ermöglicht. Dafür ist häufig eine bewusste und dauerhafte Anpassung der bisherigen Essgewohnheiten notwendig.
 
@@ -88,7 +88,7 @@ Der Grundumsatz beschreibt die Energiemenge, die dein Körper in vollständiger 
 
 Besonders energieintensiv sind dabei das Gehirn und die Leber. Obwohl sie nur einen vergleichsweise kleinen Anteil des Körpergewichts ausmachen, sind sie in Ruhe gemeinsam für rund 40 Prozent des Grundumsatzes verantwortlich. Was das konkret bedeutet, lässt sich anhand zweier vereinfachter Beispiele verdeutlichen:
 
-- Bei einer Frau mit einem Grundumsatz von 1.400 Kilokalorien entfallen rechnerisch etwa 560 Kilokalorien auf das Gehirn und die Leber. Das entspricht rein energetisch ungefähr einem Big Mac, der rund 545 Kilokalorien liefert. Bei einem Mann mit einem Grundumsatz von 1.800 Kilokalorien sind es etwa 720 Kilokalorien.
+Bei einer Frau mit einem Grundumsatz von 1.400 Kilokalorien entfallen rechnerisch etwa 560 Kilokalorien auf das Gehirn und die Leber. Das entspricht rein energetisch ungefähr einem Big Mac, der rund 545 Kilokalorien liefert. Bei einem Mann mit einem Grundumsatz von 1.800 Kilokalorien sind es etwa 720 Kilokalorien.
 
 Diese Zahlen dienen lediglich der Veranschaulichung. Der individuelle Grundumsatz hängt nicht allein vom Geschlecht ab und wird sowohl von Körpergröße, Körpergewicht, Alter als auch der Körperzusammensetzung beeinflusst.
 
@@ -124,17 +124,19 @@ Der TDEE beschreibt die gesamte Energiemenge, die dein Körper innerhalb eines T
 
 **BMR-Berechnung**
 
-Eine der wissenschaftlich am besten untersuchten und häufig empfohlenen Formeln zur Schätzung des Grundumsatzes ist die Mifflin-St.-Jeor-Formel. Sie liefert bei vielen Erwachsenen vergleichsweise zuverlässige Ergebnisse und eignet sich daher gut als Ausgangspunkt für die Berechnung des täglichen Kalorienbedarfs. Für die praktische Zielerreichung ist dieser Schätzwert in der Regel vollkommen ausreichend, sofern die Entwicklung des Körpergewichts, der Leistungsfähigkeit und des Wohlbefindens regelmäßig beobachtet wird. Auf Grundlage dieser Rückmeldungen kann die Kalorienzufuhr bei Bedarf schrittweise angepasst und immer genauer auf den individuellen Bedarf abgestimmt werden. Die genauste Bestimmung wäre durch eine indirekte Kalorimetrie möglich.
-
-
-
+Eine der wissenschaftlich am besten untersuchten und häufig empfohlenen Formeln zur Schätzung des Grundumsatzes ist die Mifflin-St.-Jeor-Formel. Sie liefert bei vielen Erwachsenen vergleichsweise zuverlässige Ergebnisse und eignet sich daher gut als Ausgangspunkt für die Berechnung des täglichen Kalorienbedarfs. Für die praktische Zielerreichung ist dieser Schätzwert in der Regel vollkommen ausreichend, sofern die Entwicklung des Körpergewichts, der Leistungsfähigkeit und des Wohlbefindens regelmäßig beobachtet wird. Auf Grundlage dieser Rückmeldungen kann die Kalorienzufuhr bei Bedarf schrittweise angepasst und immer genauer auf den individuellen Bedarf abgestimmt werden. Die genauste Bestimmung wäre darüber hinaus durch eine indirekte Kalorimetrie möglich.
 
 | Geschlecht | Formel |
 |---|---|
-| Männer | $10m + 6{,}25h - 5a + 5$ |
-| Frauen | $10m + 6{,}25h - 5a - 161$ |
+| Männer | $10\times m + 6{,}25\times h - 5\times a + 5$ |
+| Frauen | $10\times m + 6{,}25\times h - 5\times a - 161$ |
+
+*$m=Gewicht, h=Größe, a=Alter$*
 
 *Beispiel Mann, 86 kg, 182 cm, 35 Jahre:* $10 \times 86 + 6{,}25 \times 182 - 5 \times 35 + 5 = \mathbf{1.828\ \text{kcal BMR}}$
+
+
+
 
 Der BMR ist der einzige fixe Wert – aber jeder Faktor kann als Hebel genutzt werden: Krafttraining erhöht den EAT (~500 kcal/Stunde), Alltagsbewegung erhöht den NEAT (~500 kcal/Tag bei 10.000 Schritten). Ideal ist es, überall kleine Anpassungen vorzunehmen, statt alles auf einmal radikal verändern zu wollen.
 
