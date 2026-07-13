@@ -8,7 +8,7 @@ Persönliche Web-App zur Fitness- und Diätverfolgung, entwickelt mit Next.js. K
 
 ## Zugang
 
-Die App ist erreichbar unter: **https://deine-app.fly.dev**
+Die App ist erreichbar unter: **[https://fitness-app-tracker-sigma.vercel.app/](https://fitness-app-tracker-sigma.vercel.app/)**
 
 ### Als App auf dem Handy installieren
 
