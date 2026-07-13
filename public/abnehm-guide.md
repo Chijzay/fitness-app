@@ -315,6 +315,36 @@ Schlaf ist die am meisten unterschätzte Variable beim Abnehmen. Er ist keine pa
 
 > **Merke:** Wer dauerhaft 6 Stunden schläft statt 8, verliert bei gleichem Kaloriendefizit signifikant mehr Muskelmasse und weniger Fett. Schlaf ist kein Luxus, er ist Teil des Programms.
 
+#### Wie die App deinen Schlaf-Score berechnet
+
+Die App berechnet für jede Nacht einen **Score von 0–100**, der direkt aus deinen eingetragenen Werten abgeleitet wird – ohne externe Uhr oder Gerät.
+
+Der Score setzt sich aus zwei Komponenten zusammen:
+
+**1. Schlafdauer (60 % Gewichtung)**
+Deine tatsächliche Schlafzeit wird an 8 Stunden gemessen. 8 h = 100 %, alles darunter proportional weniger. Mehr als 8 h zählen nicht über 100 %.
+
+**2. Tiefschlafanteil (40 % Gewichtung)**
+Wissenschaftlich gilt ca. 20–25 % der Schlafzeit als Tiefschlaf-Zielwert. Die App verwendet 22 % als Benchmark. Erreichst du 22 % Tiefschlafanteil, bekommst du volle 40 Punkte.
+
+**Formel:**
+- Nur Schlafzeit eingetragen: Score = (Schlafzeit ÷ 480 min) × 100
+- Mit Tiefschlaf: Score = (Schlafzeit ÷ 480) × 60 + (Tiefschlaf ÷ Bettzeit ÷ 0,22) × 40
+
+**Beispiel:** 7,5 h geschlafen, 31 min Tiefschlaf bei 8,2 h Bettzeit:
+- Dauer: 7,5 ÷ 8 = 93,8 % → 56 Punkte
+- Tiefschlaf: 31 ÷ 492 = 6,3 % ÷ 22 % = 28,6 % → 11 Punkte
+- **Score: 67/100**
+
+| Score | Bewertung |
+|---|---|
+| 80–100 | Ausgezeichnet |
+| 65–79 | Gut |
+| 50–64 | Ausbaufähig |
+| < 50 | Schlafmangel |
+
+> **Hinweis:** Ein niedriger Score bei kurzer Schlafdauer ist primär ein Dauer-Problem, nicht ein Tiefschlaf-Problem. Tiefschlaf-Einträge sind optional – fehlen sie, basiert der Score nur auf der Schlafdauer.
+
 ### 4.2 Pause
 
 Pausen sind kein Zeichen von Schwäche, sondern **strategische Werkzeuge**, die Körper und Geist langfristig leistungsfähig halten.

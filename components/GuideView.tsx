@@ -460,6 +460,8 @@ function VisualFormeln() {
         { name: "Cortisol-Halbwertszeit", formula: "ca. 60–90 min nach Peak", note: "Training > 18 Uhr vermeiden" },
         { name: "GH-Ausschüttung", formula: "Peak in Tiefschlaf (NREM 3)", note: "1. Zyklus am stärksten" },
         { name: "Schlafbedarf Sportler", formula: "≥ 8–9 h / Nacht", note: "vs. 7–9 h Normalbev." },
+        { name: "Schlaf-Score (nur Dauer)", formula: "(Schlafzeit ÷ 480 min) × 100", note: "8 h = 100 Punkte" },
+        { name: "Schlaf-Score (mit Tiefschlaf)", formula: "(Schlafzeit ÷ 480) × 60 + (Tiefschlaf ÷ Bettzeit ÷ 0,22) × 40", note: "60 % Dauer + 40 % Tiefschlafanteil (Ziel: 22 %)" },
       ],
     },
   ];
