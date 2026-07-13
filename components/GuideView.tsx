@@ -428,47 +428,47 @@ function VisualFormeln() {
     {
       name: "Energie & Verbrauch", color: "var(--teal)", icon: "🔥",
       rows: [
-        { name: "BMR Männer", formula: "10m + 6{,}25h - 5a + 5", note: "Mifflin-St-Jeor" },
-        { name: "BMR Frauen", formula: "10m + 6{,}25h - 5a - 161", note: "Mifflin-St-Jeor" },
+        { name: "BMR Männer", formula: "10m + 6{,}25h - 5a + 5", note: "Mifflin-St-Jeor; h in cm einsetzen" },
+        { name: "BMR Frauen", formula: "10m + 6{,}25h - 5a - 161", note: "Mifflin-St-Jeor; h in cm einsetzen" },
         { name: "TDEE", formula: "\\text{BMR} \\times \\text{PAL}", note: "PAL: 1,2 / 1,375 / 1,55 / 1,725 / 1,9" },
-        { name: "Tagesdefizit", formula: "E_{\\text{ges}} - \\text{TDEE} - E_{\\text{Sport}}", note: "negativ = Defizit" },
+        { name: "Tagesdefizit", formula: "E_{\\text{gegessen}} - \\text{TDEE} - E_{\\text{Sport}}", note: "negativ = Defizit" },
       ],
     },
     {
       name: "Körperzusammensetzung", color: "var(--blue)", icon: "📊",
       rows: [
-        { name: "BMI", formula: "\\dfrac{m\\,[\\text{kg}]}{h^2\\,[\\text{m}^2]}", note: "Normalbereich 18,5–24,9" },
-        { name: "Körperfett % (Deurenberg)", formula: "1{,}2 \\cdot \\text{BMI} + 0{,}23 \\cdot a - 10{,}8 \\cdot G - 5{,}4", note: "G = 1 ♂, G = 0 ♀" },
-        { name: "Magergewicht (LBM)", formula: "m \\cdot \\left(1 - \\tfrac{\\text{KF\\%}}{100}\\right)", note: "" },
+        { name: "BMI", formula: "\\dfrac{m}{h^2}", note: "Normalbereich 18,5–24,9; h in Metern" },
+        { name: "Körperfett % (Deurenberg)", formula: "1{,}2 \\cdot \\text{BMI} + 0{,}23 \\cdot a - 10{,}8 \\cdot G - 5{,}4", note: "G = 1 (♂) oder 0 (♀)" },
+        { name: "Magergewicht (LBM)", formula: "m \\cdot \\left(1 - \\dfrac{\\text{KF}\\%}{100}\\right)", note: "KF% = Körperfettanteil" },
         { name: "Muskelmasse (Skelett)", formula: "\\text{LBM} \\times 0{,}60\\;(♂)\\;/\\;0{,}55\\;(♀)", note: "Schätzwert" },
       ],
     },
     {
       name: "Ernährungsziele", color: "var(--green)", icon: "🥩",
       rows: [
-        { name: "Protein (Minimum Diät)", formula: "\\geq 1{,}6\\,\\text{g} \\times m\\,[\\text{kg}]", note: "Muskelschutz" },
-        { name: "Protein (Optimum)", formula: "2{,}0\\text{–}2{,}2\\,\\text{g} \\times m\\,[\\text{kg}]", note: "" },
-        { name: "Wasserempfehlung", formula: "35\\,\\text{ml} \\times m\\,[\\text{kg}]", note: "Minimum 1.500 ml" },
-        { name: "Thermischer Effekt (TEF)", formula: "\\text{P} {\\approx}25\\%\\;\\cdot\\;\\text{KH} {\\approx}6\\%\\;\\cdot\\;\\text{F} {\\approx}2\\%", note: "der jeweil. Kalorien" },
+        { name: "Protein (Minimum Diät)", formula: "\\geq 1{,}6\\,\\text{g} \\times m", note: "Muskelschutz; Ergebnis in g/Tag" },
+        { name: "Protein (Optimum)", formula: "2{,}0\\text{–}2{,}2\\,\\text{g} \\times m", note: "Ergebnis in g/Tag" },
+        { name: "Wasserempfehlung", formula: "35\\,\\text{ml} \\times m", note: "Minimum 1.500 ml/Tag" },
+        { name: "Thermischer Effekt (TEF)", formula: "\\text{P}{\\approx}25\\%\\;\\cdot\\;\\text{KH}{\\approx}6\\%\\;\\cdot\\;\\text{F}{\\approx}2\\%", note: "der jeweil. Kalorien" },
       ],
     },
     {
       name: "Fortschritt & Ziele", color: "var(--orange)", icon: "📉",
       rows: [
-        { name: "Max. Defizit / Tag", formula: "m_{\\text{Fett}}\\,[\\text{kg}] \\times 70\\,\\text{kcal}", note: "nach Alpert" },
-        { name: "Max. Abnahme / Woche", formula: "0{,}7\\% \\times m\\,[\\text{kg}]", note: "Muskelschutz" },
-        { name: "Fettverlust (kcal → kg)", formula: "\\dfrac{\\Delta E\\,[\\text{kcal}]}{7700}", note: "≈ 1 kg Körperfett" },
-        { name: "Zielgewicht (Broca)", formula: "h\\,[\\text{cm}] - 100", note: "grober Richtwert" },
-        { name: "Wochen bis Ziel", formula: "\\dfrac{\\Delta m}{\\text{Defizit/Tag} \\times 7 \\div 7700}", note: "bei konstantem Defizit" },
+        { name: "Max. Defizit / Tag", formula: "m_{\\text{Fett}} \\times 70\\,\\text{kcal}", note: "nach Alpert; m_Fett = Fettmasse in kg" },
+        { name: "Max. Abnahme / Woche", formula: "0{,}7\\% \\times m", note: "Muskelschutz" },
+        { name: "Fettverlust (kcal → kg)", formula: "\\dfrac{\\Delta E}{7700}", note: "ΔE = Gesamtdefizit in kcal" },
+        { name: "Zielgewicht (Broca)", formula: "h_{\\text{cm}} - 100", note: "h in cm; grober Richtwert" },
+        { name: "Wochen bis Ziel", formula: "\\dfrac{\\Delta m \\times 7700}{\\text{Defizit/Tag} \\times 7}", note: "bei konstantem Defizit" },
         { name: "Tagesdefizit für Ziel", formula: "\\dfrac{\\Delta m \\times 7700}{\\text{Wochen} \\times 7}", note: "Umkehrrechnung" },
       ],
     },
     {
       name: "Muskelaufbau", color: "var(--purple)", icon: "💪",
       rows: [
-        { name: "Max. Muskelzuwachs / Monat", formula: "0{,}5\\text{–}1{,}0\\% \\times m\\,[\\text{kg}]", note: "Anfänger; Fortge. ~0,25 %" },
+        { name: "Max. Muskelzuwachs / Monat", formula: "0{,}5\\text{–}1{,}0\\% \\times m", note: "Anfänger; Fortge. ~0,25 %" },
         { name: "Kalorienüberschuss (Lean Bulk)", formula: "\\text{TDEE} + 200\\text{–}300\\,\\text{kcal}", note: "minimiert Fettansatz" },
-        { name: "Protein (Bulk)", formula: "1{,}6\\text{–}2{,}2\\,\\text{g} \\times m\\,[\\text{kg}]", note: "gleich wie Diät" },
+        { name: "Protein (Bulk)", formula: "1{,}6\\text{–}2{,}2\\,\\text{g} \\times m", note: "gleich wie Diät" },
         { name: "Fettansatz-Verhältnis", formula: "\\approx 1\\,\\text{kg Muskel} : 0{,}5\\,\\text{kg Fett}", note: "bei moderatem Überschuss" },
         { name: "Creatine-Ladephase", formula: "4 \\times 5\\,\\text{g/d} \\times 5\\text{–}7\\,\\text{Tage}", note: "dann 3–5 g/Tag" },
       ],
@@ -480,14 +480,40 @@ function VisualFormeln() {
         { name: "Cortisol-Halbwertszeit", formula: "t_{1/2} \\approx 60\\text{–}90\\,\\text{min}", note: "Training > 18 Uhr vermeiden" },
         { name: "GH-Ausschüttung", formula: "\\text{Peak in NREM}_3", note: "1. Zyklus am stärksten" },
         { name: "Schlafbedarf Sportler", formula: "\\geq 8\\text{–}9\\,\\text{h/Nacht}", note: "vs. 7–9 h Normalbev." },
-        { name: "Schlaf-Score (Dauer)", formula: "\\dfrac{t_{\\text{Schlaf}}}{480} \\times 100", note: "8 h = 100 Punkte" },
-        { name: "Schlaf-Score (Tiefschlaf)", formula: "\\dfrac{t_{\\text{Schlaf}}}{480} \\times 60 + \\dfrac{t_{\\text{Tief}}}{t_{\\text{Bett}} \\cdot 0{,}22} \\times 40", note: "60 % Dauer + 40 % Tiefschlaf" },
+        { name: "Schlaf-Score (Dauer)", formula: "\\dfrac{t_{\\text{Schlaf}}}{480} \\times 100", note: "t in Minuten; 480 min = 8 h" },
+        { name: "Schlaf-Score (Tiefschlaf)", formula: "\\dfrac{t_{\\text{Schlaf}}}{480} \\times 60 + \\dfrac{t_{\\text{Tief}}}{t_{\\text{Bett}} \\cdot 0{,}22} \\times 40", note: "0,22 = 22 % Tiefschlaf-Ziel" },
       ],
     },
   ];
   const th: React.CSSProperties = { textAlign: "left", padding: "7px 14px", fontSize: 10, fontWeight: 700, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.07em", borderBottom: "1px solid var(--border)" };
+
+  const vars = [
+    { sym: "m", label: "Körpergewicht in kg" },
+    { sym: "h", label: "Körpergröße in m" },
+    { sym: "a", label: "Alter in Jahren" },
+    { sym: "G", label: "Geschlecht (1 = ♂, 0 = ♀)" },
+    { sym: "n", label: "Anzahl" },
+    { sym: "\\Delta", label: "Differenz / Veränderung" },
+    { sym: "t", label: "Zeit (mit Index: z. B. t_{\\text{Schlaf}})" },
+  ];
+
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 14, margin: "20px 0 8px" }}>
+      {/* Variablen-Legende */}
+      <div style={{ background: "var(--surface)", border: "1px solid var(--border)", borderRadius: 12, padding: "14px 18px" }}>
+        <div style={{ fontSize: 11, fontWeight: 700, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.07em", marginBottom: 10 }}>
+          Variablen-Legende
+        </div>
+        <div style={{ display: "flex", flexWrap: "wrap", gap: "6px 20px" }}>
+          {vars.map(v => (
+            <span key={v.sym} style={{ fontSize: 12.5, color: "var(--text-2)", display: "inline-flex", alignItems: "baseline", gap: 6 }}>
+              <span style={{ fontWeight: 700, color: "var(--teal)" }}><Tex>{v.sym}</Tex></span>
+              <span style={{ color: "var(--text-muted)" }}>=</span>
+              <span>{v.label}</span>
+            </span>
+          ))}
+        </div>
+      </div>
       {cats.map((cat, i) => (
         <div key={i} style={{ background: "var(--surface)", border: "1px solid var(--border)", borderRadius: 12, overflow: "hidden" }}>
           <div style={{ padding: "10px 16px", background: "var(--surface2)", borderBottom: "1px solid var(--border)", display: "flex", alignItems: "center", gap: 8 }}>
