@@ -19,6 +19,7 @@
 
 ---
 
+
 ## 1. Einführung
 
 Dieser Guide ist eine praxisorientierte und persönlich erprobte Einführung in eine nachhaltige Gewichtsreduktion, bei der die Muskelmasse bestmöglich geschützt und im Idealfall weiter aufgebaut werden kann. Er richtet sich an Personen, die eine Gewichtsabnahme erfolgreich umsetzen und dabei ihre Muskulatur erhalen möchten. Er bietet klare Kennzahlen, praktikable Routinen, neue Gewohnheiten und legt den  Fokus auf einen zügigen Einstieg und langfristige Umsetzbarkeit.
@@ -45,9 +46,11 @@ Im Folgenden werden diese acht Bausteine einzeln betrachtet, praxisnah erläuter
 
 ---
 
+
 ## 2. Ernährung
 
 Der wichtigste Hebel für eine erfolgreiche Gewichtsreduktion ist eine durchdachte und an die individuellen Bedürfnisse angepasste Ernährung. Liegt die tägliche Energiezufuhr dauerhaft über dem Energieverbrauch, kann auch regelmäßiger Sport allein keine Gewichtsabnahme bewirken. Entscheidend ist daher, über einen längeren Zeitraum ein angemessenes Kaloriendefizit zu schaffen.
+
 
 ### 2.1 Energiebilanz
 
@@ -70,10 +73,6 @@ Ohne ein gezieltes Kaloriendefizit ist ein nachhaltiger Fettverlust nicht mögli
 Stelle dir daher während des gesamten Prozesses regelmäßig diese Frage: *»Kann ich das, was ich gerade mache, auch noch in einem, zwei oder gar in fünf Jahren genau so weitermachen?«* Lautet die Antwort nein, ist die gewählte Vorgehensweise wahrscheinlich nicht nachhaltig. In diesem Fall steigt das Risiko, in alte Gewohnheiten zurückzufallen und das verlorene Gewicht im Sinne des Jo-Jo-Effekts wieder zuzunehmen.
 
 **Merke: Es gibt keine Wundermittel.**
-
-
-
-
 
 
 #### 2.1.1 Kalorienverbrauch
@@ -144,6 +143,7 @@ TDEE = BMR (60-70%) + EAT  (15-30%) +  NEAT (15-50%) + TEF (5-15%)
 *Beispiel Mann, 86 kg, 182 cm, 35 Jahre:* (10 × 86) + (6,25 × 182) − (5 × 35) + 5 = **1.828 kcal BMR**
 
 Der BMR ist der einzige fixe Wert – aber jeder Faktor kann als Hebel genutzt werden: Krafttraining erhöht den EAT (~500 kcal/Stunde), Alltagsbewegung erhöht den NEAT (~500 kcal/Tag bei 10.000 Schritten). Ideal ist es, überall kleine Anpassungen vorzunehmen, statt alles auf einmal radikal verändern zu wollen.
+
 
 #### 2.1.2 Kaloriendefizit definieren
 
