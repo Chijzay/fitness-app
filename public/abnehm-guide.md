@@ -60,13 +60,20 @@ Dennoch zeigt dieses Beispiel, dass Gewichtsreduktion weder ein Geheimnis noch M
 1. Welche Körpermasse wird überwiegend abgebaut: Fett oder Muskulatur?
 2. Wie schnell erfolgt der Gewichtsverlust?
 3. Wie hoch sollte das Kaloriendefizit gewählt werden?
-4. Wie nachhaltig und alltagstauglich ist die gewählte Vorgehensweise?
+    1. Gewicht halten: Kalorienaufnahme = Kalorienverbrauch
+    2. Gewicht verlieren: Kalorienaufnahme < Kalorienverbrauch
+    3. Gewicht zunehmen: Kalorienaufnahme > Kalorienverbrauch
+5. Wie nachhaltig und alltagstauglich ist die gewählte Vorgehensweise?
 
 Ohne ein gezieltes Kaloriendefizit ist ein nachhaltiger Fettverlust nicht möglich. Ernährungsformen wie Intervallfasten, Low Carb, Keto, Clean Eating, FDH und so weiter können die Umsetzung zwar unterstützen, entscheidend ist jedoch, dass die gewählte Ernährungsweise individuell passend ist und über einen längeren Zeitraum zuverlässig ein Kaloriendefizit ermöglicht. Dafür ist häufig eine bewusste und dauerhafte Anpassung der bisherigen Essgewohnheiten notwendig.
 
 Stelle dir daher während des gesamten Prozesses regelmäßig diese Frage: *»Kann ich das, was ich gerade mache, auch noch in einem, zwei oder gar in fünf Jahren genau so weitermachen?«* Lautet die Antwort nein, ist die gewählte Vorgehensweise wahrscheinlich nicht nachhaltig. In diesem Fall steigt das Risiko, in alte Gewohnheiten zurückzufallen und das verlorene Gewicht im Sinne des Jo-Jo-Effekts wieder zuzunehmen.
 
 **Merke: Es gibt keine Wundermittel.**
+
+
+
+
 
 
 #### 2.1.1 Kalorienverbrauch
@@ -108,6 +115,11 @@ Wie hoch dieser Effekt ausfällt, hängt unter anderem von der Zusammensetzung d
 | Fett | etwa 0–3 % |
 
 Vereinfacht ausgedrückt bedeutet das: Von 100 aufgenommenen Kilokalorien aus Protein benötigt der Körper etwa 20 bis 30 Kilokalorien für die Verdauung und Verstoffwechselung. Dadurch verbleibt ein Nettoenergiebeitrag von ungefähr 70 bis 80 Kilokalorien. Bei Fett liegt der thermische Effekt dagegen nur bei etwa null bis drei Prozent, sodass von 100 aufgenommenen Kilokalorien rund 97 bis 100 Kilokalorien verbleiben. Protein besitzt damit den höchsten thermischen Effekt der drei Makronährstoffe. Eine proteinreiche Ernährung kann den täglichen Energieverbrauch daher geringfügig erhöhen und gleichzeitig die Sättigung unterstützen.
+
+**Täglicher Gesamtenergieverbrauch (TDEE – Total Daily Energy Expenditure)**
+
+Der TDEE beschreibt die gesamte Energiemenge, die dein Körper innerhalb eines Tages verbraucht. Er setzt sich aus dem Grundumsatz, dem Leistungsumsatz und dem thermischen Effekt der Nahrung zusammen. Wie hoch der tatsächliche Tagesverbrauch ausfällt, hängt unter anderem von Körpergewicht, Muskelmasse, Alltagsbewegung, Training und Ernährung ab und kann deshalb von Tag zu Tag schwanken. Gleichzeitig ergeben sich daraus verschiedene Stellschrauben, mit denen sich der Energieverbrauch gezielt beeinflussen lässt. Während der Grundumsatz nur begrenzt und langfristig veränderbar ist, können vor allem Alltagsbewegung, Training und die Zusammensetzung der Ernährung bewusst gesteuert werden. Werden diese Faktoren planvoll und auf das persönliche Ziel abgestimmt eingesetzt, können sie die Gewichtsreduktion unterstützen und die Umsetzung im Alltag nachhaltig erleichtern.
+
 
 
 
