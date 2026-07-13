@@ -131,7 +131,7 @@ Eine der wissenschaftlich am besten untersuchten und häufig empfohlenen Formeln
 | Männer | $10\times m + 6{,}25\times h - 5\times a + 5$ |
 | Frauen | $10\times m + 6{,}25\times h - 5\times a - 161$ |
 
-<!-- visual:sym -->
+
 
 *Beispiel Mann, 86 kg, 182 cm, 35 Jahre:* $10 \times 86 + 6{,}25 \times 182 - 5 \times 35 + 5 = \mathbf{1.828\ \text{kcal BMR}}$
 
