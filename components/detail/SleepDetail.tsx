@@ -1,6 +1,6 @@
 ﻿"use client";
 import { useMemo } from "react";
-import { BarChart, Bar, ComposedChart, LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, ReferenceLine, Cell } from "recharts";
+import { BarChart, Bar, LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, ReferenceLine } from "recharts";
 import type { DailyLog, DateRange } from "@/app/page";
 import { allDatesInRange, fmtShort, fmtFull, tickStyle, gridStyle, tooltipStyle, RangeSelector, KpiCard, SectionHeader } from "@/lib/chartHelpers";
 import { calcSleepScore, formatMinutes } from "@/lib/calculations";
@@ -26,14 +26,17 @@ export default function SleepDetail({ logs, allLogs, range, setRange, onEditDate
     const score = calcSleepScore(log?.sleepActual ?? null, log?.sleepDeep ?? null, log?.sleepTotal ?? null);
     const actual = log?.sleepActual ?? null;
     const deep = log?.sleepDeep ?? null;
-    // lightSleep = actual minus deep sleep (for stacked bar)
+    const total = log?.sleepTotal ?? null;
+    // Stacked: tiefschlaf (bottom) + leichtschlaf (middle) + wachzeit im Bett (top)
     const lightSleep = actual != null ? (deep != null ? actual - deep : actual) : null;
+    const wakingBed = actual != null && total != null && total > actual ? total - actual : null;
     return {
       date: fmtShort(d), full: fmtFull(d), raw: d,
-      total: log?.sleepTotal ?? null,
+      total,
       actual,
       deep,
       lightSleep,
+      wakingBed,
       quality: log?.sleepQuality ?? null,
       score,
     };
@@ -141,30 +144,26 @@ export default function SleepDetail({ logs, allLogs, range, setRange, onEditDate
             }} />
             <ReferenceLine y={420} stroke="var(--orange)" strokeDasharray="4 3" strokeWidth={1.5}
               label={{ value: "7h", fontSize: 10, fill: "var(--orange)", position: "right" }} />
-            {/* Tiefschlaf unten (grün) */}
-            <Bar dataKey="deep" stackId="sleep" maxBarSize={44} radius={[0, 0, 4, 4]} fill="var(--green)" fillOpacity={0.85} />
-            {/* Leichtschlaf oben (blau/lila) */}
-            <Bar dataKey="lightSleep" stackId="sleep" maxBarSize={44} radius={[4, 4, 0, 0]}>
-              {sleepData.map((d, i) => (
-                <Cell key={i}
-                  fill={(d.actual ?? 0) >= 420 ? "var(--purple)" : "var(--blue)"}
-                  fillOpacity={d.lightSleep ? 0.75 : 0} />
-              ))}
-            </Bar>
+            {/* Tiefschlaf (unten, grün) */}
+            <Bar dataKey="deep" stackId="sleep" maxBarSize={44} radius={[0, 0, 4, 4]} fill="var(--green)" fillOpacity={0.9} name="Tiefschlaf" />
+            {/* Leichtschlaf (mitte, blau) = Schlafzeit − Tiefschlaf */}
+            <Bar dataKey="lightSleep" stackId="sleep" maxBarSize={44} radius={[0, 0, 0, 0]} fill="var(--blue)" fillOpacity={0.75} name="Leichtschlaf" />
+            {/* Wachzeit im Bett (oben, grau) = Bettzeit − Schlafzeit */}
+            <Bar dataKey="wakingBed" stackId="sleep" maxBarSize={44} radius={[4, 4, 0, 0]} fill="var(--text-muted)" fillOpacity={0.25} name="Wachzeit im Bett" />
           </BarChart>
         </ResponsiveContainer>
-        <div style={{ display: "flex", gap: 20, marginTop: 10, fontSize: 12 }}>
-          <span style={{ display: "flex", alignItems: "center", gap: 5 }}>
-            <span style={{ width: 12, height: 12, borderRadius: 3, background: "var(--purple)", display: "inline-block" }} />
-            ≥ 7h Schlaf
-          </span>
-          <span style={{ display: "flex", alignItems: "center", gap: 5 }}>
-            <span style={{ width: 12, height: 12, borderRadius: 3, background: "var(--blue)", display: "inline-block" }} />
-            &lt; 7h Schlaf
-          </span>
+        <div style={{ display: "flex", gap: 20, marginTop: 10, fontSize: 12, flexWrap: "wrap" }}>
           <span style={{ display: "flex", alignItems: "center", gap: 5 }}>
             <span style={{ width: 12, height: 12, borderRadius: 3, background: "var(--green)", display: "inline-block" }} />
-            Tiefschlaf (unten)
+            Tiefschlaf
+          </span>
+          <span style={{ display: "flex", alignItems: "center", gap: 5 }}>
+            <span style={{ width: 12, height: 12, borderRadius: 3, background: "var(--blue)", opacity: 0.75, display: "inline-block" }} />
+            Leichtschlaf
+          </span>
+          <span style={{ display: "flex", alignItems: "center", gap: 5 }}>
+            <span style={{ width: 12, height: 12, borderRadius: 3, background: "var(--text-muted)", opacity: 0.4, display: "inline-block" }} />
+            Wachzeit im Bett
           </span>
         </div>
       </div>
