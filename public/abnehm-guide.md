@@ -16,6 +16,7 @@
 - [4. Regeneration](#regeneration)
 - [5. Durchführung anhand eines Beispiels](#durchführung)
 - [6. Formelreferenz](#formelreferenz)
+- [7. Glossar](#glossar)
 
 ---
 
@@ -121,19 +122,16 @@ Der TDEE beschreibt die gesamte Energiemenge, die dein Körper innerhalb eines T
 
 <!-- visual:tdee -->
 
+**BMR-Berechnung**
+
+Eine der wissenschaftlich am besten untersuchten und häufig empfohlenen Formeln zur Schätzung des Grundumsatzes ist die Mifflin-St.-Jeor-Formel. Sie liefert bei vielen Erwachsenen vergleichsweise zuverlässige Ergebnisse und eignet sich daher gut als Ausgangspunkt für die Berechnung des täglichen Kalorienbedarfs. Für die praktische Zielerreichung ist dieser Schätzwert in der Regel vollkommen ausreichend, sofern die Entwicklung des Körpergewichts, der Leistungsfähigkeit und des Wohlbefindens regelmäßig beobachtet wird. Auf Grundlage dieser Rückmeldungen kann die Kalorienzufuhr bei Bedarf schrittweise angepasst und immer genauer auf den individuellen Bedarf abgestimmt werden. Die genauste Bestimmung wäre durch eine indirekte Kalorimetrie möglich.
 
 
 
-
-
-
-
-
-**BMR-Berechnung (Mifflin-St-Jeor-Formel):**
 
 | Geschlecht | Formel |
 |---|---|
-| Männer | (10 × Gewicht kg) + (6,25 × Größe cm) − (5 × Alter) + 5 |
+| Männer | %(10 \times Gewicht kg) + (6,25 × Größe cm) − (5 × Alter) + 5$ |
 | Frauen | (10 × Gewicht kg) + (6,25 × Größe cm) − (5 × Alter) − 161 |
 
 *Beispiel Mann, 86 kg, 182 cm, 35 Jahre:* (10 × 86) + (6,25 × 182) − (5 × 35) + 5 = **1.828 kcal BMR**
