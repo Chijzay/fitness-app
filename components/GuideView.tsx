@@ -14,13 +14,15 @@ function Tex({ children, display = false }: { children: string; display?: boolea
 
 // ── Minimal Markdown → React renderer ─────────────────────────────────────────
 
+type ListItem = { text: string; depth: number };
+
 type Token =
   | { t: "h1" | "h2" | "h3"; text: string; id: string }
   | { t: "hr" }
   | { t: "blockquote"; text: string }
   | { t: "table"; head: string[]; rows: string[][] }
-  | { t: "ul"; items: { text: string; sub: boolean }[] }
-  | { t: "ol"; items: string[] }
+  | { t: "ul"; items: ListItem[] }
+  | { t: "ol"; items: ListItem[] }
   | { t: "code"; text: string }
   | { t: "p"; text: string }
   | { t: "visual"; name: string }
@@ -133,22 +135,28 @@ function tokenize(md: string): Token[] {
 
     // Unordered list
     if (trimmed.startsWith("- ") || trimmed.startsWith("* ")) {
-      const items: { text: string; sub: boolean }[] = [{ text: trimmed.slice(2), sub: false }];
-      i++;
-      while (i < lines.length && (lines[i].trim().startsWith("- ") || lines[i].trim().startsWith("* "))) {
+      const items: ListItem[] = [];
+      while (i < lines.length) {
         const raw = lines[i];
-        const sub = /^\s{3,}/.test(raw);
-        items.push({ text: raw.trim().slice(2), sub }); i++;
+        const t = raw.trim();
+        if (!t.startsWith("- ") && !t.startsWith("* ")) break;
+        const depth = Math.floor((raw.length - raw.trimStart().length) / 2);
+        items.push({ text: t.slice(2), depth });
+        i++;
       }
       tokens.push({ t: "ul", items }); continue;
     }
 
     // Ordered list
     if (/^\d+\.\s/.test(trimmed)) {
-      const items: string[] = [trimmed.replace(/^\d+\.\s/, "")];
-      i++;
-      while (i < lines.length && /^\d+\.\s/.test(lines[i].trim())) {
-        items.push(lines[i].trim().replace(/^\d+\.\s/, "")); i++;
+      const items: ListItem[] = [];
+      while (i < lines.length) {
+        const raw = lines[i];
+        const t = raw.trim();
+        if (!/^\d+\.\s/.test(t)) break;
+        const depth = Math.floor((raw.length - raw.trimStart().length) / 4);
+        items.push({ text: t.replace(/^\d+\.\s/, ""), depth });
+        i++;
       }
       tokens.push({ t: "ol", items }); continue;
     }
@@ -167,6 +175,29 @@ function tokenize(md: string): Token[] {
     i++;
   }
   return tokens;
+}
+
+function NestedList({ items, ordered, depth = 0, liStyle }: {
+  items: ListItem[]; ordered: boolean; depth?: number; liStyle: React.CSSProperties;
+}): React.ReactElement {
+  const Tag = ordered ? "ol" : "ul";
+  const result: React.ReactElement[] = [];
+  let i = 0;
+  while (i < items.length) {
+    if (items[i].depth !== depth) { i++; continue; }
+    // collect sub-items that follow at depth+1
+    let k = i + 1;
+    while (k < items.length && items[k].depth > depth) k++;
+    const sub = items.slice(i + 1, k).filter(x => x.depth > depth);
+    result.push(
+      <li key={i} style={{ ...liStyle, marginBottom: 3 }}>
+        {parseInline(items[i].text)}
+        {sub.length > 0 && <NestedList items={sub} ordered={ordered} depth={depth + 1} liStyle={liStyle} />}
+      </li>
+    );
+    i = k;
+  }
+  return <Tag style={{ paddingLeft: depth === 0 ? 20 : 18, marginBottom: depth === 0 ? 14 : 6, marginTop: depth === 0 ? 0 : 6 }}>{result}</Tag>;
 }
 
 function RenderTokens({ tokens }: { tokens: Token[] }) {
@@ -199,21 +230,9 @@ function RenderTokens({ tokens }: { tokens: Token[] }) {
             <p style={{ margin: 0 }}>{parseInline(tok.text.replace(/^\*\*[^*]+\*\*\s*/, ""))}</p>
           </div>
         );
-        if (tok.t === "ul") return (
-          <ul key={idx} style={{ paddingLeft: 20, marginBottom: 14 }}>
-            {tok.items.map((item, j) => (
-              <li key={j} style={{ ...s.li, paddingLeft: item.sub ? 16 : 0, marginBottom: item.sub ? 2 : undefined }}>
-                {parseInline(item.text)}
-              </li>
-            ))}
-          </ul>
-        );
+        if (tok.t === "ul") return <NestedList key={idx} items={tok.items} ordered={false} liStyle={s.li} />;
         if (tok.t === "visual") return <VisualBlock key={idx} name={tok.name} />;
-        if (tok.t === "ol") return (
-          <ol key={idx} style={{ paddingLeft: 20, marginBottom: 14 }}>
-            {tok.items.map((item, j) => <li key={j} style={s.li}>{parseInline(item)}</li>)}
-          </ol>
-        );
+        if (tok.t === "ol") return <NestedList key={idx} items={tok.items} ordered={true} liStyle={s.li} />;
         if (tok.t === "table") {
           const n = tok.head.length;
           // Fixed column widths so layout is stable regardless of content
