@@ -21,17 +21,32 @@
 
 ## 1. Einführung
 
-Dieser Guide ist eine praxisorientierte und persönlich erprobte Einführung in eine nachhaltige Gewichtsreduktion. Er richtet sich an Personen, die eine Gewichtsabnahme erfolgreich umsetzen möchten – mit klaren Kennzahlen, praktikablen Routinen, neuen Gewohnheiten und einem Fokus auf einen zügigen Einstieg und langfristige Umsetzbarkeit.
+Dieser Guide ist eine praxisorientierte und persönlich erprobte Einführung in eine nachhaltige Gewichtsreduktion, bei der die Muskelmasse bestmöglich geschützt und im Idealfall weiter aufgebaut werden kann. Er richtet sich an Personen, die eine Gewichtsabnahme erfolgreich umsetzen und dabei ihre Muskulatur erhalen möchten. Er bietet klare Kennzahlen, praktikable Routinen, neue Gewohnheiten und legt den  Fokus auf einen zügigen Einstieg und langfristige Umsetzbarkeit.
 
 Der Guide unterscheidet **drei Hebel**: Ernährung, Bewegung und Regeneration.
 
-- **Hebel 1 – Ernährung** (wichtigster): Energiebilanz → Proteine → Lebensmittelauswahl
+- **Hebel 1 – Ernährung** (der Wichtigste): Energiebilanz → Proteine → Lebensmittelauswahl
 - **Hebel 2 – Bewegung**: Krafttraining → Alltagsbewegung → Ausdauersport
 - **Hebel 3 – Regeneration** (durchgehend): Schlaf · Pausen
 
-Diese acht Bausteine sind hierarchisch nach ihrer Wirksamkeit geordnet. Sie steuern den Fettverlust, schützen die Muskelmasse und erhöhen die Alltagstauglichkeit.
+Diese acht Bausteine sind hierarchisch nach ihrer Wirksamkeit und innerhalb ihrer Gruppe geordnet. Sie steuern den Fettverlust, schützen die Muskelmasse und erhöhen die Alltagstauglichkeit.
 
 <!-- visual:bausteine -->
+
+Der wichtigste Baustein einer erfolgreichen Abnehmphase ist die Energiebilanz. Nur wenn über einen längeren Zeitraum weniger Energie aufgenommen als verbraucht wird, kann Körpergewicht und damit auch Körperfett reduziert werden. Entscheidend ist dabei die passende Höhe des Kaloriendefizits. Ein moderates Defizit ermöglicht einen kontinuierlichen Fettverlust, ohne Leistungsfähigkeit, Wohlbefinden und Muskelerhalt unnötig zu beeinträchtigen.
+
+Neben der Energiebilanz spielen eine ausreichende Proteinzufuhr und regelmäßiges Krafttraining eine wichtige Rolle. Gemeinsam setzen sie den entscheidenden Reiz, um die vorhandene Muskelmasse während der Diät möglichst vollständig zu erhalten. Abhängig von Trainingsstand, Ausgangssituation und Höhe des Defizits kann unter bestimmten Voraussetzungen sogar gleichzeitig Muskelmasse aufgebaut werden.
+Die Energiebilanz, die Proteinzufuhr und das Krafttraining bilden somit die Grundlage des Erfolgs. Die Auswahl der Lebensmittel entscheidet zwar nicht direkt darüber, ob Fett abgebaut wird, sie kann die Umsetzung jedoch erheblich erleichtern. Nährstoffreiche und sättigende Lebensmittel helfen dabei, Hunger besser zu kontrollieren, den Körper ausreichend zu versorgen und die angestrebten Kalorien- und Proteinwerte zuverlässig einzuhalten.
+
+Zusätzliche Alltagsbewegung und ergänzendes Ausdauertraining können den täglichen Energieverbrauch erhöhen. Dadurch muss das Kaloriendefizit nicht ausschließlich über eine geringere Nahrungsaufnahme erzeugt werden. Ein höherer Verbrauch kann mehr Flexibilität bei der Ernährung ermöglichen und die Abnehmphase langfristig angenehmer und besser durchhaltbar machen.
+
+Die körperliche Anpassung findet überwiegend in den Erholungsphasen statt. Ausreichender Schlaf, gezielte Pausen und ein gutes Stressmanagement sind deshalb essenziell. Sie unterstützen die Regeneration, die Trainingsleistung, die hormonellen Prozesse sowie die körperliche und psychische Belastbarkeit während der gesamten Abnehmphase.
+
+
+
+
+
+
 
 ---
 
@@ -500,13 +515,13 @@ Ein funktionierendes System muss nicht verändert werden, ein nicht funktioniere
 
 ## 6. Formelreferenz
 
-Alle relevanten Formeln aus diesem Guide auf einen Blick – zum schnellen Nachschlagen und Ausrechnen der eigenen Werte.
+Alle relevanten Formeln aus diesem Guide auf einen Blick zum Nachschlagen und Ausrechnen der eigenen Werte.
 
 <!-- visual:formeln -->
 
 
 ## 7. Glossar
 
-Alle wichtigen Begriffe, Abkürzungen und Konzepte aus diesem Guide – alphabetisch nach Kategorie sortiert.
+Alle wichtigen Begriffe, Abkürzungen und Konzepte aus diesem Guide, alphabetisch nach Kategorie sortiert.
 
 <!-- visual:glossar -->
