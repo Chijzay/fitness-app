@@ -131,31 +131,29 @@ Eine der wissenschaftlich am besten untersuchten und häufig empfohlenen Formeln
 | Männer | $10\times m + 6{,}25\times h - 5\times a + 5$ |
 | Frauen | $10\times m + 6{,}25\times h - 5\times a - 161$ |
 
-
-
 <!-- visual:vars-bmr -->
 
-*Beispiel Mann, 86 kg, 182 cm, 35 Jahre:* $10 \times 86 + 6{,}25 \times 182 - 5 \times 35 + 5 = \mathbf{1.828\ \text{kcal BMR}}$
+*Beispiel Mann, 86 kg, 182 cm, 35 Jahre:* 
+
+$10 \times 86 + 6{,}25 \times 182 - 5 \times 35 + 5 = \mathbf{1.828\ \text{kcal BMR}}$
 
 Der Grundumsatz ist kurzfristig nur begrenzt beeinflussbar, während sich vor allem der Leistungsumsatz gezielt steigern lässt. Krafttraining erhöht den Energieverbrauch durch sportliche Aktivität (ca. 500 Kalorien in der Stunde), während mehr Bewegung im Alltag, beispielsweise durch zusätzliche Schritte (10.000 Schritte ca. 500 Kalorien), Treppensteigen oder häufigeres Gehen den NEAT erhöht. Wie viele Kalorien dabei tatsächlich verbraucht werden, hängt unter anderem von Körpergewicht, Trainingsintensität, Tempo und Dauer der Aktivität ab.
 
 In der Praxis ist es meist sinnvoller, mehrere kleine Stellschrauben gleichzeitig zu nutzen, anstatt einen einzelnen Bereich radikal zu verändern. Regelmäßiges Krafttraining, mehr Alltagsbewegung und eine angepasste Ernährung ergeben gemeinsam eine nachhaltige und gut umsetzbare Strategie.
 
 
-
-
-
-
-
-
-
-
-
-
-
 #### 2.1.2 Kaloriendefizit definieren
 
-Für die meisten Menschen ist ein moderates Defizit am besten – als Orientierung etwa 300–600 kcal pro Tag oder eine Abnahme von rund 0,5–1 % des Körpergewichts pro Woche –, weil es die Diät durchhaltbar macht und das Risiko für Leistungsabfall, Hunger, Stress und unnötigen Verlust fettfreier Masse reduziert.
+Für die meisten Menschen ist ein moderates Kaloriendefizit der sinnvollste Ausgangspunkt. Als praktische Orientierung können etwa 300 bis 600 Kilokalorien pro Tag beziehungsweise eine wöchentliche Gewichtsabnahme von rund 0,5 bis 1 Prozent des Körpergewichts dienen. Je niedriger der Körperfettanteil und je wichtiger der Erhalt der Muskelmasse ist, desto eher sollte das untere Ende dieses Bereichs angestrebt werden. Ein moderates Defizit erleichtert die langfristige Umsetzung und kann das Risiko für starken Hunger, Leistungseinbußen, eine hohe psychische Belastung und einen unnötigen Verlust fettfreier Masse reduzieren.
+
+
+
+
+
+
+
+
+
 
 **Empfohlener Bereich:** 300–600 kcal/Tag für die meisten Menschen. Das entspricht ~300 g bis ~600 g Gewichtsverlust pro Woche. Viele Leitlinien orientieren sich an 0,5–1,0 kg Abnahme pro Woche, was einem Defizit von ca. 500–1.000 kcal/Tag entspricht.
 
