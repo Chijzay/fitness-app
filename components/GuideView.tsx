@@ -218,7 +218,17 @@ function NestedList({ items, ordered, depth = 0, liStyle }: {
     );
     i = k;
   }
-  return <Tag style={{ paddingLeft: depth === 0 ? 20 : 18, marginBottom: depth === 0 ? 14 : 6, marginTop: depth === 0 ? 0 : 6 }}>{result}</Tag>;
+  return (
+    <Tag style={{
+      paddingLeft: depth === 0 ? 24 : 20,
+      marginBottom: depth === 0 ? 14 : 6,
+      marginTop: depth === 0 ? 0 : 6,
+      listStyleType: ordered ? "decimal" : "disc",
+      listStylePosition: "outside",
+    }}>
+      {result}
+    </Tag>
+  );
 }
 
 function RenderTokens({ tokens }: { tokens: Token[] }) {

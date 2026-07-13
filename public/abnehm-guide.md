@@ -131,10 +131,10 @@ Eine der wissenschaftlich am besten untersuchten und häufig empfohlenen Formeln
 
 | Geschlecht | Formel |
 |---|---|
-| Männer | %(10 \times Gewicht kg) + (6,25 × Größe cm) − (5 × Alter) + 5$ |
-| Frauen | (10 × Gewicht kg) + (6,25 × Größe cm) − (5 × Alter) − 161 |
+| Männer | $10m + 6{,}25h - 5a + 5$ |
+| Frauen | $10m + 6{,}25h - 5a - 161$ |
 
-*Beispiel Mann, 86 kg, 182 cm, 35 Jahre:* (10 × 86) + (6,25 × 182) − (5 × 35) + 5 = **1.828 kcal BMR**
+*Beispiel Mann, 86 kg, 182 cm, 35 Jahre:* $10 \times 86 + 6{,}25 \times 182 - 5 \times 35 + 5 = \mathbf{1.828\ \text{kcal BMR}}$
 
 Der BMR ist der einzige fixe Wert – aber jeder Faktor kann als Hebel genutzt werden: Krafttraining erhöht den EAT (~500 kcal/Stunde), Alltagsbewegung erhöht den NEAT (~500 kcal/Tag bei 10.000 Schritten). Ideal ist es, überall kleine Anpassungen vorzunehmen, statt alles auf einmal radikal verändern zu wollen.
 
@@ -374,12 +374,12 @@ Deine tatsächliche Schlafzeit wird an 8 Stunden gemessen. 8 h = 100 %, alles da
 Wissenschaftlich gilt ca. 20–25 % der Schlafzeit als Tiefschlaf-Zielwert. Die App verwendet 22 % als Benchmark. Erreichst du 22 % Tiefschlafanteil, bekommst du volle 40 Punkte.
 
 **Formel:**
-- Nur Schlafzeit eingetragen: Score = (Schlafzeit ÷ 480 min) × 100
-- Mit Tiefschlaf: Score = (Schlafzeit ÷ 480) × 60 + (Tiefschlaf ÷ Bettzeit ÷ 0,22) × 40
+- Nur Schlafzeit eingetragen: $\text{Score} = \dfrac{t_{\text{Schlaf}}}{480} \times 100$
+- Mit Tiefschlaf: $\text{Score} = \dfrac{t_{\text{Schlaf}}}{480} \times 60 + \dfrac{t_{\text{Tief}}}{t_{\text{Bett}} \cdot 0{,}22} \times 40$
 
 **Beispiel:** 7,5 h geschlafen, 31 min Tiefschlaf bei 8,2 h Bettzeit:
-- Dauer: 7,5 ÷ 8 = 93,8 % → 56 Punkte
-- Tiefschlaf: 31 ÷ 492 = 6,3 % ÷ 22 % = 28,6 % → 11 Punkte
+- Dauer: $\frac{450}{480} = 93{,}8\%$ → 56 Punkte
+- Tiefschlaf: $\frac{31}{492 \cdot 0{,}22} = 28{,}6\%$ → 11 Punkte
 - **Score: 67/100**
 
 | Score | Bewertung |
