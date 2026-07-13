@@ -192,7 +192,7 @@ function tokenize(md: string): Token[] {
 
     // HTML comment visuals: <!-- visual:name -->
     if (trimmed.startsWith("<!--") && trimmed.endsWith("-->")) {
-      const m = trimmed.match(/<!--\s*visual:(\w+)\s*-->/);
+      const m = trimmed.match(/<!--\s*visual:([\w-]+)\s*-->/);
       if (m) { tokens.push({ t: "visual", name: m[1] }); i++; continue; }
       i++; continue;
     }
