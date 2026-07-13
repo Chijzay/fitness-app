@@ -742,13 +742,19 @@ function VisualVarsBMR() {
     { sym: "a", label: "Alter in Jahren" },
   ];
   return (
-    <div style={{ display: "flex", flexWrap: "wrap", gap: 8, margin: "10px 0 16px" }}>
-      {vars.map(v => (
-        <div key={v.sym} style={{ display: "flex", alignItems: "center", gap: 8, background: "var(--surface2)", border: "1px solid var(--border)", borderRadius: 8, padding: "5px 12px" }}>
-          <span style={{ fontFamily: "monospace" }}><Tex>{v.sym}</Tex></span>
-          <span style={{ fontSize: 12, color: "var(--text-muted)" }}>= {v.label}</span>
-        </div>
-      ))}
+    <div style={{ background: "var(--surface)", border: "1px solid var(--border)", borderRadius: 12, padding: "14px 18px", margin: "10px 0 16px" }}>
+      <div style={{ fontSize: 11, fontWeight: 700, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.07em", marginBottom: 10 }}>
+        Variablen-Legende
+      </div>
+      <div style={{ display: "flex", flexWrap: "wrap", gap: "6px 20px" }}>
+        {vars.map(v => (
+          <span key={v.sym} style={{ fontSize: 12.5, color: "var(--text-2)", display: "inline-flex", alignItems: "baseline", gap: 6 }}>
+            <span style={{ fontWeight: 700, color: "var(--teal)" }}><Tex>{v.sym}</Tex></span>
+            <span style={{ color: "var(--text-muted)" }}>=</span>
+            <span>{v.label}</span>
+          </span>
+        ))}
+      </div>
     </div>
   );
 }
