@@ -1,4 +1,4 @@
-# 💪 FitnessTracker
+# FitnessTracker
 
 Persönliche Web-App zur Fitness- und Diätverfolgung, entwickelt mit Next.js. Konzipiert für langfristiges Gewichtsmanagement, Körperzusammensetzung und Trainingsfortschritt.
 
