@@ -134,7 +134,7 @@ export default function KcalDetail({ logs, allLogs, profile, range, setRange, on
       <div className="card card-pad" style={{ marginBottom: 16 }}>
         <SectionHeader title="Tägliche Kalorienbalance" icon="📈" />
         <ResponsiveContainer width="100%" height={220}>
-          <BarChart data={dayData} margin={{ top: 5, right: 10, left: 5, bottom: 0 }}>
+          <BarChart data={dayData} margin={{ top: 5, right: 80, left: 5, bottom: 0 }}>
             <CartesianGrid {...gridStyle} />
             <XAxis dataKey="date" tick={tickStyle} tickLine={false} />
             <YAxis tick={tickStyle} width={55} />
@@ -239,7 +239,7 @@ export default function KcalDetail({ logs, allLogs, profile, range, setRange, on
           </div>
           {/* Makro-Trend Chart */}
           <ResponsiveContainer width="100%" height={200}>
-            <BarChart data={macroEntries} margin={{ top: 5, right: 10, left: 5, bottom: 0 }}>
+            <BarChart data={macroEntries} margin={{ top: 5, right: 70, left: 5, bottom: 0 }}>
               <CartesianGrid {...gridStyle} />
               <XAxis dataKey="date" tick={tickStyle} tickLine={false} />
               <YAxis tick={tickStyle} width={40} unit="g" />

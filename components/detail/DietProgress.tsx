@@ -363,7 +363,7 @@ export default function DietProgress({ allLogs, profile, range, setRange, onEdit
       <div className="card card-pad" style={{ marginBottom: 16 }}>
         <SectionHeader title="Gewichtsverlauf mit Ziel" icon="📈" />
         <ResponsiveContainer width="100%" height={240}>
-          <ComposedChart data={chartData} margin={{ top: 5, right: 20, left: 5, bottom: 0 }}>
+          <ComposedChart data={chartData} margin={{ top: 5, right: 90, left: 5, bottom: 0 }}>
             <defs>
               <linearGradient id="weightGrad" x1="0" y1="0" x2="0" y2="1">
                 <stop offset="5%" stopColor="var(--teal)" stopOpacity={0.25} />
@@ -389,7 +389,7 @@ export default function DietProgress({ allLogs, profile, range, setRange, onEdit
         <div className="card card-pad">
           <SectionHeader title="Tägliche Kalorienbilanz" icon="🔥" />
           <ResponsiveContainer width="100%" height={200}>
-            <BarChart data={kcalData} margin={{ top: 5, right: 10, left: 5, bottom: 0 }}>
+            <BarChart data={kcalData} margin={{ top: 5, right: 45, left: 5, bottom: 0 }}>
               <CartesianGrid {...gridStyle} />
               <XAxis dataKey="date" tick={tickStyle} tickLine={false} />
               <YAxis tick={tickStyle} width={55} />
