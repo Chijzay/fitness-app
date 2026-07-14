@@ -2,7 +2,7 @@
 import { useMemo } from "react";
 import { BarChart, Bar, LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell, CartesianGrid, ReferenceLine, Legend } from "recharts";
 import type { DailyLog, DateRange, Profile } from "@/app/page";
-import { allDatesInRange, fmtShort, fmtFull, tickStyle, gridStyle, tooltipStyle, RangeSelector, KpiCard, SectionHeader } from "@/lib/chartHelpers";
+import { allDatesInRange, fmtShort, fmtFull, tickStyle, gridStyle, tooltipStyle, RangeSelector, KpiCard, SectionHeader, refLabel } from "@/lib/chartHelpers";
 import { calcBMR, calcTDEE, estimateBodyFat, calcMaxDeficit, calcFatKgFromKcal } from "@/lib/calculations";
 
 export default function KcalDetail({ logs, allLogs, profile, range, setRange, onEditDate }: {
@@ -161,7 +161,7 @@ export default function KcalDetail({ logs, allLogs, profile, range, setRange, on
               );
             }} />
             <ReferenceLine y={0} stroke="var(--border2)" strokeWidth={1.5} />
-            {maxDeficit && <ReferenceLine y={-maxDeficit} stroke="var(--orange)" strokeDasharray="4 3" label={{ value: "Max. Defizit", fontSize: 10, fill: "var(--orange)", position: "insideTopRight" }} />}
+            {maxDeficit && <ReferenceLine y={-maxDeficit} stroke="var(--orange)" strokeDasharray="4 3" label={refLabel("Max. Defizit", "var(--orange)")} />}
             <Bar dataKey="deficit" radius={[5, 5, 0, 0]} maxBarSize={40}>
               {dayData.map((d, i) => <Cell key={i} fill={(d.deficit ?? 0) <= 0 ? "var(--green)" : "var(--red)"} fillOpacity={0.85} />)}
             </Bar>
@@ -251,7 +251,7 @@ export default function KcalDetail({ logs, allLogs, profile, range, setRange, on
               <Bar dataKey="protein" fill="var(--teal)"   fillOpacity={0.85} radius={[0, 0, 0, 0]} maxBarSize={20} stackId="a" />
               <Bar dataKey="carbs"   fill="var(--blue)"   fillOpacity={0.85} radius={[0, 0, 0, 0]} maxBarSize={20} stackId="a" />
               <Bar dataKey="fat"     fill="var(--orange)" fillOpacity={0.85} radius={[3, 3, 0, 0]} maxBarSize={20} stackId="a" />
-              {proteinTarget && <ReferenceLine y={proteinTarget} stroke="var(--teal)" strokeDasharray="4 3" strokeWidth={1.5} label={{ value: `Ziel ${proteinTarget}g`, fontSize: 10, fill: "var(--teal)", position: "insideTopRight" }} />}
+              {proteinTarget && <ReferenceLine y={proteinTarget} stroke="var(--teal)" strokeDasharray="4 3" strokeWidth={1.5} label={refLabel(`Ziel ${proteinTarget}g`, "var(--teal)")} />}
             </BarChart>
           </ResponsiveContainer>
           <p style={{ fontSize: 11, color: "var(--text-muted)", marginTop: 8 }}>

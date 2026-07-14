@@ -2,7 +2,7 @@
 import { useMemo } from "react";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell, CartesianGrid, ReferenceLine, LineChart, Line } from "recharts";
 import type { DailyLog, DateRange } from "@/app/page";
-import { allDatesInRange, fmtShort, fmtFull, tickStyle, gridStyle, tooltipStyle, RangeSelector, KpiCard, SectionHeader } from "@/lib/chartHelpers";
+import { allDatesInRange, fmtShort, fmtFull, tickStyle, gridStyle, tooltipStyle, RangeSelector, KpiCard, SectionHeader, refLabel } from "@/lib/chartHelpers";
 import { formatMinutes } from "@/lib/calculations";
 
 export default function StepsDetail({ logs, allLogs, range, setRange, onEditDate }: {
@@ -93,7 +93,7 @@ export default function StepsDetail({ logs, allLogs, range, setRange, onEditDate
             <YAxis tick={tickStyle} width={50} />
             <Tooltip {...tt} formatter={(v: number) => [v?.toLocaleString("de"), "Schritte"]} />
             <ReferenceLine y={10000} stroke="var(--orange)" strokeDasharray="4 3" strokeWidth={1.5}
-              label={{ value: "10.000 Ziel", fontSize: 10, fill: "var(--orange)", position: "insideTopRight" }} />
+              label={refLabel("10.000 Ziel", "var(--orange)")} />
             <Bar dataKey="steps" radius={[5, 5, 0, 0]} maxBarSize={40}>
               {stepsData.map((d, i) => <Cell key={i} fill={(d.steps ?? 0) >= 10000 ? "var(--green)" : "var(--blue)"} fillOpacity={0.85} />)}
             </Bar>
@@ -113,7 +113,7 @@ export default function StepsDetail({ logs, allLogs, range, setRange, onEditDate
                 <YAxis tick={tickStyle} width={55} />
                 <Tooltip {...tt} formatter={(v: number) => [v?.toLocaleString("de"), "Schritte gesamt"]} />
                 <ReferenceLine y={70000} stroke="var(--orange)" strokeDasharray="4 3" strokeWidth={1.5}
-                  label={{ value: "70.000 Wochenziel", fontSize: 10, fill: "var(--orange)", position: "insideTopRight" }} />
+                  label={refLabel("70.000 Wochenziel", "var(--orange)")} />
                 <Bar dataKey="steps" radius={[5, 5, 0, 0]} fill="var(--blue)" fillOpacity={0.8} maxBarSize={50}>
                   {weeklyData.map((d, i) => <Cell key={i} fill={d.steps >= 70000 ? "var(--green)" : "var(--blue)"} fillOpacity={0.85} />)}
                 </Bar>

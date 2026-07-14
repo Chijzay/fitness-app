@@ -2,7 +2,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { AreaChart, Area, BarChart, LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, ReferenceLine, ComposedChart, Bar, Cell } from "recharts";
 import type { DailyLog, DateRange, Profile } from "@/app/page";
-import { allDatesInRange, fmtShort, fmtFull, tickStyle, gridStyle, tooltipStyle, RangeSelector, KpiCard, SectionHeader, PageHeader } from "@/lib/chartHelpers";
+import { allDatesInRange, fmtShort, fmtFull, tickStyle, gridStyle, tooltipStyle, RangeSelector, KpiCard, SectionHeader, refLabel, PageHeader } from "@/lib/chartHelpers";
 import { calcBMR, calcTDEE, calcMaxDeficit, estimateBodyFat } from "@/lib/calculations";
 
 type Goal = { id: number; type: string; targetValue: number; targetDate?: string; notes?: string };
@@ -375,9 +375,9 @@ export default function DietProgress({ allLogs, profile, range, setRange, onEdit
             <YAxis domain={["auto", "auto"]} tick={tickStyle} width={50} unit=" kg" />
             <Tooltip {...tt} formatter={(v: number, name: string) => [`${v} kg`, name === "weight" ? "Gewicht" : "Ziel"]} />
             {goalWeight && <ReferenceLine y={goalWeight} stroke="var(--green)" strokeDasharray="5 3" strokeWidth={2}
-              label={{ value: `Ziel: ${goalWeight} kg`, fontSize: 11, fill: "var(--green)", position: "insideTopRight" }} />}
+              label={refLabel(`Ziel: ${goalWeight} kg`, "var(--green)")} />}
             {startWeight && selectedPhase && <ReferenceLine y={startWeight} stroke="var(--text-muted)" strokeDasharray="3 3" strokeWidth={1}
-              label={{ value: `Start: ${startWeight} kg`, fontSize: 10, fill: "var(--text-muted)", position: "insideTopRight" }} />}
+              label={refLabel(`Start: ${startWeight} kg`, "#8b949e")} />}
             <Area type="monotone" dataKey="weight" stroke="var(--teal)" strokeWidth={2.5} fill="url(#weightGrad)"
               dot={{ r: 4, fill: "var(--teal)", strokeWidth: 0 }} connectNulls activeDot={{ r: 6 }} />
           </ComposedChart>
@@ -396,7 +396,7 @@ export default function DietProgress({ allLogs, profile, range, setRange, onEdit
               <Tooltip {...tt} formatter={(v: number) => [`${v > 0 ? "+" : ""}${v} kcal`, "Bilanz"]} />
               <ReferenceLine y={0} stroke="var(--border2)" strokeWidth={1.5} />
               {maxDef && <ReferenceLine y={-maxDef} stroke="var(--orange)" strokeDasharray="4 3"
-                label={{ value: "Max.", fontSize: 10, fill: "var(--orange)", position: "insideTopRight" }} />}
+                label={refLabel("Max. Defizit", "var(--orange)")} />}
               <Bar dataKey="deficit" radius={[4, 4, 0, 0]} maxBarSize={35}>
                 {kcalData.map((d, i) => <Cell key={i} fill={(d.deficit ?? 0) <= 0 ? "var(--green)" : "var(--red)"} fillOpacity={0.8} />)}
               </Bar>

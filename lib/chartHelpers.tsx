@@ -48,6 +48,26 @@ export function RangeSelector({ range, setRange }: { range: DateRange; setRange:
   );
 }
 
+// ReferenceLine label with readable badge background
+export function refLabel(text: string, color: string) {
+  const Render = ({ viewBox }: { viewBox?: { x?: number; y?: number; width?: number } }) => {
+    const x = (viewBox?.x ?? 0) + (viewBox?.width ?? 0) - 4;
+    const y = (viewBox?.y ?? 0) - 2;
+    const pad = 5;
+    const charW = 6.5;
+    const w = text.length * charW + pad * 2;
+    const h = 16;
+    return (
+      <g>
+        <rect x={x - w} y={y - h + 2} width={w} height={h} rx={4} fill="#1c2333" fillOpacity={0.88} />
+        <text x={x - pad} y={y - 3} textAnchor="end" fontSize={10} fontWeight={700} fill={color}>{text}</text>
+      </g>
+    );
+  };
+  Render.displayName = "RefLabel";
+  return <Render />;
+}
+
 // Dark-theme chart defaults
 export const tickStyle = { fontSize: 10.5, fill: "#8b949e" };
 export const gridStyle = { stroke: "#2a3348", strokeDasharray: "3 3" };

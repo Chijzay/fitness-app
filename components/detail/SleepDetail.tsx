@@ -2,7 +2,7 @@
 import { useMemo } from "react";
 import { BarChart, Bar, LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, ReferenceLine } from "recharts";
 import type { DailyLog, DateRange } from "@/app/page";
-import { allDatesInRange, fmtShort, fmtFull, tickStyle, gridStyle, tooltipStyle, RangeSelector, KpiCard, SectionHeader } from "@/lib/chartHelpers";
+import { allDatesInRange, fmtShort, fmtFull, tickStyle, gridStyle, tooltipStyle, RangeSelector, KpiCard, SectionHeader, refLabel } from "@/lib/chartHelpers";
 import { calcSleepScore, formatMinutes } from "@/lib/calculations";
 
 function fmtHours(min: number | null | undefined): string {
@@ -143,7 +143,7 @@ export default function SleepDetail({ logs, allLogs, range, setRange, onEditDate
               );
             }} />
             <ReferenceLine y={420} stroke="var(--orange)" strokeDasharray="4 3" strokeWidth={1.5}
-              label={{ value: "7h", fontSize: 10, fill: "var(--orange)", position: "insideTopRight" }} />
+              label={refLabel("7h Ziel", "var(--orange)")} />
             {/* Tiefschlaf (unten, grün) */}
             <Bar dataKey="deep" stackId="sleep" maxBarSize={44} radius={[0, 0, 4, 4]} fill="var(--green)" fillOpacity={0.9} name="Tiefschlaf" />
             {/* Leichtschlaf (mitte, blau) = Schlafzeit − Tiefschlaf */}
@@ -178,8 +178,8 @@ export default function SleepDetail({ logs, allLogs, range, setRange, onEditDate
               <XAxis dataKey="date" tick={tickStyle} tickLine={false} />
               <YAxis domain={[0, 100]} tick={tickStyle} width={40} />
               <Tooltip {...tt} formatter={(v: number) => [`${v}/100`, "Score"]} />
-              <ReferenceLine y={75} stroke="var(--green)" strokeDasharray="4 3" label={{ value: "Gut", fontSize: 10, fill: "var(--green)" }} />
-              <ReferenceLine y={50} stroke="var(--orange)" strokeDasharray="4 3" label={{ value: "Ok", fontSize: 10, fill: "var(--orange)" }} />
+              <ReferenceLine y={75} stroke="var(--green)" strokeDasharray="4 3" label={refLabel("Gut ≥75", "var(--green)")} />
+              <ReferenceLine y={50} stroke="var(--orange)" strokeDasharray="4 3" label={refLabel("Ok ≥50", "var(--orange)")} />
               <Line type="monotone" dataKey="score" stroke="var(--purple)" strokeWidth={2.5}
                 dot={{ r: 4, fill: "var(--purple)", strokeWidth: 0 }} />
             </LineChart>
