@@ -134,7 +134,7 @@ export default function KcalDetail({ logs, allLogs, profile, range, setRange, on
       <div className="card card-pad" style={{ marginBottom: 16 }}>
         <SectionHeader title="Tägliche Kalorienbalance" icon="📈" />
         <ResponsiveContainer width="100%" height={220}>
-          <BarChart data={dayData} margin={{ top: 5, right: 80, left: 5, bottom: 0 }}>
+          <BarChart data={dayData} margin={{ top: 5, right: 10, left: 5, bottom: 0 }}>
             <CartesianGrid {...gridStyle} />
             <XAxis dataKey="date" tick={tickStyle} tickLine={false} />
             <YAxis tick={tickStyle} width={55} />
@@ -161,7 +161,7 @@ export default function KcalDetail({ logs, allLogs, profile, range, setRange, on
               );
             }} />
             <ReferenceLine y={0} stroke="var(--border2)" strokeWidth={1.5} />
-            {maxDeficit && <ReferenceLine y={-maxDeficit} stroke="var(--orange)" strokeDasharray="4 3" label={{ value: "Max. Defizit", fontSize: 10, fill: "var(--orange)", position: "right" }} />}
+            {maxDeficit && <ReferenceLine y={-maxDeficit} stroke="var(--orange)" strokeDasharray="4 3" label={{ value: "Max. Defizit", fontSize: 10, fill: "var(--orange)", position: "insideTopRight" }} />}
             <Bar dataKey="deficit" radius={[5, 5, 0, 0]} maxBarSize={40}>
               {dayData.map((d, i) => <Cell key={i} fill={(d.deficit ?? 0) <= 0 ? "var(--green)" : "var(--red)"} fillOpacity={0.85} />)}
             </Bar>
@@ -239,7 +239,7 @@ export default function KcalDetail({ logs, allLogs, profile, range, setRange, on
           </div>
           {/* Makro-Trend Chart */}
           <ResponsiveContainer width="100%" height={200}>
-            <BarChart data={macroEntries} margin={{ top: 5, right: 70, left: 5, bottom: 0 }}>
+            <BarChart data={macroEntries} margin={{ top: 5, right: 10, left: 5, bottom: 0 }}>
               <CartesianGrid {...gridStyle} />
               <XAxis dataKey="date" tick={tickStyle} tickLine={false} />
               <YAxis tick={tickStyle} width={40} unit="g" />
@@ -251,7 +251,7 @@ export default function KcalDetail({ logs, allLogs, profile, range, setRange, on
               <Bar dataKey="protein" fill="var(--teal)"   fillOpacity={0.85} radius={[0, 0, 0, 0]} maxBarSize={20} stackId="a" />
               <Bar dataKey="carbs"   fill="var(--blue)"   fillOpacity={0.85} radius={[0, 0, 0, 0]} maxBarSize={20} stackId="a" />
               <Bar dataKey="fat"     fill="var(--orange)" fillOpacity={0.85} radius={[3, 3, 0, 0]} maxBarSize={20} stackId="a" />
-              {proteinTarget && <ReferenceLine y={proteinTarget} stroke="var(--teal)" strokeDasharray="4 3" strokeWidth={1.5} label={{ value: `Ziel ${proteinTarget}g`, fontSize: 10, fill: "var(--teal)", position: "right" }} />}
+              {proteinTarget && <ReferenceLine y={proteinTarget} stroke="var(--teal)" strokeDasharray="4 3" strokeWidth={1.5} label={{ value: `Ziel ${proteinTarget}g`, fontSize: 10, fill: "var(--teal)", position: "insideTopRight" }} />}
             </BarChart>
           </ResponsiveContainer>
           <p style={{ fontSize: 11, color: "var(--text-muted)", marginTop: 8 }}>

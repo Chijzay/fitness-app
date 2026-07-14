@@ -87,13 +87,13 @@ export default function StepsDetail({ logs, allLogs, range, setRange, onEditDate
       <div className="card card-pad" style={{ marginBottom: 16 }}>
         <SectionHeader title="Tägliche Schritte" icon="📈" />
         <ResponsiveContainer width="100%" height={220}>
-          <BarChart data={stepsData} margin={{ top: 5, right: 85, left: 5, bottom: 0 }}>
+          <BarChart data={stepsData} margin={{ top: 5, right: 10, left: 5, bottom: 0 }}>
             <CartesianGrid {...gridStyle} />
             <XAxis dataKey="date" tick={tickStyle} tickLine={false} />
             <YAxis tick={tickStyle} width={50} />
             <Tooltip {...tt} formatter={(v: number) => [v?.toLocaleString("de"), "Schritte"]} />
             <ReferenceLine y={10000} stroke="var(--orange)" strokeDasharray="4 3" strokeWidth={1.5}
-              label={{ value: "10.000 Ziel", fontSize: 10, fill: "var(--orange)", position: "right" }} />
+              label={{ value: "10.000 Ziel", fontSize: 10, fill: "var(--orange)", position: "insideTopRight" }} />
             <Bar dataKey="steps" radius={[5, 5, 0, 0]} maxBarSize={40}>
               {stepsData.map((d, i) => <Cell key={i} fill={(d.steps ?? 0) >= 10000 ? "var(--green)" : "var(--blue)"} fillOpacity={0.85} />)}
             </Bar>
@@ -107,13 +107,13 @@ export default function StepsDetail({ logs, allLogs, range, setRange, onEditDate
           <SectionHeader title="Wöchentliche Gesamtschritte" icon="📅" />
           {weeklyData.length > 0 ? (
             <ResponsiveContainer width="100%" height={180}>
-              <BarChart data={weeklyData} margin={{ top: 5, right: 115, left: 5, bottom: 0 }}>
+              <BarChart data={weeklyData} margin={{ top: 5, right: 10, left: 5, bottom: 0 }}>
                 <CartesianGrid {...gridStyle} />
                 <XAxis dataKey="week" tick={tickStyle} tickLine={false} />
                 <YAxis tick={tickStyle} width={55} />
                 <Tooltip {...tt} formatter={(v: number) => [v?.toLocaleString("de"), "Schritte gesamt"]} />
                 <ReferenceLine y={70000} stroke="var(--orange)" strokeDasharray="4 3" strokeWidth={1.5}
-                  label={{ value: "70.000 Wochenziel", fontSize: 10, fill: "var(--orange)", position: "right" }} />
+                  label={{ value: "70.000 Wochenziel", fontSize: 10, fill: "var(--orange)", position: "insideTopRight" }} />
                 <Bar dataKey="steps" radius={[5, 5, 0, 0]} fill="var(--blue)" fillOpacity={0.8} maxBarSize={50}>
                   {weeklyData.map((d, i) => <Cell key={i} fill={d.steps >= 70000 ? "var(--green)" : "var(--blue)"} fillOpacity={0.85} />)}
                 </Bar>

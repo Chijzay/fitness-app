@@ -363,7 +363,7 @@ export default function DietProgress({ allLogs, profile, range, setRange, onEdit
       <div className="card card-pad" style={{ marginBottom: 16 }}>
         <SectionHeader title="Gewichtsverlauf mit Ziel" icon="📈" />
         <ResponsiveContainer width="100%" height={240}>
-          <ComposedChart data={chartData} margin={{ top: 5, right: 90, left: 5, bottom: 0 }}>
+          <ComposedChart data={chartData} margin={{ top: 5, right: 20, left: 5, bottom: 0 }}>
             <defs>
               <linearGradient id="weightGrad" x1="0" y1="0" x2="0" y2="1">
                 <stop offset="5%" stopColor="var(--teal)" stopOpacity={0.25} />
@@ -375,9 +375,9 @@ export default function DietProgress({ allLogs, profile, range, setRange, onEdit
             <YAxis domain={["auto", "auto"]} tick={tickStyle} width={50} unit=" kg" />
             <Tooltip {...tt} formatter={(v: number, name: string) => [`${v} kg`, name === "weight" ? "Gewicht" : "Ziel"]} />
             {goalWeight && <ReferenceLine y={goalWeight} stroke="var(--green)" strokeDasharray="5 3" strokeWidth={2}
-              label={{ value: `Ziel: ${goalWeight} kg`, fontSize: 11, fill: "var(--green)", position: "right" }} />}
+              label={{ value: `Ziel: ${goalWeight} kg`, fontSize: 11, fill: "var(--green)", position: "insideTopRight" }} />}
             {startWeight && selectedPhase && <ReferenceLine y={startWeight} stroke="var(--text-muted)" strokeDasharray="3 3" strokeWidth={1}
-              label={{ value: `Start: ${startWeight} kg`, fontSize: 10, fill: "var(--text-muted)", position: "right" }} />}
+              label={{ value: `Start: ${startWeight} kg`, fontSize: 10, fill: "var(--text-muted)", position: "insideTopRight" }} />}
             <Area type="monotone" dataKey="weight" stroke="var(--teal)" strokeWidth={2.5} fill="url(#weightGrad)"
               dot={{ r: 4, fill: "var(--teal)", strokeWidth: 0 }} connectNulls activeDot={{ r: 6 }} />
           </ComposedChart>
@@ -389,14 +389,14 @@ export default function DietProgress({ allLogs, profile, range, setRange, onEdit
         <div className="card card-pad">
           <SectionHeader title="Tägliche Kalorienbilanz" icon="🔥" />
           <ResponsiveContainer width="100%" height={200}>
-            <BarChart data={kcalData} margin={{ top: 5, right: 45, left: 5, bottom: 0 }}>
+            <BarChart data={kcalData} margin={{ top: 5, right: 10, left: 5, bottom: 0 }}>
               <CartesianGrid {...gridStyle} />
               <XAxis dataKey="date" tick={tickStyle} tickLine={false} />
               <YAxis tick={tickStyle} width={55} />
               <Tooltip {...tt} formatter={(v: number) => [`${v > 0 ? "+" : ""}${v} kcal`, "Bilanz"]} />
               <ReferenceLine y={0} stroke="var(--border2)" strokeWidth={1.5} />
               {maxDef && <ReferenceLine y={-maxDef} stroke="var(--orange)" strokeDasharray="4 3"
-                label={{ value: "Max.", fontSize: 10, fill: "var(--orange)", position: "right" }} />}
+                label={{ value: "Max.", fontSize: 10, fill: "var(--orange)", position: "insideTopRight" }} />}
               <Bar dataKey="deficit" radius={[4, 4, 0, 0]} maxBarSize={35}>
                 {kcalData.map((d, i) => <Cell key={i} fill={(d.deficit ?? 0) <= 0 ? "var(--green)" : "var(--red)"} fillOpacity={0.8} />)}
               </Bar>
