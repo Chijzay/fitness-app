@@ -198,7 +198,8 @@ export default function WorkoutEntry({ onSaved, onCancel, editId }: { onSaved: (
 
       {/* Session-Infos */}
       <div className="card card-pad" style={{ marginBottom: 14 }}>
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 12, marginBottom: 12 }}>
+        {/* Zeile 1: Trainingsart (+ optionale freie Bezeichnung) */}
+        <div style={{ display: "grid", gridTemplateColumns: name === "Eigene Bezeichnung" ? "1fr 1fr" : "1fr", gap: 12, marginBottom: 12 }}>
           <div>
             <label className="lbl">Trainingsart</label>
             <select value={name} onChange={e => setName(e.target.value)}>
@@ -211,6 +212,9 @@ export default function WorkoutEntry({ onSaved, onCancel, editId }: { onSaved: (
               <input value={customName} onChange={e => setCustomName(e.target.value)} placeholder="z.B. Schulter, Full Body A…" />
             </div>
           )}
+        </div>
+        {/* Zeile 2: Start + Ende – immer fix */}
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginBottom: 12 }}>
           <div>
             <label className="lbl">Start</label>
             <input type="time" value={startTime} onChange={e => setStartTime(e.target.value)} />
