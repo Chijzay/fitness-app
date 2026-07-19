@@ -209,7 +209,7 @@ export default function WorkoutDetail({
           {allExercises.length > 0 && (
             <div className="card card-pad">
               <SectionHeader title="Persönliche Rekorde" icon="🏆" />
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(160px, 1fr))", gap: 10 }}>
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(6, 1fr)", gap: 10 }}>
                 {allExercises.map((exName, i) => {
                   const allSetsForEx = filteredSessions.flatMap(s =>
                     s.exercises.filter(e => e.name === exName).flatMap(e => e.sets)
