@@ -45,6 +45,7 @@ export default function WorkoutDetail({
   const [selectedEx, setSelectedEx]     = useState<string | null>(null);
   const [expandedId, setExpandedId]     = useState<number | null>(null);
   const [confirmDeleteId, setConfirmDeleteId] = useState<number | null>(null);
+  const [selectedType, setSelectedType] = useState<string | null>(null);
 
   useEffect(() => {
     fetch(`/api/workouts?from=${range.from}&to=${range.to}`)
@@ -57,12 +58,24 @@ export default function WorkoutDetail({
     setConfirmDeleteId(null);
   }
 
+  // Session types distribution (always from all sessions for filter chips)
+  const typeCount = useMemo(() => {
+    const m: Record<string, number> = {};
+    sessions.forEach(s => { m[s.name] = (m[s.name] ?? 0) + 1; });
+    return Object.entries(m).map(([name, count]) => ({ name, count })).sort((a,b) => b.count - a.count);
+  }, [sessions]);
+
+  const filteredSessions = useMemo(
+    () => selectedType ? sessions.filter(s => s.name === selectedType) : sessions,
+    [sessions, selectedType]
+  );
+
   // All unique exercise names across sessions
   const allExercises = useMemo(() => {
     const set = new Set<string>();
-    sessions.forEach(s => s.exercises.forEach(e => set.add(e.name)));
+    filteredSessions.forEach(s => s.exercises.forEach(e => set.add(e.name)));
     return [...set].sort();
-  }, [sessions]);
+  }, [filteredSessions]);
 
   // Auto-select first exercise when list loads
   useEffect(() => {
@@ -72,7 +85,7 @@ export default function WorkoutDetail({
   // Progression data for selected exercise
   const progressionData = useMemo(() => {
     if (!selectedEx) return [];
-    return [...sessions].reverse().flatMap(s => {
+    return [...filteredSessions].reverse().flatMap(s => {
       const ex = s.exercises.find(e => e.name === selectedEx);
       if (!ex || ex.sets.length === 0) return [];
       const maxW  = calcMaxWeight(ex.sets);
@@ -87,28 +100,21 @@ export default function WorkoutDetail({
         session: s.name,
       }];
     });
-  }, [sessions, selectedEx]);
+  }, [filteredSessions, selectedEx]);
 
   // Volume per session (all exercises)
-  const volumePerSession = useMemo(() => [...sessions].reverse().map(s => ({
+  const volumePerSession = useMemo(() => [...filteredSessions].reverse().map(s => ({
     date:  fmtDateShort(s.date),
     name:  s.name,
     vol:   +s.exercises.reduce((sum, e) => sum + calcVolume(e.sets), 0).toFixed(0),
     sets:  s.exercises.reduce((sum, e) => sum + e.sets.length, 0),
-  })), [sessions]);
-
-  // Session types distribution
-  const typeCount = useMemo(() => {
-    const m: Record<string, number> = {};
-    sessions.forEach(s => { m[s.name] = (m[s.name] ?? 0) + 1; });
-    return Object.entries(m).map(([name, count]) => ({ name, count })).sort((a,b) => b.count - a.count);
-  }, [sessions]);
+  })), [filteredSessions]);
 
   const tt = tooltipStyle;
-  const totalVol = sessions.reduce((sum, s) => sum + s.exercises.reduce((es, e) => es + calcVolume(e.sets), 0), 0);
-  const totalSets = sessions.reduce((sum, s) => sum + s.exercises.reduce((es, e) => es + e.sets.length, 0), 0);
+  const totalVol = filteredSessions.reduce((sum, s) => sum + s.exercises.reduce((es, e) => es + calcVolume(e.sets), 0), 0);
+  const totalSets = filteredSessions.reduce((sum, s) => sum + s.exercises.reduce((es, e) => es + e.sets.length, 0), 0);
   const avgDur = (() => {
-    const withDur = sessions.filter(s => durationMin(s) != null);
+    const withDur = filteredSessions.filter(s => durationMin(s) != null);
     if (!withDur.length) return null;
     return Math.round(withDur.reduce((sum, s) => sum + (durationMin(s) ?? 0), 0) / withDur.length);
   })();
@@ -126,6 +132,43 @@ export default function WorkoutDetail({
         <RangeSelector range={range} setRange={setRange} />
       </div>
 
+      {/* Aufteilung nach Trainingsart – filter chips at top */}
+      {typeCount.length > 1 && (
+        <div className="card card-pad">
+          <SectionHeader title="Aufteilung nach Trainingsart" icon="🗂️" />
+          <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+            {typeCount.map((t, i) => {
+              const color = TYPE_COLORS[i % TYPE_COLORS.length];
+              const active = selectedType === t.name;
+              return (
+                <button key={t.name} onClick={() => setSelectedType(active ? null : t.name)}
+                  style={{
+                    padding: "7px 16px", borderRadius: 20, cursor: "pointer", fontWeight: 700, fontSize: 13,
+                    background: active ? color : color + "22",
+                    color: active ? "#fff" : color,
+                    border: `1.5px solid ${color}`,
+                    transition: "all .15s",
+                  }}>
+                  {t.name} · {t.count}×
+                </button>
+              );
+            })}
+            {selectedType && (
+              <button onClick={() => setSelectedType(null)}
+                style={{ padding: "7px 14px", borderRadius: 20, cursor: "pointer", fontSize: 12, fontWeight: 600,
+                  background: "var(--surface2)", color: "var(--text-muted)", border: "1px solid var(--border2)" }}>
+                ✕ Filter aufheben
+              </button>
+            )}
+          </div>
+          {selectedType && (
+            <div style={{ marginTop: 10, fontSize: 12, color: "var(--text-muted)" }}>
+              Zeige nur <span style={{ color: "var(--teal)", fontWeight: 700 }}>{selectedType}</span> — {filteredSessions.length} Session{filteredSessions.length !== 1 ? "s" : ""}
+            </div>
+          )}
+        </div>
+      )}
+
       {sessions.length === 0 && (
         <div className="card card-pad" style={{ color: "var(--text-muted)", fontSize: 14, textAlign: "center", padding: 40 }}>
           Noch keine Trainings-Sessions im ausgewählten Zeitraum eingetragen.
@@ -142,8 +185,8 @@ export default function WorkoutDetail({
             <SectionHeader title="Übersicht" icon="💪" />
             <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 10 }}>
               {[
-                { label: "Sessions", value: String(sessions.length), sub: "im Zeitraum" },
-                { label: "Gesamt Sätze", value: String(totalSets), sub: `Ø ${Math.round(totalSets / sessions.length)}/Session` },
+                { label: "Sessions", value: String(filteredSessions.length), sub: selectedType ? `Nur: ${selectedType}` : "im Zeitraum" },
+                { label: "Gesamt Sätze", value: String(totalSets), sub: `Ø ${filteredSessions.length ? Math.round(totalSets / filteredSessions.length) : 0}/Session` },
                 { label: "Gesamt Volumen", value: totalVol >= 1000 ? `${(totalVol/1000).toFixed(1)} t` : `${totalVol} kg`, sub: "Sätze × Gewicht × Wdh.", color: "var(--teal)" },
                 { label: "Ø Dauer", value: avgDur ? `${avgDur} min` : "–", sub: avgDur ? "pro Session" : "Keine Zeit erfasst" },
               ].map(k => (
@@ -162,12 +205,12 @@ export default function WorkoutDetail({
               <SectionHeader title="Persönliche Rekorde" icon="🏆" />
               <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(180px, 1fr))", gap: 10 }}>
                 {allExercises.map((exName, i) => {
-                  const allSetsForEx = sessions.flatMap(s =>
+                  const allSetsForEx = filteredSessions.flatMap(s =>
                     s.exercises.filter(e => e.name === exName).flatMap(e => e.sets)
                   );
                   const prWeight = allSetsForEx.length ? Math.max(0, ...allSetsForEx.map(s => s.weight ?? 0)) : 0;
                   const prSet = allSetsForEx.find(s => (s.weight ?? 0) === prWeight);
-                  const sessionCount = sessions.filter(s => s.exercises.some(e => e.name === exName)).length;
+                  const sessionCount = filteredSessions.filter(s => s.exercises.some(e => e.name === exName)).length;
                   const color = TYPE_COLORS[i % TYPE_COLORS.length];
                   return (
                     <div key={exName} style={{ padding: "12px 14px", background: "var(--surface2)", borderRadius: 10, border: `1px solid ${color}33` }}>
@@ -277,27 +320,13 @@ export default function WorkoutDetail({
             </div>
           )}
 
-          {/* Aufteilung nach Trainingsart */}
-          {typeCount.length > 1 && (
-            <div className="card card-pad">
-              <SectionHeader title="Aufteilung nach Trainingsart" icon="🗂️" />
-              <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
-                {typeCount.map((t, i) => (
-                  <div key={t.name} style={{ padding: "8px 16px", borderRadius: 20, background: TYPE_COLORS[i % TYPE_COLORS.length] + "22", color: TYPE_COLORS[i % TYPE_COLORS.length], fontSize: 13, fontWeight: 700 }}>
-                    {t.name} · {t.count}×
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
           {/* Session Liste */}
           <div className="card">
             <div style={{ padding: "14px 20px 12px", borderBottom: "1px solid var(--border)", fontWeight: 700, fontSize: 14 }}>
-              📋 Alle Sessions
+              📋 {selectedType ? `${selectedType} Sessions` : "Alle Sessions"}
             </div>
             <div style={{ display: "flex", flexDirection: "column" }}>
-              {sessions.map(s => {
+              {filteredSessions.map(s => {
                 const vol     = s.exercises.reduce((sum, e) => sum + calcVolume(e.sets), 0);
                 const sets    = s.exercises.reduce((sum, e) => sum + e.sets.length, 0);
                 const dur     = durationMin(s);
