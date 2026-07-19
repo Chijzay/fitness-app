@@ -45,7 +45,7 @@ export default function WorkoutDetail({
   const [selectedEx, setSelectedEx]     = useState<string | null>(null);
   const [expandedId, setExpandedId]     = useState<number | null>(null);
   const [confirmDeleteId, setConfirmDeleteId] = useState<number | null>(null);
-  const [selectedType, setSelectedType] = useState<string | null>(null);
+  const [selectedTypes, setSelectedTypes] = useState<string[]>([]);
 
   useEffect(() => {
     fetch(`/api/workouts?from=${range.from}&to=${range.to}`)
@@ -66,8 +66,8 @@ export default function WorkoutDetail({
   }, [sessions]);
 
   const filteredSessions = useMemo(
-    () => selectedType ? sessions.filter(s => s.name === selectedType) : sessions,
-    [sessions, selectedType]
+    () => selectedTypes.length > 0 ? sessions.filter(s => selectedTypes.includes(s.name)) : sessions,
+    [sessions, selectedTypes]
   );
 
   // All unique exercise names across sessions
@@ -132,16 +132,27 @@ export default function WorkoutDetail({
         <RangeSelector range={range} setRange={setRange} />
       </div>
 
-      {/* Aufteilung nach Trainingsart – filter chips at top */}
+      {/* Aufteilung nach Trainingsart – multi-select filter chips at top */}
       {typeCount.length > 1 && (
         <div className="card card-pad">
-          <SectionHeader title="Aufteilung nach Trainingsart" icon="🗂️" />
+          <SectionHeader title="Aufteilung nach Trainingsart" icon="🗂️"
+            right={selectedTypes.length > 0 ? (
+              <button onClick={() => setSelectedTypes([])}
+                style={{ fontSize: 11, padding: "3px 10px", borderRadius: 20, cursor: "pointer", fontWeight: 600,
+                  background: "var(--surface2)", color: "var(--text-muted)", border: "1px solid var(--border2)" }}>
+                ✕ Alle anzeigen
+              </button>
+            ) : undefined}
+          />
           <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
             {typeCount.map((t, i) => {
               const color = TYPE_COLORS[i % TYPE_COLORS.length];
-              const active = selectedType === t.name;
+              const active = selectedTypes.includes(t.name);
               return (
-                <button key={t.name} onClick={() => setSelectedType(active ? null : t.name)}
+                <button key={t.name}
+                  onClick={() => setSelectedTypes(prev =>
+                    active ? prev.filter(x => x !== t.name) : [...prev, t.name]
+                  )}
                   style={{
                     padding: "7px 16px", borderRadius: 20, cursor: "pointer", fontWeight: 700, fontSize: 13,
                     background: active ? color : color + "22",
@@ -153,17 +164,12 @@ export default function WorkoutDetail({
                 </button>
               );
             })}
-            {selectedType && (
-              <button onClick={() => setSelectedType(null)}
-                style={{ padding: "7px 14px", borderRadius: 20, cursor: "pointer", fontSize: 12, fontWeight: 600,
-                  background: "var(--surface2)", color: "var(--text-muted)", border: "1px solid var(--border2)" }}>
-                ✕ Filter aufheben
-              </button>
-            )}
           </div>
-          {selectedType && (
+          {selectedTypes.length > 0 && (
             <div style={{ marginTop: 10, fontSize: 12, color: "var(--text-muted)" }}>
-              Zeige nur <span style={{ color: "var(--teal)", fontWeight: 700 }}>{selectedType}</span> — {filteredSessions.length} Session{filteredSessions.length !== 1 ? "s" : ""}
+              Filter aktiv: {selectedTypes.map((t, i) => (
+                <span key={t} style={{ color: "var(--teal)", fontWeight: 700 }}>{i > 0 ? ", " : ""}{t}</span>
+              ))} — {filteredSessions.length} Session{filteredSessions.length !== 1 ? "s" : ""}
             </div>
           )}
         </div>
@@ -185,7 +191,7 @@ export default function WorkoutDetail({
             <SectionHeader title="Übersicht" icon="💪" />
             <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 10 }}>
               {[
-                { label: "Sessions", value: String(filteredSessions.length), sub: selectedType ? `Nur: ${selectedType}` : "im Zeitraum" },
+                { label: "Sessions", value: String(filteredSessions.length), sub: selectedTypes.length > 0 ? selectedTypes.join(", ") : "im Zeitraum" },
                 { label: "Gesamt Sätze", value: String(totalSets), sub: `Ø ${filteredSessions.length ? Math.round(totalSets / filteredSessions.length) : 0}/Session` },
                 { label: "Gesamt Volumen", value: totalVol >= 1000 ? `${(totalVol/1000).toFixed(1)} t` : `${totalVol} kg`, sub: "Sätze × Gewicht × Wdh.", color: "var(--teal)" },
                 { label: "Ø Dauer", value: avgDur ? `${avgDur} min` : "–", sub: avgDur ? "pro Session" : "Keine Zeit erfasst" },
@@ -203,7 +209,7 @@ export default function WorkoutDetail({
           {allExercises.length > 0 && (
             <div className="card card-pad">
               <SectionHeader title="Persönliche Rekorde" icon="🏆" />
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(180px, 1fr))", gap: 10 }}>
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(160px, 200px))", gap: 10 }}>
                 {allExercises.map((exName, i) => {
                   const allSetsForEx = filteredSessions.flatMap(s =>
                     s.exercises.filter(e => e.name === exName).flatMap(e => e.sets)
@@ -323,7 +329,7 @@ export default function WorkoutDetail({
           {/* Session Liste */}
           <div className="card">
             <div style={{ padding: "14px 20px 12px", borderBottom: "1px solid var(--border)", fontWeight: 700, fontSize: 14 }}>
-              📋 {selectedType ? `${selectedType} Sessions` : "Alle Sessions"}
+              📋 {selectedTypes.length > 0 ? `${selectedTypes.join(" + ")} Sessions` : "Alle Sessions"}
             </div>
             <div style={{ display: "flex", flexDirection: "column" }}>
               {filteredSessions.map(s => {

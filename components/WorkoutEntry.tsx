@@ -4,7 +4,7 @@ import { useEffect, useState, useRef } from "react";
 type SetRow    = { setNumber: number; reps: string; weight: string; notes: string };
 type ExerciseRow = { localId: number; name: string; sets: SetRow[]; notes: string };
 
-const WORKOUT_TYPES = ["Pull", "Push", "Leg", "Ganzkörper", "Oberkörper", "Unterkörper", "Rumpf", "Sonstiges"];
+const WORKOUT_TYPES = ["Pull", "Push", "Leg", "Oberkörper", "Unterkörper", "Ganzkörper", "Brust", "Rücken", "Beine", "Arme", "Sonstiges"];
 const ENERGY_LABELS: Record<number, string> = { 1: "😩 Sehr schlecht", 2: "😕 Schlecht", 3: "😐 Ok", 4: "🙂 Gut", 5: "💪 Top" };
 
 let _lid = 0;
