@@ -4,7 +4,7 @@ import { useEffect, useState, useRef } from "react";
 type SetRow    = { setNumber: number; reps: string; weight: string; notes: string };
 type ExerciseRow = { localId: number; name: string; sets: SetRow[]; notes: string };
 
-const WORKOUT_TYPES = ["Pull", "Push", "Leg", "Oberkörper", "Unterkörper", "Ganzkörper", "Brust", "Rücken", "Beine", "Arme", "Sonstiges"];
+const WORKOUT_TYPES = ["Pull", "Push", "Leg", "Oberkörper", "Unterkörper", "Ganzkörper", "Eigene Bezeichnung"];
 const ENERGY_LABELS: Record<number, string> = { 1: "😩 Sehr schlecht", 2: "😕 Schlecht", 3: "😐 Ok", 4: "🙂 Gut", 5: "💪 Top" };
 
 let _lid = 0;
@@ -82,7 +82,7 @@ export default function WorkoutEntry({ onSaved, onCancel, editId }: { onSaved: (
         const dateStr = s.date.split("T")[0];
         setDate(dateStr);
         const knownType = WORKOUT_TYPES.find(t => t === s.name);
-        setName(knownType ?? "Sonstiges");
+        setName(knownType ?? "Eigene Bezeichnung");
         if (!knownType) setCustomName(s.name);
         setEnergyLevel(s.energyLevel ?? null);
         setStartTime(s.startTime ?? "");
@@ -105,7 +105,7 @@ export default function WorkoutEntry({ onSaved, onCancel, editId }: { onSaved: (
   // Load last session of same type for carry-forward preview
   useEffect(() => {
     if (isEditing) return; // don't override when editing
-    const n = name === "Sonstiges" ? customName : name;
+    const n = name === "Eigene Bezeichnung" ? customName : name;
     if (!n) return;
     fetch(`/api/workouts?from=2020-01-01&to=${date}`)
       .then(r => r.json())
@@ -142,7 +142,7 @@ export default function WorkoutEntry({ onSaved, onCancel, editId }: { onSaved: (
   }
 
   async function save() {
-    const sessionName = name === "Sonstiges" ? customName : name;
+    const sessionName = name === "Eigene Bezeichnung" ? customName : name;
     if (!sessionName) return;
     setSaving(true);
     // When editing: delete old session first, then create new
@@ -172,7 +172,7 @@ export default function WorkoutEntry({ onSaved, onCancel, editId }: { onSaved: (
     onSaved();
   }
 
-  const sessionName = name === "Sonstiges" ? customName : name;
+  const sessionName = name === "Eigene Bezeichnung" ? customName : name;
 
   return (
     <div style={{ maxWidth: 820, margin: "0 auto" }}>
@@ -205,10 +205,10 @@ export default function WorkoutEntry({ onSaved, onCancel, editId }: { onSaved: (
               {WORKOUT_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
             </select>
           </div>
-          {name === "Sonstiges" && (
+          {name === "Eigene Bezeichnung" && (
             <div>
-              <label className="lbl">Name</label>
-              <input value={customName} onChange={e => setCustomName(e.target.value)} placeholder="z.B. Pull A" />
+              <label className="lbl">Bezeichnung</label>
+              <input value={customName} onChange={e => setCustomName(e.target.value)} placeholder="z.B. Schulter, Full Body A…" />
             </div>
           )}
           <div>
