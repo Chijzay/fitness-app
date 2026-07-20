@@ -75,6 +75,55 @@ export default function WeightDetail({ logs, allLogs, profile, range, setRange, 
   const fatMass = lastW && bfUsed ? +(lastW * bfUsed / 100).toFixed(1) : null;
   const leanMass = lastW && fatMass ? +(lastW - fatMass).toFixed(1) : null;
 
+  // Wöchentliche Körperzusammensetzung
+  const weeklyCompMap: Record<string, { bfSum: number; bfCount: number; mmSum: number; mmCount: number; wSum: number; wCount: number }> = {};
+  dates.forEach(d => {
+    const l = logMap[d];
+    if (!l?.weight) return;
+    const dt = new Date(d + "T12:00:00");
+    const mon = new Date(dt); mon.setDate(dt.getDate() - ((dt.getDay() + 6) % 7));
+    const key = mon.toISOString().split("T")[0];
+    if (!weeklyCompMap[key]) weeklyCompMap[key] = { bfSum: 0, bfCount: 0, mmSum: 0, mmCount: 0, wSum: 0, wCount: 0 };
+    weeklyCompMap[key].wSum += l.weight; weeklyCompMap[key].wCount++;
+    if (l.bodyFatPercent) { weeklyCompMap[key].bfSum += l.bodyFatPercent; weeklyCompMap[key].bfCount++; }
+    if (l.muscleMass) { weeklyCompMap[key].mmSum += l.muscleMass; weeklyCompMap[key].mmCount++; }
+  });
+  const weeklyComp = Object.entries(weeklyCompMap).sort(([a], [b]) => a.localeCompare(b)).map(([key, v]) => {
+    const dt = new Date(key + "T12:00:00");
+    const avgW = v.wCount ? +(v.wSum / v.wCount).toFixed(1) : null;
+    const avgBF = v.bfCount ? +(v.bfSum / v.bfCount).toFixed(1) : null;
+    const avgMM = v.mmCount ? +(v.mmSum / v.mmCount).toFixed(1) : null;
+    const fatKg = avgW && avgBF ? +(avgW * avgBF / 100).toFixed(1) : null;
+    const mmKg  = avgW && avgMM ? +(avgW * avgMM / 100).toFixed(1) : null;
+    return { key, week: `KW ${dt.toLocaleDateString("de-DE", { day: "2-digit", month: "2-digit" })}`, avgBF, fatKg, avgMM, mmKg };
+  });
+
+  // BF-Trend (lineare Regression)
+  const bfPoints = weightEntries.filter(d => d.bf).map((d, i) => ({ i, v: d.bf! }));
+  let bfSlope = 0;
+  if (bfPoints.length >= 2) {
+    const n = bfPoints.length, sx = bfPoints.reduce((s,d)=>s+d.i,0), sy = bfPoints.reduce((s,d)=>s+d.v,0);
+    const sxy = bfPoints.reduce((s,d)=>s+d.i*d.v,0), sx2 = bfPoints.reduce((s,d)=>s+d.i*d.i,0);
+    bfSlope = (n*sxy - sx*sy) / (n*sx2 - sx*sx);
+  }
+  const bfWeeklyTrend = +(bfSlope * 7).toFixed(2);
+
+  const mmPoints = weightEntries.filter(d => d.muscleMass).map((d, i) => ({ i, v: d.muscleMass! }));
+  let mmSlope = 0;
+  if (mmPoints.length >= 2) {
+    const n = mmPoints.length, sx = mmPoints.reduce((s,d)=>s+d.i,0), sy = mmPoints.reduce((s,d)=>s+d.v,0);
+    const sxy = mmPoints.reduce((s,d)=>s+d.i*d.v,0), sx2 = mmPoints.reduce((s,d)=>s+d.i*d.i,0);
+    mmSlope = (n*sxy - sx*sy) / (n*sx2 - sx*sx);
+  }
+  const mmWeeklyTrend = +(mmSlope * 7).toFixed(2);
+
+  const firstBF = weightEntries.find(d => d.bf)?.bf ?? null;
+  const lastBF  = [...weightEntries].reverse().find(d => d.bf)?.bf ?? null;
+  const bfDiff  = firstBF != null && lastBF != null ? +(lastBF - firstBF).toFixed(1) : null;
+  const firstMM = weightEntries.find(d => d.muscleMass)?.muscleMass ?? null;
+  const lastMM  = [...weightEntries].reverse().find(d => d.muscleMass)?.muscleMass ?? null;
+  const mmDiff  = firstMM != null && lastMM != null ? +(lastMM - firstMM).toFixed(1) : null;
+
   // Wöchentliche Bilanz für Tabelle
   const weeklyBilanz = Object.entries(weeklyAvgMap).map(([key, { sum, count }]) => {
     const avg = +(sum / count).toFixed(1);
@@ -231,6 +280,95 @@ export default function WeightDetail({ logs, allLogs, profile, range, setRange, 
           )}
         </div>
       </div>
+
+      {/* Körperzusammensetzung Trend & Wochenvergleich */}
+      {(bfDiff != null || mmDiff != null) && (
+        <div className="card card-pad" style={{ marginBottom: 16 }}>
+          <SectionHeader title="Körperzusammensetzung — Entwicklung" icon="📊" />
+
+          {/* KPI-Zeile */}
+          <div className="detail-kpi-grid" style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 10, marginBottom: 18 }}>
+            {bfDiff != null && <>
+              <div className="card card-pad" style={{ padding: "12px 10px", textAlign: "center" }}>
+                <div style={{ fontSize: 10, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: 4 }}>KF Veränderung</div>
+                <div style={{ fontSize: 20, fontWeight: 800, color: bfDiff < 0 ? "var(--green)" : bfDiff > 0 ? "var(--red)" : "var(--text-muted)" }}>
+                  {bfDiff > 0 ? "+" : ""}{bfDiff} %
+                </div>
+                <div style={{ fontSize: 10, color: "var(--text-muted)", marginTop: 3 }}>seit Beginn</div>
+              </div>
+              <div className="card card-pad" style={{ padding: "12px 10px", textAlign: "center" }}>
+                <div style={{ fontSize: 10, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: 4 }}>KF Trend/Woche</div>
+                <div style={{ fontSize: 20, fontWeight: 800, color: bfWeeklyTrend < 0 ? "var(--green)" : bfWeeklyTrend > 0 ? "var(--red)" : "var(--text-muted)" }}>
+                  {bfWeeklyTrend !== 0 ? `${bfWeeklyTrend > 0 ? "+" : ""}${bfWeeklyTrend} %` : "–"}
+                </div>
+                <div style={{ fontSize: 10, color: "var(--text-muted)", marginTop: 3 }}>Lineare Regression</div>
+              </div>
+            </>}
+            {mmDiff != null && <>
+              <div className="card card-pad" style={{ padding: "12px 10px", textAlign: "center" }}>
+                <div style={{ fontSize: 10, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: 4 }}>Muskel Veränderung</div>
+                <div style={{ fontSize: 20, fontWeight: 800, color: mmDiff > 0 ? "var(--green)" : mmDiff < 0 ? "var(--red)" : "var(--text-muted)" }}>
+                  {mmDiff > 0 ? "+" : ""}{mmDiff} %
+                </div>
+                <div style={{ fontSize: 10, color: "var(--text-muted)", marginTop: 3 }}>seit Beginn</div>
+              </div>
+              <div className="card card-pad" style={{ padding: "12px 10px", textAlign: "center" }}>
+                <div style={{ fontSize: 10, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: 4 }}>Muskel Trend/Woche</div>
+                <div style={{ fontSize: 20, fontWeight: 800, color: mmWeeklyTrend > 0 ? "var(--green)" : mmWeeklyTrend < 0 ? "var(--red)" : "var(--text-muted)" }}>
+                  {mmWeeklyTrend !== 0 ? `${mmWeeklyTrend > 0 ? "+" : ""}${mmWeeklyTrend} %` : "–"}
+                </div>
+                <div style={{ fontSize: 10, color: "var(--text-muted)", marginTop: 3 }}>Lineare Regression</div>
+              </div>
+            </>}
+          </div>
+
+          {/* Wochenvergleich-Tabelle */}
+          {weeklyComp.length > 0 && (
+            <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+              {weeklyComp.map((w, i) => {
+                const prev = weeklyComp[i - 1] ?? null;
+                const bfChg = prev?.avgBF != null && w.avgBF != null ? +(w.avgBF - prev.avgBF).toFixed(1) : null;
+                const mmChg = prev?.avgMM != null && w.avgMM != null ? +(w.avgMM - prev.avgMM).toFixed(1) : null;
+                return (
+                  <div key={w.key} style={{ display: "grid", gridTemplateColumns: "80px 1fr 1fr", gap: 10, padding: "10px 14px", background: "var(--surface2)", borderRadius: 8, alignItems: "center" }}>
+                    <span style={{ fontSize: 12, fontWeight: 700, color: "var(--text-muted)" }}>{w.week}</span>
+                    {/* Körperfett */}
+                    <div>
+                      <div style={{ fontSize: 11, color: "var(--text-muted)", marginBottom: 2 }}>Körperfett</div>
+                      <div style={{ display: "flex", alignItems: "baseline", gap: 6 }}>
+                        <span style={{ fontWeight: 700, fontSize: 14, color: "var(--orange)" }}>
+                          {w.avgBF != null ? `${w.avgBF} %` : "–"}
+                        </span>
+                        {w.fatKg != null && <span style={{ fontSize: 11, color: "var(--text-muted)" }}>{w.fatKg} kg</span>}
+                        {bfChg != null && (
+                          <span style={{ fontSize: 11, fontWeight: 700, color: bfChg < 0 ? "var(--green)" : bfChg > 0 ? "var(--red)" : "var(--text-muted)" }}>
+                            {bfChg > 0 ? "▲" : "▼"} {Math.abs(bfChg)} %
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                    {/* Muskelmasse */}
+                    <div>
+                      <div style={{ fontSize: 11, color: "var(--text-muted)", marginBottom: 2 }}>Muskelmasse</div>
+                      <div style={{ display: "flex", alignItems: "baseline", gap: 6 }}>
+                        <span style={{ fontWeight: 700, fontSize: 14, color: "var(--blue)" }}>
+                          {w.avgMM != null ? `${w.avgMM} %` : "–"}
+                        </span>
+                        {w.mmKg != null && <span style={{ fontSize: 11, color: "var(--text-muted)" }}>{w.mmKg} kg</span>}
+                        {mmChg != null && (
+                          <span style={{ fontSize: 11, fontWeight: 700, color: mmChg > 0 ? "var(--green)" : mmChg < 0 ? "var(--red)" : "var(--text-muted)" }}>
+                            {mmChg > 0 ? "▲" : "▼"} {Math.abs(mmChg)} %
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Wöchentlicher Durchschnitt — volle Breite unter den Charts */}
       <div className="card card-pad" style={{ marginBottom: 16 }}>
