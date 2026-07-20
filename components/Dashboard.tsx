@@ -712,7 +712,7 @@ export default function Dashboard({ logs, allLogs, profile, range, today: todayP
       </div>
 
       {/* ── Wöchentliche Zusammenfassung + Benchmarks + Notizen ── */}
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 22 }}>
+      <div className="dash-weekly-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 22 }}>
 
         {/* Letzte Woche */}
         <div className="card card-pad">

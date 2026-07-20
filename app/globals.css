@@ -468,6 +468,29 @@ tbody td { padding: 10px 14px; color: var(--text); white-space: nowrap; }
   .glossar-col-mid { display: none !important; }
   .glossar-col-term { width: 28% !important; }
   .glossar-col-def  { width: 72% !important; }
+
+  /* Dashboard: Wöchentliche Zusammenfassung → 1 Spalte */
+  .dash-weekly-grid { grid-template-columns: 1fr !important; }
+
+  /* Krafttraining: Persönliche Rekorde → 2 Spalten */
+  .pr-grid { grid-template-columns: repeat(2, 1fr) !important; }
+
+  /* QuickEntry Footer: Buttons umbrechen, nicht abschneiden */
+  .entry-footer {
+    flex-wrap: wrap !important;
+    justify-content: stretch !important;
+    padding-bottom: 60px !important;
+  }
+  .entry-footer .btn {
+    flex: 1 1 calc(50% - 5px) !important;
+    min-width: 0 !important;
+    text-align: center !important;
+    justify-content: center !important;
+  }
+  .entry-footer .btn[style*="margin-right: auto"],
+  .entry-footer > button:first-child:not(:only-child) {
+    flex: 1 1 100% !important;
+  }
 }
 
 /* ── Form-Grids ───────────────────────────────── */

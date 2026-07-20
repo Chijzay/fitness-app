@@ -781,7 +781,7 @@ export default function QuickEntry({
         </Section>
 
         {/* Footer */}
-        <div style={{ display: "flex", justifyContent: "flex-end", gap: 10, paddingBottom: 32 }}>
+        <div className="entry-footer" style={{ display: "flex", justifyContent: "flex-end", gap: 10, paddingBottom: 32 }}>
           {existingId && (
             <button className="btn btn-secondary" onClick={() => setConfirmDelete(true)}
               style={{ color: "var(--red)", borderColor: "var(--red)", marginRight: "auto" }}>
