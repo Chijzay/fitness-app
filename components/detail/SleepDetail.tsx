@@ -168,7 +168,7 @@ export default function SleepDetail({ logs, allLogs, range, setRange, onEditDate
         </div>
       </div>
 
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 16 }}>
+      <div className="col2-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 16 }}>
         {/* Score-Chart */}
         <div className="card card-pad">
           <SectionHeader title="Schlaf-Score Verlauf" icon="⭐" />

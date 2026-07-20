@@ -258,7 +258,7 @@ export default function WorkoutDetail({
               )}
 
               {progressionData.length >= 2 && (
-                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
+                <div className="col2-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
                   {/* Max Gewicht */}
                   <div>
                     <div style={{ fontSize: 11, color: "var(--text-muted)", fontWeight: 700, textTransform: "uppercase", marginBottom: 8 }}>Maximales Gewicht (kg)</div>

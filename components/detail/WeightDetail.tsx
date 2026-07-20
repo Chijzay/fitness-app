@@ -162,7 +162,7 @@ export default function WeightDetail({ logs, allLogs, profile, range, setRange, 
         </div>
       </div>
 
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 16 }}>
+      <div className="col2-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 16 }}>
         {/* Körperfett als Balken + Linie — Y-Achse in kg, Tooltip zeigt % + kg */}
         <div className="card card-pad">
           <SectionHeader title="Körperfett (% + kg)" icon="🏃" />

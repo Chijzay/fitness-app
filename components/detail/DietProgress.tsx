@@ -384,7 +384,7 @@ export default function DietProgress({ allLogs, profile, range, setRange, onEdit
         </ResponsiveContainer>
       </div>
 
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 16 }}>
+      <div className="col2-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 16 }}>
         {/* Kaloriendefizit Chart */}
         <div className="card card-pad">
           <SectionHeader title="Tägliche Kalorienbilanz" icon="🔥" />

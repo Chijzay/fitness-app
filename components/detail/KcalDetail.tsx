@@ -169,7 +169,7 @@ export default function KcalDetail({ logs, allLogs, profile, range, setRange, on
         </ResponsiveContainer>
       </div>
 
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 16 }}>
+      <div className="col2-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 16 }}>
         {/* Gegessen vs BMR Chart */}
         <div className="card card-pad">
           <SectionHeader title="Kalorien gegessen vs. BMR" icon="🍽️" />

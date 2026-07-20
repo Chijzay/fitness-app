@@ -472,6 +472,9 @@ tbody td { padding: 10px 14px; color: var(--text); white-space: nowrap; }
   /* Dashboard: Wöchentliche Zusammenfassung → 1 Spalte */
   .dash-weekly-grid { grid-template-columns: 1fr !important; }
 
+  /* Alle 2-Spalten-Grids in Detail-Ansichten → 1 Spalte */
+  .col2-grid { grid-template-columns: 1fr !important; }
+
   /* Krafttraining: Persönliche Rekorde → 2 Spalten */
   .pr-grid { grid-template-columns: repeat(2, 1fr) !important; }
 

@@ -101,7 +101,7 @@ export default function StepsDetail({ logs, allLogs, range, setRange, onEditDate
         </ResponsiveContainer>
       </div>
 
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 16 }}>
+      <div className="col2-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 16 }}>
         {/* Wöchentliche Summe */}
         <div className="card card-pad">
           <SectionHeader title="Wöchentliche Gesamtschritte" icon="📅" />
