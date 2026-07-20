@@ -188,7 +188,7 @@ export default function Home() {
         onDietProgress={() => goDetail("detail-diet")}
         onGuide={() => setView("guide")}
       />
-      <main className="page" style={{ flex: 1 }}>
+      <main className="page" style={{ flexGrow: 1, width: "100%" }}>
         {view === "dashboard" && (
           <Dashboard
             logs={dashLogs} allLogs={allLogs} profile={profile} range={dashRange} today={today}

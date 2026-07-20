@@ -46,17 +46,19 @@
 }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html { font-size: 14px; overflow-y: scroll; }
+html { font-size: 14px; overflow-y: scroll; overflow-x: hidden; }
 body {
   background: var(--bg);
   color: var(--text);
   font-family: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", system-ui, sans-serif;
   line-height: 1.55;
   -webkit-font-smoothing: antialiased;
+  width: 100%;
+  overflow-x: hidden;
 }
 
 /* ── Layout ─────────────────────────────────── */
-.page { width: 100%; max-width: 1180px; margin: 0 auto; padding: 28px 24px 60px; box-sizing: border-box; }
+.page { width: 100%; max-width: 1180px; margin-left: auto; margin-right: auto; padding: 28px 24px 60px; box-sizing: border-box; flex-shrink: 0; }
 
 /* ── Cards ───────────────────────────────────── */
 .card {
