@@ -330,34 +330,34 @@ export default function WeightDetail({ logs, allLogs, profile, range, setRange, 
                 const bfChg = prev?.avgBF != null && w.avgBF != null ? +(w.avgBF - prev.avgBF).toFixed(1) : null;
                 const mmChg = prev?.avgMM != null && w.avgMM != null ? +(w.avgMM - prev.avgMM).toFixed(1) : null;
                 return (
-                  <div key={w.key} style={{ display: "grid", gridTemplateColumns: "80px 1fr 1fr", gap: 10, padding: "10px 14px", background: "var(--surface2)", borderRadius: 8, alignItems: "center" }}>
-                    <span style={{ fontSize: 12, fontWeight: 700, color: "var(--text-muted)" }}>{w.week}</span>
+                  <div key={w.key} className="bodycomp-row" style={{ display: "grid", gridTemplateColumns: "80px 1fr 1fr", gap: 10, padding: "10px 14px", background: "var(--surface2)", borderRadius: 8, alignItems: "center" }}>
+                    <span className="bodycomp-sub" style={{ fontSize: 12, fontWeight: 700, color: "var(--text-muted)" }}>{w.week}</span>
                     {/* Körperfett */}
                     <div>
-                      <div style={{ fontSize: 11, color: "var(--text-muted)", marginBottom: 2 }}>Körperfett</div>
-                      <div style={{ display: "flex", alignItems: "baseline", gap: 6 }}>
-                        <span style={{ fontWeight: 700, fontSize: 14, color: "var(--orange)" }}>
+                      <div className="bodycomp-label" style={{ fontSize: 11, color: "var(--text-muted)", marginBottom: 2 }}>Körperfett</div>
+                      <div style={{ display: "flex", alignItems: "baseline", gap: 5, flexWrap: "nowrap" }}>
+                        <span className="bodycomp-val" style={{ fontWeight: 700, fontSize: 14, color: "var(--orange)", whiteSpace: "nowrap" }}>
                           {w.avgBF != null ? `${w.avgBF} %` : "–"}
                         </span>
-                        {w.fatKg != null && <span style={{ fontSize: 11, color: "var(--text-muted)" }}>{w.fatKg} kg</span>}
+                        {w.fatKg != null && <span className="bodycomp-sub" style={{ fontSize: 11, color: "var(--text-muted)", whiteSpace: "nowrap" }}>{w.fatKg} kg</span>}
                         {bfChg != null && (
-                          <span style={{ fontSize: 11, fontWeight: 700, color: bfChg < 0 ? "var(--green)" : bfChg > 0 ? "var(--red)" : "var(--text-muted)" }}>
-                            {bfChg > 0 ? "▲" : "▼"} {Math.abs(bfChg)} %
+                          <span className="bodycomp-chg" style={{ fontSize: 11, fontWeight: 700, color: bfChg < 0 ? "var(--green)" : bfChg > 0 ? "var(--red)" : "var(--text-muted)", whiteSpace: "nowrap" }}>
+                            {bfChg > 0 ? "▲" : "▼"}{Math.abs(bfChg)}%
                           </span>
                         )}
                       </div>
                     </div>
                     {/* Muskelmasse */}
                     <div>
-                      <div style={{ fontSize: 11, color: "var(--text-muted)", marginBottom: 2 }}>Muskelmasse</div>
-                      <div style={{ display: "flex", alignItems: "baseline", gap: 6 }}>
-                        <span style={{ fontWeight: 700, fontSize: 14, color: "var(--blue)" }}>
+                      <div className="bodycomp-label" style={{ fontSize: 11, color: "var(--text-muted)", marginBottom: 2 }}>Muskelmasse</div>
+                      <div style={{ display: "flex", alignItems: "baseline", gap: 5, flexWrap: "nowrap" }}>
+                        <span className="bodycomp-val" style={{ fontWeight: 700, fontSize: 14, color: "var(--blue)", whiteSpace: "nowrap" }}>
                           {w.avgMM != null ? `${w.avgMM} %` : "–"}
                         </span>
-                        {w.mmKg != null && <span style={{ fontSize: 11, color: "var(--text-muted)" }}>{w.mmKg} kg</span>}
+                        {w.mmKg != null && <span className="bodycomp-sub" style={{ fontSize: 11, color: "var(--text-muted)", whiteSpace: "nowrap" }}>{w.mmKg} kg</span>}
                         {mmChg != null && (
-                          <span style={{ fontSize: 11, fontWeight: 700, color: mmChg > 0 ? "var(--green)" : mmChg < 0 ? "var(--red)" : "var(--text-muted)" }}>
-                            {mmChg > 0 ? "▲" : "▼"} {Math.abs(mmChg)} %
+                          <span className="bodycomp-chg" style={{ fontSize: 11, fontWeight: 700, color: mmChg > 0 ? "var(--green)" : mmChg < 0 ? "var(--red)" : "var(--text-muted)", whiteSpace: "nowrap" }}>
+                            {mmChg > 0 ? "▲" : "▼"}{Math.abs(mmChg)}%
                           </span>
                         )}
                       </div>

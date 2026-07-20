@@ -56,7 +56,7 @@ body {
 }
 
 /* ── Layout ─────────────────────────────────── */
-.page { max-width: 1180px; margin: 0 auto; padding: 28px 24px 60px; }
+.page { width: 100%; max-width: 1180px; margin: 0 auto; padding: 28px 24px 60px; box-sizing: border-box; }
 
 /* ── Cards ───────────────────────────────────── */
 .card {
@@ -474,6 +474,13 @@ tbody td { padding: 10px 14px; color: var(--text); white-space: nowrap; }
 
   /* Alle 2-Spalten-Grids in Detail-Ansichten → 1 Spalte */
   .col2-grid { grid-template-columns: 1fr !important; }
+
+  /* Körperzusammensetzung Wochenzeilen → alles in einer Linie */
+  .bodycomp-row { grid-template-columns: 70px 1fr 1fr !important; gap: 6px !important; }
+  .bodycomp-label { font-size: 9px !important; }
+  .bodycomp-val   { font-size: 12px !important; }
+  .bodycomp-sub   { font-size: 10px !important; }
+  .bodycomp-chg   { font-size: 10px !important; }
 
   /* Krafttraining: Persönliche Rekorde → 2 Spalten */
   .pr-grid { grid-template-columns: repeat(2, 1fr) !important; }
