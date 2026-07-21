@@ -57,6 +57,7 @@ export default function WorkoutDetail({
   const [expandedId, setExpandedId]           = useState<number | null>(null);
   const [confirmDeleteId, setConfirmDeleteId] = useState<number | null>(null);
   const [selectedTypes, setSelectedTypes]     = useState<string[]>([]);
+  const [selectedMGs, setSelectedMGs]         = useState<string[]>([]);
   const [muscleGroups, setMuscleGroups]       = useState<Record<string, string>>({});
 
   useEffect(() => {
@@ -416,19 +417,34 @@ export default function WorkoutDetail({
           {/* Muskelgruppen-Analyse */}
           {assignedMGs.length > 0 && (
             <div className="card card-pad">
-              <SectionHeader title="Muskelgruppen-Analyse" icon="🧬" />
+              <SectionHeader title="Muskelgruppen-Analyse" icon="🧬"
+                right={selectedMGs.length > 0 ? (
+                  <button onClick={() => setSelectedMGs([])}
+                    style={{ fontSize: 11, padding: "3px 10px", borderRadius: 20, cursor: "pointer", fontWeight: 600,
+                      background: "var(--surface2)", color: "var(--text-muted)", border: "1px solid var(--border2)" }}>
+                    ✕ Alle anzeigen
+                  </button>
+                ) : undefined}
+              />
 
-              {/* KPI cards per muscle group */}
+              {/* KPI cards per muscle group – clickable filter */}
               <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(160px, 1fr))", gap: 12, marginBottom: 24 }}>
                 {assignedMGs.map(mg => {
                   const s = mgStats[mg];
                   if (!s) return null;
                   const color = MG_COLORS[mg];
+                  const isActive = selectedMGs.includes(mg);
+                  const isFiltering = selectedMGs.length > 0;
                   const trend = s.trend;
                   const trendColor = trend == null ? "var(--text-muted)" : trend > 5 ? "var(--green)" : trend < -5 ? "var(--red)" : "var(--text-muted)";
                   const trendIcon = trend == null ? "" : trend > 5 ? "▲" : trend < -5 ? "▼" : "→";
                   return (
-                    <div key={mg} className="card card-pad" style={{ padding: "14px 16px", borderLeft: `3px solid ${color}` }}>
+                    <div key={mg} className="card card-pad"
+                      onClick={() => setSelectedMGs(prev => isActive ? prev.filter(x => x !== mg) : [...prev, mg])}
+                      style={{ padding: "14px 16px", borderLeft: `3px solid ${color}`, cursor: "pointer",
+                        opacity: isFiltering && !isActive ? 0.4 : 1,
+                        background: isActive ? color + "18" : "var(--surface2)",
+                        transition: "all .15s" }}>
                       <div style={{ fontSize: 12, color, fontWeight: 700, marginBottom: 6 }}>{mg}</div>
                       <div style={{ fontSize: 22, fontWeight: 800, color: "var(--text)", lineHeight: 1, marginBottom: 4 }}>
                         {s.totalVol >= 1000 ? `${(s.totalVol/1000).toFixed(1)} t` : `${s.totalVol} kg`}
@@ -454,14 +470,15 @@ export default function WorkoutDetail({
 
               {/* Volumenanteil (Balance) */}
               {(() => {
-                const total = assignedMGs.reduce((sum, mg) => sum + (mgStats[mg]?.totalVol ?? 0), 0);
+                const activeMGs = selectedMGs.length > 0 ? selectedMGs : assignedMGs;
+                const total = activeMGs.reduce((sum, mg) => sum + (mgStats[mg]?.totalVol ?? 0), 0);
                 return total > 0 ? (
                   <div style={{ marginBottom: 24 }}>
                     <div style={{ fontSize: 11, color: "var(--text-muted)", fontWeight: 700, textTransform: "uppercase", marginBottom: 8 }}>
                       Volumenverteilung
                     </div>
                     <div style={{ display: "flex", height: 22, borderRadius: 6, overflow: "hidden", gap: 2 }}>
-                      {assignedMGs.map(mg => {
+                      {activeMGs.map(mg => {
                         const vol = mgStats[mg]?.totalVol ?? 0;
                         const pct = (vol / total * 100);
                         return (
@@ -473,7 +490,7 @@ export default function WorkoutDetail({
                       })}
                     </div>
                     <div style={{ display: "flex", gap: 12, flexWrap: "wrap", marginTop: 6 }}>
-                      {assignedMGs.map(mg => {
+                      {activeMGs.map(mg => {
                         const vol = mgStats[mg]?.totalVol ?? 0;
                         const pct = (vol / total * 100).toFixed(1);
                         return (
@@ -499,7 +516,7 @@ export default function WorkoutDetail({
                       <XAxis dataKey="date" tick={tickStyle} tickLine={false} />
                       <YAxis tick={tickStyle} unit=" kg" width={52} />
                       <Tooltip {...tt} formatter={(v: unknown, name: unknown) => [`${v} kg`, String(name)]} />
-                      {assignedMGs.map(mg => (
+                      {(selectedMGs.length > 0 ? selectedMGs : assignedMGs).map(mg => (
                         <Line key={mg} type="monotone" dataKey={mg} stroke={MG_COLORS[mg]} strokeWidth={2}
                           dot={{ r: 3, fill: MG_COLORS[mg], strokeWidth: 0 }} connectNulls />
                       ))}
