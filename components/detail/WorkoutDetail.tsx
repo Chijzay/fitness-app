@@ -14,9 +14,10 @@ type Session = {
 };
 
 const ENERGY_LABELS: Record<number, string> = { 1: "😩", 2: "😕", 3: "😐", 4: "🙂", 5: "💪" };
-const TYPE_COLORS = ["var(--teal)", "var(--blue)", "var(--orange)", "var(--purple)", "var(--green)", "#f472b6", "#94a3b8"];
+const TYPE_COLORS      = ["var(--teal)", "var(--blue)", "var(--orange)", "var(--purple)", "var(--green)", "#f472b6", "#94a3b8"];
+const TYPE_COLORS_HEX  = ["#00d4b4",    "#4f8ef7",    "#e3b341",       "#a78bfa",       "#3fb950",      "#f472b6", "#94a3b8"];
 
-const MUSCLE_GROUPS = ["Brust", "Rücken", "Schultern", "Arme", "Bauch", "Beine"];
+const MUSCLE_GROUPS = ["Arme", "Bauch", "Beine", "Brust", "Rücken", "Schultern"];
 const MG_COLORS: Record<string, string> = {
   "Brust":     "var(--blue)",
   "Rücken":    "var(--teal)",
@@ -287,7 +288,8 @@ export default function WorkoutDetail({
                   const prWeight = allSetsForEx.length ? Math.max(0, ...allSetsForEx.map(s => s.weight ?? 0)) : 0;
                   const prSet = allSetsForEx.find(s => (s.weight ?? 0) === prWeight);
                   const sessionCount = filteredSessions.filter(s => s.exercises.some(e => e.name === exName)).length;
-                  const color = TYPE_COLORS[i % TYPE_COLORS.length];
+                  const color    = TYPE_COLORS[i % TYPE_COLORS.length];
+                  const colorHex = TYPE_COLORS_HEX[i % TYPE_COLORS_HEX.length];
                   const isSelected = selectedEx === exName;
                   const mg = muscleGroups[exName];
                   return (
@@ -295,7 +297,7 @@ export default function WorkoutDetail({
                       onClick={() => setSelectedEx(prev => prev === exName ? null : exName)}
                       style={{
                         padding: "12px 14px", borderRadius: 10, cursor: "pointer",
-                        background: isSelected ? color + "22" : "var(--surface2)",
+                        background: isSelected ? colorHex + "33" : "var(--surface2)",
                         border: isSelected ? `2.5px solid ${color}` : `1.5px solid ${color}`,
                         transition: "all .15s",
                         display: "flex", flexDirection: "column",
@@ -314,7 +316,7 @@ export default function WorkoutDetail({
                         onChange={e => { e.stopPropagation(); saveMuscleGroup(exName, e.target.value); }}
                         style={{
                           fontSize: 10, background: "var(--surface)", border: "1px solid var(--border2)",
-                          borderRadius: 4, color: mg ? MG_COLORS[mg] : "var(--text-muted)",
+                          borderRadius: 4, color: mg ? color : "var(--text-muted)",
                           padding: "2px 4px", width: "100%", cursor: "pointer", fontWeight: mg ? 700 : 400,
                         }}>
                         <option value="">Muskelgruppe…</option>
