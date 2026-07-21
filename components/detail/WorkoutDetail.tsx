@@ -219,7 +219,7 @@ export default function WorkoutDetail({
                   const sessionCount = filteredSessions.filter(s => s.exercises.some(e => e.name === exName)).length;
                   const color = TYPE_COLORS[i % TYPE_COLORS.length];
                   return (
-                    <div key={exName} style={{ padding: "12px 14px", background: "var(--surface2)", borderRadius: 10, border: `1.5px solid ${color}99` }}>
+                    <div key={exName} style={{ padding: "12px 14px", background: "var(--surface2)", borderRadius: 10, border: `1.5px solid ${color}` }}>
                       <div style={{ fontSize: 10, color: "var(--text-muted)", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: 6 }}>{exName}</div>
                       <div style={{ fontSize: 20, fontWeight: 800, color, lineHeight: 1 }}>
                         {prWeight > 0 ? `${prWeight} kg` : "–"}
