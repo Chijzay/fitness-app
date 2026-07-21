@@ -21,7 +21,8 @@ model User {
   goals           Goal[]
   measurements    BodyMeasurement[]
   cardioSessions  CardioSession[]
-  workoutSessions WorkoutSession[]
+  workoutSessions      WorkoutSession[]
+  exerciseMuscleGroups ExerciseMuscleGroup[]
 }
 
 model Profile {
@@ -162,6 +163,16 @@ model CardioSession {
   notes     String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model ExerciseMuscleGroup {
+  id           Int    @id @default(autoincrement())
+  userId       String
+  user         User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  exerciseName String
+  muscleGroup  String
+
+  @@unique([userId, exerciseName])
 }
 
 model Goal {

@@ -1,6 +1,6 @@
-﻿"use client";
-import { useEffect, useState, useMemo } from "react";
-import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, BarChart, Bar } from "recharts";
+"use client";
+import { useEffect, useState, useMemo, useCallback } from "react";
+import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, BarChart, Bar, Cell } from "recharts";
 import { RangeSelector, SectionHeader, PageHeader, tickStyle, gridStyle, tooltipStyle } from "@/lib/chartHelpers";
 import type { DateRange } from "@/app/page";
 
@@ -15,6 +15,16 @@ type Session = {
 
 const ENERGY_LABELS: Record<number, string> = { 1: "😩", 2: "😕", 3: "😐", 4: "🙂", 5: "💪" };
 const TYPE_COLORS = ["var(--teal)", "var(--blue)", "var(--orange)", "var(--purple)", "var(--green)", "#f472b6", "#94a3b8"];
+
+const MUSCLE_GROUPS = ["Brust", "Rücken", "Schultern", "Arme", "Bauch", "Beine"];
+const MG_COLORS: Record<string, string> = {
+  "Brust":     "var(--blue)",
+  "Rücken":    "var(--teal)",
+  "Schultern": "var(--purple)",
+  "Arme":      "var(--orange)",
+  "Bauch":     "var(--green)",
+  "Beine":     "#f472b6",
+};
 
 function fmtDate(s: string) {
   return new Date(s.split("T")[0] + "T12:00:00").toLocaleDateString("de-DE", { weekday: "short", day: "2-digit", month: "2-digit" });
@@ -41,16 +51,31 @@ export default function WorkoutDetail({
 }: {
   range: DateRange; setRange: (r: DateRange) => void; onNewSession: () => void; onEditSession: (id: number) => void;
 }) {
-  const [sessions, setSessions]         = useState<Session[]>([]);
-  const [selectedEx, setSelectedEx]     = useState<string | null>(null);
-  const [expandedId, setExpandedId]     = useState<number | null>(null);
+  const [sessions, setSessions]               = useState<Session[]>([]);
+  const [selectedEx, setSelectedEx]           = useState<string | null>(null);
+  const [expandedId, setExpandedId]           = useState<number | null>(null);
   const [confirmDeleteId, setConfirmDeleteId] = useState<number | null>(null);
-  const [selectedTypes, setSelectedTypes] = useState<string[]>([]);
+  const [selectedTypes, setSelectedTypes]     = useState<string[]>([]);
+  const [muscleGroups, setMuscleGroups]       = useState<Record<string, string>>({});
 
   useEffect(() => {
     fetch(`/api/workouts?from=${range.from}&to=${range.to}`)
       .then(r => r.json()).then(setSessions).catch(() => {});
   }, [range]);
+
+  useEffect(() => {
+    fetch("/api/exercise-muscle-groups")
+      .then(r => r.json()).then(setMuscleGroups).catch(() => {});
+  }, []);
+
+  const saveMuscleGroup = useCallback(async (exerciseName: string, muscleGroup: string) => {
+    setMuscleGroups(prev => ({ ...prev, [exerciseName]: muscleGroup }));
+    await fetch("/api/exercise-muscle-groups", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ exerciseName, muscleGroup }),
+    });
+  }, []);
 
   async function deleteSession(id: number) {
     await fetch(`/api/workouts?id=${id}`, { method: "DELETE" });
@@ -70,17 +95,12 @@ export default function WorkoutDetail({
     [sessions, selectedTypes]
   );
 
-  // All unique exercise names across sessions
+  // All unique exercise names across filtered sessions
   const allExercises = useMemo(() => {
     const set = new Set<string>();
     filteredSessions.forEach(s => s.exercises.forEach(e => set.add(e.name)));
     return [...set].sort();
   }, [filteredSessions]);
-
-  // Auto-select first exercise when list loads
-  useEffect(() => {
-    if (!selectedEx && allExercises.length > 0) setSelectedEx(allExercises[0]);
-  }, [allExercises, selectedEx]);
 
   // Progression data for selected exercise
   const progressionData = useMemo(() => {
@@ -109,6 +129,44 @@ export default function WorkoutDetail({
     vol:   +s.exercises.reduce((sum, e) => sum + calcVolume(e.sets), 0).toFixed(0),
     sets:  s.exercises.reduce((sum, e) => sum + e.sets.length, 0),
   })), [filteredSessions]);
+
+  // Muscle group analysis
+  const assignedMGs = useMemo(() =>
+    MUSCLE_GROUPS.filter(mg => allExercises.some(ex => muscleGroups[ex] === mg)),
+    [allExercises, muscleGroups]
+  );
+
+  const muscleGroupTotals = useMemo(() => {
+    const totals: Record<string, { vol: number; exercises: Set<string>; sessions: number }> = {};
+    filteredSessions.forEach(s => {
+      const mgsInSession = new Set<string>();
+      s.exercises.forEach(ex => {
+        const mg = muscleGroups[ex.name];
+        if (mg) {
+          if (!totals[mg]) totals[mg] = { vol: 0, exercises: new Set(), sessions: 0 };
+          totals[mg].vol += calcVolume(ex.sets);
+          totals[mg].exercises.add(ex.name);
+          mgsInSession.add(mg);
+        }
+      });
+      mgsInSession.forEach(mg => { totals[mg].sessions++; });
+    });
+    return Object.entries(totals)
+      .map(([mg, v]) => ({ mg, vol: +v.vol.toFixed(0), exercises: v.exercises.size, sessions: v.sessions }))
+      .sort((a, b) => b.vol - a.vol);
+  }, [filteredSessions, muscleGroups]);
+
+  const muscleGroupTimeline = useMemo(() => {
+    if (assignedMGs.length === 0) return [];
+    return [...filteredSessions].reverse().map(s => {
+      const entry: Record<string, number | string> = { date: fmtDateShort(s.date) };
+      s.exercises.forEach(ex => {
+        const mg = muscleGroups[ex.name];
+        if (mg) entry[mg] = ((entry[mg] as number) ?? 0) + calcVolume(ex.sets);
+      });
+      return entry;
+    });
+  }, [filteredSessions, muscleGroups, assignedMGs]);
 
   const tt = tooltipStyle;
   const totalVol = filteredSessions.reduce((sum, s) => sum + s.exercises.reduce((es, e) => es + calcVolume(e.sets), 0), 0);
@@ -205,10 +263,22 @@ export default function WorkoutDetail({
             </div>
           </div>
 
-          {/* Personal Records */}
+          {/* Persönliche Rekorde & Progression – unified section */}
           {allExercises.length > 0 && (
             <div className="card card-pad">
-              <SectionHeader title="Persönliche Rekorde" icon="🏆" />
+              <SectionHeader
+                title="Persönliche Rekorde & Progression"
+                icon="🏆"
+                right={selectedEx ? (
+                  <button onClick={() => setSelectedEx(null)}
+                    style={{ fontSize: 11, padding: "3px 10px", borderRadius: 20, cursor: "pointer", fontWeight: 600,
+                      background: "var(--surface2)", color: "var(--text-muted)", border: "1px solid var(--border2)" }}>
+                    ✕ Auswahl aufheben
+                  </button>
+                ) : undefined}
+              />
+
+              {/* PR Cards – clickable for exercise selection */}
               <div className="pr-grid" style={{ display: "grid", gridTemplateColumns: "repeat(6, 1fr)", gap: 10 }}>
                 {allExercises.map((exName, i) => {
                   const allSetsForEx = filteredSessions.flatMap(s =>
@@ -218,81 +288,63 @@ export default function WorkoutDetail({
                   const prSet = allSetsForEx.find(s => (s.weight ?? 0) === prWeight);
                   const sessionCount = filteredSessions.filter(s => s.exercises.some(e => e.name === exName)).length;
                   const color = TYPE_COLORS[i % TYPE_COLORS.length];
+                  const isSelected = selectedEx === exName;
+                  const mg = muscleGroups[exName];
                   return (
-                    <div key={exName} style={{ padding: "12px 14px", background: "var(--surface2)", borderRadius: 10, border: `1.5px solid ${color}` }}>
+                    <div key={exName}
+                      onClick={() => setSelectedEx(prev => prev === exName ? null : exName)}
+                      style={{
+                        padding: "12px 14px", borderRadius: 10, cursor: "pointer",
+                        background: isSelected ? color + "22" : "var(--surface2)",
+                        border: isSelected ? `2.5px solid ${color}` : `1.5px solid ${color}`,
+                        transition: "all .15s",
+                        display: "flex", flexDirection: "column",
+                      }}>
                       <div style={{ fontSize: 10, color: "var(--text-muted)", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: 6 }}>{exName}</div>
-                      <div style={{ fontSize: 20, fontWeight: 800, color, lineHeight: 1 }}>
+                      <div style={{ fontSize: 20, fontWeight: 800, color, lineHeight: 1, flex: 1 }}>
                         {prWeight > 0 ? `${prWeight} kg` : "–"}
                       </div>
-                      <div style={{ fontSize: 11, color: "var(--text-muted)", marginTop: 4 }}>
-                        {prSet?.reps ? `× ${prSet.reps} Wdh.` : ""}
-                        {prSet?.reps ? " · " : ""}
-                        {sessionCount} Session{sessionCount !== 1 ? "s" : ""}
+                      <div style={{ fontSize: 11, color: "var(--text-muted)", marginTop: 4, marginBottom: 6 }}>
+                        {prSet?.reps ? `× ${prSet.reps} Wdh. · ` : ""}{sessionCount} Session{sessionCount !== 1 ? "s" : ""}
                       </div>
+                      {/* Muscle group selector */}
+                      <select
+                        value={mg ?? ""}
+                        onClick={e => e.stopPropagation()}
+                        onChange={e => { e.stopPropagation(); saveMuscleGroup(exName, e.target.value); }}
+                        style={{
+                          fontSize: 10, background: "var(--surface)", border: "1px solid var(--border2)",
+                          borderRadius: 4, color: mg ? MG_COLORS[mg] : "var(--text-muted)",
+                          padding: "2px 4px", width: "100%", cursor: "pointer", fontWeight: mg ? 700 : 400,
+                        }}>
+                        <option value="">Muskelgruppe…</option>
+                        {MUSCLE_GROUPS.map(m => <option key={m} value={m}>{m}</option>)}
+                      </select>
                     </div>
                   );
                 })}
               </div>
-            </div>
-          )}
 
-          {/* Progression per exercise */}
-          {allExercises.length > 0 && (
-            <div className="card card-pad">
-              <SectionHeader title="Übungs-Progression" icon="📈" />
-              {/* Exercise selector */}
-              <div style={{ display: "flex", gap: 6, flexWrap: "wrap", marginBottom: 14 }}>
-                {allExercises.map((ex, i) => (
-                  <button key={ex} onClick={() => setSelectedEx(ex)}
-                    style={{
-                      fontSize: 11.5, padding: "4px 12px", borderRadius: 20, cursor: "pointer", fontWeight: 600,
-                      background: selectedEx === ex ? TYPE_COLORS[i % TYPE_COLORS.length] + "22" : "var(--surface2)",
-                      color:      selectedEx === ex ? TYPE_COLORS[i % TYPE_COLORS.length] : "var(--text-muted)",
-                      border:     `1px solid ${selectedEx === ex ? TYPE_COLORS[i % TYPE_COLORS.length] : "var(--border2)"}`,
-                    }}>{ex}</button>
-                ))}
-              </div>
-
-              {progressionData.length < 2 && (
-                <div style={{ color: "var(--text-muted)", fontSize: 13, padding: "16px 0" }}>Mindestens 2 Sessions mit dieser Übung nötig für Progression.</div>
-              )}
-
-              {progressionData.length >= 2 && (
-                <div className="col2-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
-                  {/* Max Gewicht */}
-                  <div>
-                    <div style={{ fontSize: 11, color: "var(--text-muted)", fontWeight: 700, textTransform: "uppercase", marginBottom: 8 }}>Maximales Gewicht (kg)</div>
-                    <ResponsiveContainer width="100%" height={160}>
-                      <LineChart data={progressionData} margin={{ top: 4, right: 8, left: 0, bottom: 0 }}>
-                        <CartesianGrid {...gridStyle} />
-                        <XAxis dataKey="date" tick={tickStyle} tickLine={false} />
-                        <YAxis tick={tickStyle} unit=" kg" />
-                        <Tooltip {...tt} formatter={(v: unknown) => [`${v} kg`, "Max. Gewicht"]} />
-                        <Line type="monotone" dataKey="maxW" stroke="var(--teal)" strokeWidth={2.5} dot={{ r: 4, fill: "var(--teal)", strokeWidth: 0 }} />
-                      </LineChart>
-                    </ResponsiveContainer>
-                  </div>
-
-                  {/* Volumen */}
-                  <div>
-                    <div style={{ fontSize: 11, color: "var(--text-muted)", fontWeight: 700, textTransform: "uppercase", marginBottom: 8 }}>Volumen (kg × Wdh.)</div>
-                    <ResponsiveContainer width="100%" height={160}>
-                      <LineChart data={progressionData} margin={{ top: 4, right: 8, left: 0, bottom: 0 }}>
-                        <CartesianGrid {...gridStyle} />
-                        <XAxis dataKey="date" tick={tickStyle} tickLine={false} />
-                        <YAxis tick={tickStyle} unit=" kg" />
-                        <Tooltip {...tt} formatter={(v: unknown) => [`${v} kg`, "Volumen"]} />
-                        <Line type="monotone" dataKey="vol" stroke="var(--orange)" strokeWidth={2.5} dot={{ r: 4, fill: "var(--orange)", strokeWidth: 0 }} />
-                      </LineChart>
-                    </ResponsiveContainer>
-                  </div>
+              {/* Inline Progression */}
+              {!selectedEx && (
+                <div style={{ marginTop: 16, color: "var(--text-muted)", fontSize: 13, textAlign: "center", padding: "20px 0" }}>
+                  Übung anklicken für Progression & Analyse
                 </div>
               )}
 
-              {/* Progression table: last vs best vs current */}
-              {progressionData.length >= 1 && (
-                <div style={{ marginTop: 16 }}>
-                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr 1fr", gap: 10 }}>
+              {selectedEx && progressionData.length < 2 && (
+                <div style={{ marginTop: 16, color: "var(--text-muted)", fontSize: 13, padding: "16px 0" }}>
+                  Mindestens 2 Sessions mit „{selectedEx}" nötig für Progression.
+                </div>
+              )}
+
+              {selectedEx && progressionData.length >= 1 && (
+                <div style={{ marginTop: 20 }}>
+                  <div style={{ fontSize: 13, fontWeight: 700, marginBottom: 12, color: "var(--text-2)" }}>
+                    📈 {selectedEx}
+                  </div>
+                  {/* KPIs */}
+                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr 1fr", gap: 10, marginBottom: 16 }}>
                     {[
                       { label: "Letztes Max.", value: `${progressionData.at(-1)?.maxW ?? "–"} kg`, color: "var(--teal)" },
                       { label: "Letztes Volumen", value: `${progressionData.at(-1)?.vol ?? "–"} kg`, color: "var(--orange)" },
@@ -305,8 +357,116 @@ export default function WorkoutDetail({
                       </div>
                     ))}
                   </div>
+
+                  {/* Charts */}
+                  {progressionData.length >= 2 && (
+                    <div className="col2-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
+                      <div>
+                        <div style={{ fontSize: 11, color: "var(--text-muted)", fontWeight: 700, textTransform: "uppercase", marginBottom: 8 }}>Maximales Gewicht (kg)</div>
+                        <ResponsiveContainer width="100%" height={160}>
+                          <LineChart data={progressionData} margin={{ top: 4, right: 8, left: 0, bottom: 0 }}>
+                            <CartesianGrid {...gridStyle} />
+                            <XAxis dataKey="date" tick={tickStyle} tickLine={false} />
+                            <YAxis tick={tickStyle} unit=" kg" />
+                            <Tooltip {...tt} formatter={(v: unknown) => [`${v} kg`, "Max. Gewicht"]} />
+                            <Line type="monotone" dataKey="maxW" stroke="var(--teal)" strokeWidth={2.5} dot={{ r: 4, fill: "var(--teal)", strokeWidth: 0 }} />
+                          </LineChart>
+                        </ResponsiveContainer>
+                      </div>
+                      <div>
+                        <div style={{ fontSize: 11, color: "var(--text-muted)", fontWeight: 700, textTransform: "uppercase", marginBottom: 8 }}>Volumen (kg × Wdh.)</div>
+                        <ResponsiveContainer width="100%" height={160}>
+                          <LineChart data={progressionData} margin={{ top: 4, right: 8, left: 0, bottom: 0 }}>
+                            <CartesianGrid {...gridStyle} />
+                            <XAxis dataKey="date" tick={tickStyle} tickLine={false} />
+                            <YAxis tick={tickStyle} unit=" kg" />
+                            <Tooltip {...tt} formatter={(v: unknown) => [`${v} kg`, "Volumen"]} />
+                            <Line type="monotone" dataKey="vol" stroke="var(--orange)" strokeWidth={2.5} dot={{ r: 4, fill: "var(--orange)", strokeWidth: 0 }} />
+                          </LineChart>
+                        </ResponsiveContainer>
+                      </div>
+                    </div>
+                  )}
                 </div>
               )}
+            </div>
+          )}
+
+          {/* Muskelgruppen-Analyse */}
+          {assignedMGs.length > 0 && (
+            <div className="card card-pad">
+              <SectionHeader title="Muskelgruppen-Analyse" icon="🧬" />
+
+              {/* Totals per muscle group */}
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(140px, 1fr))", gap: 10, marginBottom: 20 }}>
+                {muscleGroupTotals.map(({ mg, vol, exercises, sessions: sc }) => (
+                  <div key={mg} className="card card-pad" style={{ padding: "12px 14px", borderLeft: `3px solid ${MG_COLORS[mg]}` }}>
+                    <div style={{ fontSize: 11, color: MG_COLORS[mg], fontWeight: 700, marginBottom: 4 }}>{mg}</div>
+                    <div style={{ fontSize: 18, fontWeight: 800, color: "var(--text)" }}>
+                      {vol >= 1000 ? `${(vol/1000).toFixed(1)} t` : `${vol} kg`}
+                    </div>
+                    <div style={{ fontSize: 10.5, color: "var(--text-muted)", marginTop: 3 }}>
+                      {exercises} Übg. · {sc} Sessions
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Stacked volume timeline by muscle group */}
+              {muscleGroupTimeline.length >= 2 && (
+                <>
+                  <div style={{ fontSize: 11, color: "var(--text-muted)", fontWeight: 700, textTransform: "uppercase", marginBottom: 8 }}>
+                    Volumen pro Session nach Muskelgruppe
+                  </div>
+                  <ResponsiveContainer width="100%" height={200}>
+                    <BarChart data={muscleGroupTimeline} margin={{ top: 4, right: 10, left: 5, bottom: 0 }}>
+                      <CartesianGrid {...gridStyle} />
+                      <XAxis dataKey="date" tick={tickStyle} tickLine={false} />
+                      <YAxis tick={tickStyle} unit=" kg" width={52} />
+                      <Tooltip {...tt} formatter={(v: unknown, name: unknown) => [`${v} kg`, String(name)]} />
+                      {assignedMGs.map(mg => (
+                        <Bar key={mg} dataKey={mg} stackId="a" fill={MG_COLORS[mg]} fillOpacity={0.85} maxBarSize={36}
+                          radius={mg === assignedMGs[assignedMGs.length - 1] ? [4, 4, 0, 0] : [0, 0, 0, 0]} />
+                      ))}
+                    </BarChart>
+                  </ResponsiveContainer>
+
+                  {/* Volume per muscle group – simple bars */}
+                  <div style={{ marginTop: 20 }}>
+                    <div style={{ fontSize: 11, color: "var(--text-muted)", fontWeight: 700, textTransform: "uppercase", marginBottom: 8 }}>
+                      Gesamtvolumen nach Muskelgruppe
+                    </div>
+                    <ResponsiveContainer width="100%" height={Math.max(120, muscleGroupTotals.length * 36)}>
+                      <BarChart data={muscleGroupTotals} layout="vertical" margin={{ top: 0, right: 10, left: 20, bottom: 0 }}>
+                        <CartesianGrid {...gridStyle} horizontal={false} />
+                        <XAxis type="number" tick={tickStyle} tickLine={false} unit=" kg" />
+                        <YAxis type="category" dataKey="mg" tick={tickStyle} width={80} />
+                        <Tooltip {...tt} formatter={(v: unknown) => [`${v} kg`, "Volumen"]} />
+                        <Bar dataKey="vol" maxBarSize={22} radius={[0, 4, 4, 0]}>
+                          {muscleGroupTotals.map(({ mg }) => (
+                            <Cell key={mg} fill={MG_COLORS[mg]} fillOpacity={0.85} />
+                          ))}
+                        </Bar>
+                      </BarChart>
+                    </ResponsiveContainer>
+                  </div>
+                </>
+              )}
+
+              {/* List of exercises per muscle group */}
+              <div style={{ marginTop: 20, display: "flex", flexWrap: "wrap", gap: 12 }}>
+                {assignedMGs.map(mg => {
+                  const exs = allExercises.filter(ex => muscleGroups[ex] === mg);
+                  return (
+                    <div key={mg} style={{ minWidth: 140 }}>
+                      <div style={{ fontSize: 11, fontWeight: 700, color: MG_COLORS[mg], marginBottom: 4 }}>{mg}</div>
+                      {exs.map(ex => (
+                        <div key={ex} style={{ fontSize: 11, color: "var(--text-muted)", paddingLeft: 8 }}>· {ex}</div>
+                      ))}
+                    </div>
+                  );
+                })}
+              </div>
             </div>
           )}
 
