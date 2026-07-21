@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState, useMemo, useCallback } from "react";
-import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, BarChart, Bar, Cell } from "recharts";
+import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, BarChart, Bar } from "recharts";
 import { RangeSelector, SectionHeader, PageHeader, tickStyle, gridStyle, tooltipStyle } from "@/lib/chartHelpers";
 import type { DateRange } from "@/app/page";
 
@@ -137,36 +137,55 @@ export default function WorkoutDetail({
     [allExercises, muscleGroups]
   );
 
-  const muscleGroupTotals = useMemo(() => {
-    const totals: Record<string, { vol: number; exercises: Set<string>; sessions: number }> = {};
-    filteredSessions.forEach(s => {
-      const mgsInSession = new Set<string>();
-      s.exercises.forEach(ex => {
-        const mg = muscleGroups[ex.name];
-        if (mg) {
-          if (!totals[mg]) totals[mg] = { vol: 0, exercises: new Set(), sessions: 0 };
-          totals[mg].vol += calcVolume(ex.sets);
-          totals[mg].exercises.add(ex.name);
-          mgsInSession.add(mg);
-        }
-      });
-      mgsInSession.forEach(mg => { totals[mg].sessions++; });
-    });
-    return Object.entries(totals)
-      .map(([mg, v]) => ({ mg, vol: +v.vol.toFixed(0), exercises: v.exercises.size, sessions: v.sessions }))
-      .sort((a, b) => b.vol - a.vol);
-  }, [filteredSessions, muscleGroups]);
+  const mgStats = useMemo(() => {
+    const today = new Date();
+    const sorted = [...filteredSessions].sort((a, b) => a.date.localeCompare(b.date));
+    const mid = Math.floor(sorted.length / 2);
+    const firstHalf = sorted.slice(0, mid);
+    const secondHalf = sorted.slice(mid);
+    const periodDays = sorted.length >= 2
+      ? (new Date(sorted.at(-1)!.date).getTime() - new Date(sorted[0].date).getTime()) / 86400000
+      : 7;
+    const weeks = Math.max(1, periodDays / 7);
 
-  const muscleGroupTimeline = useMemo(() => {
+    const result: Record<string, { totalVol: number; trend: number | null; avgMaxWeight: number | null; daysSinceLast: number | null; sessionsCount: number; freqPerWeek: number }> = {};
+    assignedMGs.forEach(mg => {
+      const mgSessions = sorted.filter(s => s.exercises.some(e => muscleGroups[e.name] === mg));
+      const volOf = (ss: Session[]) => ss.reduce((sum, s) =>
+        sum + s.exercises.filter(e => muscleGroups[e.name] === mg).reduce((es, e) => es + calcVolume(e.sets), 0), 0);
+      const totalVol = volOf(mgSessions);
+      const v1 = volOf(firstHalf); const v2 = volOf(secondHalf);
+      const trend = v1 > 0 ? Math.round(((v2 - v1) / v1) * 100) : null;
+      const sessionMaxes = mgSessions.map(s => {
+        const ws = s.exercises.filter(e => muscleGroups[e.name] === mg).flatMap(e => e.sets.map(set => set.weight ?? 0));
+        return ws.length ? Math.max(...ws) : 0;
+      }).filter(w => w > 0);
+      const avgMaxWeight = sessionMaxes.length ? Math.round(sessionMaxes.reduce((a, b) => a + b, 0) / sessionMaxes.length) : null;
+      const lastSession = mgSessions.at(-1);
+      const daysSinceLast = lastSession
+        ? Math.round((today.getTime() - new Date(lastSession.date.split("T")[0] + "T12:00:00").getTime()) / 86400000)
+        : null;
+      result[mg] = { totalVol, trend, avgMaxWeight, daysSinceLast, sessionsCount: mgSessions.length, freqPerWeek: +(mgSessions.length / weeks).toFixed(1) };
+    });
+    return result;
+  }, [assignedMGs, filteredSessions, muscleGroups]);
+
+  const weeklyMGVolume = useMemo(() => {
     if (assignedMGs.length === 0) return [];
-    return [...filteredSessions].reverse().map(s => {
-      const entry: Record<string, number | string> = { date: fmtDateShort(s.date) };
+    const weekMap = new Map<string, Record<string, number>>();
+    [...filteredSessions].sort((a, b) => a.date.localeCompare(b.date)).forEach(s => {
+      const d = new Date(s.date.split("T")[0] + "T12:00:00");
+      const day = d.getDay();
+      const monday = new Date(d); monday.setDate(d.getDate() - day + (day === 0 ? -6 : 1));
+      const key = `${String(monday.getDate()).padStart(2,"0")}.${String(monday.getMonth()+1).padStart(2,"0")}`;
+      if (!weekMap.has(key)) weekMap.set(key, {});
+      const week = weekMap.get(key)!;
       s.exercises.forEach(ex => {
         const mg = muscleGroups[ex.name];
-        if (mg) entry[mg] = ((entry[mg] as number) ?? 0) + calcVolume(ex.sets);
+        if (mg) week[mg] = (week[mg] ?? 0) + calcVolume(ex.sets);
       });
-      return entry;
     });
+    return [...weekMap.entries()].map(([date, vols]) => ({ date, ...vols }));
   }, [filteredSessions, muscleGroups, assignedMGs]);
 
   const tt = tooltipStyle;
@@ -399,75 +418,106 @@ export default function WorkoutDetail({
             <div className="card card-pad">
               <SectionHeader title="Muskelgruppen-Analyse" icon="🧬" />
 
-              {/* Totals per muscle group */}
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(140px, 1fr))", gap: 10, marginBottom: 20 }}>
-                {muscleGroupTotals.map(({ mg, vol, exercises, sessions: sc }) => (
-                  <div key={mg} className="card card-pad" style={{ padding: "12px 14px", borderLeft: `3px solid ${MG_COLORS[mg]}` }}>
-                    <div style={{ fontSize: 11, color: MG_COLORS[mg], fontWeight: 700, marginBottom: 4 }}>{mg}</div>
-                    <div style={{ fontSize: 18, fontWeight: 800, color: "var(--text)" }}>
-                      {vol >= 1000 ? `${(vol/1000).toFixed(1)} t` : `${vol} kg`}
+              {/* KPI cards per muscle group */}
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(160px, 1fr))", gap: 12, marginBottom: 24 }}>
+                {assignedMGs.map(mg => {
+                  const s = mgStats[mg];
+                  if (!s) return null;
+                  const color = MG_COLORS[mg];
+                  const trend = s.trend;
+                  const trendColor = trend == null ? "var(--text-muted)" : trend > 5 ? "var(--green)" : trend < -5 ? "var(--red)" : "var(--text-muted)";
+                  const trendIcon = trend == null ? "" : trend > 5 ? "▲" : trend < -5 ? "▼" : "→";
+                  return (
+                    <div key={mg} className="card card-pad" style={{ padding: "14px 16px", borderLeft: `3px solid ${color}` }}>
+                      <div style={{ fontSize: 12, color, fontWeight: 700, marginBottom: 6 }}>{mg}</div>
+                      <div style={{ fontSize: 22, fontWeight: 800, color: "var(--text)", lineHeight: 1, marginBottom: 4 }}>
+                        {s.totalVol >= 1000 ? `${(s.totalVol/1000).toFixed(1)} t` : `${s.totalVol} kg`}
+                      </div>
+                      {trend != null && (
+                        <div style={{ fontSize: 11, color: trendColor, fontWeight: 700, marginBottom: 6 }}>
+                          {trendIcon} {trend > 0 ? "+" : ""}{trend}% vs. Vorperiode
+                        </div>
+                      )}
+                      <div style={{ fontSize: 10.5, color: "var(--text-muted)", display: "flex", flexDirection: "column", gap: 3 }}>
+                        {s.avgMaxWeight != null && <span>Ø Max: <b style={{ color: "var(--text-2)" }}>{s.avgMaxWeight} kg</b></span>}
+                        <span>{s.freqPerWeek}×/Woche · {s.sessionsCount} Sessions</span>
+                        {s.daysSinceLast != null && (
+                          <span style={{ color: s.daysSinceLast > 7 ? "var(--orange)" : "var(--text-muted)" }}>
+                            Letztes Training: vor {s.daysSinceLast === 0 ? "heute" : `${s.daysSinceLast} Tag${s.daysSinceLast !== 1 ? "en" : ""}`}
+                          </span>
+                        )}
+                      </div>
                     </div>
-                    <div style={{ fontSize: 10.5, color: "var(--text-muted)", marginTop: 3 }}>
-                      {exercises} Übg. · {sc} Sessions
-                    </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
 
-              {/* Stacked volume timeline by muscle group */}
-              {muscleGroupTimeline.length >= 2 && (
-                <>
+              {/* Volumenanteil (Balance) */}
+              {(() => {
+                const total = assignedMGs.reduce((sum, mg) => sum + (mgStats[mg]?.totalVol ?? 0), 0);
+                return total > 0 ? (
+                  <div style={{ marginBottom: 24 }}>
+                    <div style={{ fontSize: 11, color: "var(--text-muted)", fontWeight: 700, textTransform: "uppercase", marginBottom: 8 }}>
+                      Volumenverteilung
+                    </div>
+                    <div style={{ display: "flex", height: 22, borderRadius: 6, overflow: "hidden", gap: 2 }}>
+                      {assignedMGs.map(mg => {
+                        const vol = mgStats[mg]?.totalVol ?? 0;
+                        const pct = (vol / total * 100);
+                        return (
+                          <div key={mg} style={{ flex: vol, background: MG_COLORS[mg], display: "flex", alignItems: "center", justifyContent: "center", fontSize: 9.5, color: "#fff", fontWeight: 700 }}
+                            title={`${mg}: ${pct.toFixed(1)}%`}>
+                            {pct > 9 ? `${pct.toFixed(0)}%` : ""}
+                          </div>
+                        );
+                      })}
+                    </div>
+                    <div style={{ display: "flex", gap: 12, flexWrap: "wrap", marginTop: 6 }}>
+                      {assignedMGs.map(mg => {
+                        const vol = mgStats[mg]?.totalVol ?? 0;
+                        const pct = (vol / total * 100).toFixed(1);
+                        return (
+                          <span key={mg} style={{ fontSize: 10.5, color: "var(--text-muted)" }}>
+                            <span style={{ color: MG_COLORS[mg], fontWeight: 700 }}>●</span> {mg} {pct}%
+                          </span>
+                        );
+                      })}
+                    </div>
+                  </div>
+                ) : null;
+              })()}
+
+              {/* Wöchentliches Volumen – Line Chart */}
+              {weeklyMGVolume.length >= 2 && (
+                <div style={{ marginBottom: 24 }}>
                   <div style={{ fontSize: 11, color: "var(--text-muted)", fontWeight: 700, textTransform: "uppercase", marginBottom: 8 }}>
-                    Volumen pro Session nach Muskelgruppe
+                    Wöchentliches Volumen pro Muskelgruppe
                   </div>
                   <ResponsiveContainer width="100%" height={200}>
-                    <BarChart data={muscleGroupTimeline} margin={{ top: 4, right: 10, left: 5, bottom: 0 }}>
+                    <LineChart data={weeklyMGVolume} margin={{ top: 4, right: 10, left: 5, bottom: 0 }}>
                       <CartesianGrid {...gridStyle} />
                       <XAxis dataKey="date" tick={tickStyle} tickLine={false} />
                       <YAxis tick={tickStyle} unit=" kg" width={52} />
                       <Tooltip {...tt} formatter={(v: unknown, name: unknown) => [`${v} kg`, String(name)]} />
                       {assignedMGs.map(mg => (
-                        <Bar key={mg} dataKey={mg} stackId="a" fill={MG_COLORS[mg]} fillOpacity={0.85} maxBarSize={36}
-                          radius={mg === assignedMGs[assignedMGs.length - 1] ? [4, 4, 0, 0] : [0, 0, 0, 0]} />
+                        <Line key={mg} type="monotone" dataKey={mg} stroke={MG_COLORS[mg]} strokeWidth={2}
+                          dot={{ r: 3, fill: MG_COLORS[mg], strokeWidth: 0 }} connectNulls />
                       ))}
-                    </BarChart>
+                    </LineChart>
                   </ResponsiveContainer>
-
-                  {/* Volume per muscle group – simple bars */}
-                  <div style={{ marginTop: 20 }}>
-                    <div style={{ fontSize: 11, color: "var(--text-muted)", fontWeight: 700, textTransform: "uppercase", marginBottom: 8 }}>
-                      Gesamtvolumen nach Muskelgruppe
-                    </div>
-                    <ResponsiveContainer width="100%" height={Math.max(120, muscleGroupTotals.length * 36)}>
-                      <BarChart data={muscleGroupTotals} layout="vertical" margin={{ top: 0, right: 10, left: 20, bottom: 0 }}>
-                        <CartesianGrid {...gridStyle} horizontal={false} />
-                        <XAxis type="number" tick={tickStyle} tickLine={false} unit=" kg" />
-                        <YAxis type="category" dataKey="mg" tick={tickStyle} width={80} />
-                        <Tooltip {...tt} formatter={(v: unknown) => [`${v} kg`, "Volumen"]} />
-                        <Bar dataKey="vol" maxBarSize={22} radius={[0, 4, 4, 0]}>
-                          {muscleGroupTotals.map(({ mg }) => (
-                            <Cell key={mg} fill={MG_COLORS[mg]} fillOpacity={0.85} />
-                          ))}
-                        </Bar>
-                      </BarChart>
-                    </ResponsiveContainer>
-                  </div>
-                </>
+                </div>
               )}
 
-              {/* List of exercises per muscle group */}
-              <div style={{ marginTop: 20, display: "flex", flexWrap: "wrap", gap: 12 }}>
-                {assignedMGs.map(mg => {
-                  const exs = allExercises.filter(ex => muscleGroups[ex] === mg);
-                  return (
-                    <div key={mg} style={{ minWidth: 140 }}>
-                      <div style={{ fontSize: 11, fontWeight: 700, color: MG_COLORS[mg], marginBottom: 4 }}>{mg}</div>
-                      {exs.map(ex => (
-                        <div key={ex} style={{ fontSize: 11, color: "var(--text-muted)", paddingLeft: 8 }}>· {ex}</div>
-                      ))}
-                    </div>
-                  );
-                })}
+              {/* Übungen je Muskelgruppe */}
+              <div style={{ display: "flex", flexWrap: "wrap", gap: 16 }}>
+                {assignedMGs.map(mg => (
+                  <div key={mg} style={{ minWidth: 130 }}>
+                    <div style={{ fontSize: 11, fontWeight: 700, color: MG_COLORS[mg], marginBottom: 4 }}>{mg}</div>
+                    {allExercises.filter(ex => muscleGroups[ex] === mg).map(ex => (
+                      <div key={ex} style={{ fontSize: 11, color: "var(--text-muted)", paddingLeft: 8 }}>· {ex}</div>
+                    ))}
+                  </div>
+                ))}
               </div>
             </div>
           )}
