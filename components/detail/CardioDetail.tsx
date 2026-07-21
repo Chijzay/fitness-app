@@ -153,7 +153,7 @@ export default function CardioDetail({
                   <CartesianGrid {...gridStyle} horizontal={false} />
                   <XAxis type="number" tick={tickStyle} tickLine={false} />
                   <YAxis type="category" dataKey="type" tick={tickStyle} width={80} />
-                  <Tooltip {...tt} formatter={(v: unknown, name: unknown) => [`${v}`, name === "count" ? "Sessions" : name === "distKm" ? "km" : "kcal"]} />
+                  <Tooltip {...tt} formatter={(v: unknown, name: unknown) => [`${v}×`, name === "Sessions" ? "Anzahl" : name === "distKm" ? "km" : "kcal"]} />
                   <Bar dataKey="count" maxBarSize={20} radius={[0, 4, 4, 0]} name="Sessions">
                     {byType.map((t, i) => <Cell key={i} fill={typeColor(t.type)} fillOpacity={0.85} />)}
                   </Bar>
