@@ -481,29 +481,43 @@ export default function Dashboard({ logs, allLogs, profile, range, today: todayP
               : weightGoal ? "Ziel gesetzt" : "Kein Ziel gesetzt"}
           </div>
         </div>
-        {projection ? (
-          <div className="kpi-card" style={{ borderLeft: "2px solid var(--green)", opacity: 0.9 }}>
-            <div className="kpi-label"><span>📅</span>Trend-Projektion</div>
-            <div className="kpi-value" style={{ fontSize: 14, fontWeight: 800, color: "var(--green)", lineHeight: 1.25 }}>
-              {projection.dateStr}
+        {(() => {
+          const gw = goals.find(g => g.type === "weight");
+          if (!gw) return (
+            <div className="kpi-card" style={{ borderLeft: "2px solid var(--border2)", opacity: 0.9 }}>
+              <div className="kpi-label"><span>🎯</span>Zielgewicht</div>
+              <div className="kpi-value" style={{ fontSize: 13, color: "var(--text-muted)" }}>Nicht gesetzt</div>
+              <div className="kpi-sub">Unter Ziele eintragen</div>
             </div>
-            <div className="kpi-sub">
-              Ø {projection.avgDef} kcal/Tag · noch {projection.kgToLose} kg · {projection.daysLeft} Tage
+          );
+          const diff = latestWeight != null ? +(latestWeight - gw.targetValue).toFixed(1) : null;
+          const color = diff == null ? "var(--text-muted)" : diff <= 0 ? "var(--green)" : "var(--red)";
+          const border = diff == null ? "var(--border2)" : diff <= 0 ? "var(--green)" : "var(--red)";
+          return (
+            <div className="kpi-card" style={{ borderLeft: `2px solid ${border}`, opacity: 0.9 }}>
+              <div className="kpi-label"><span>🎯</span>Zielgewicht-Abstand</div>
+              <div className="kpi-value" style={{ fontSize: 20, fontWeight: 800, color, lineHeight: 1.1 }}>
+                {diff == null ? "–" : diff <= 0 ? `${Math.abs(diff)} kg ✓` : `${diff} kg`}
+              </div>
+              <div className="kpi-sub">
+                Ziel: {gw.targetValue} kg
+                {diff != null && diff > 0 && ` · noch ${diff} kg`}
+                {diff != null && diff <= 0 && " · Ziel erreicht!"}
+              </div>
             </div>
+          );
+        })()}
+        <div className="kpi-card" style={{ borderLeft: "2px solid var(--purple)", opacity: 0.9 }}>
+          <div className="kpi-label"><span>😴</span>Schlaf heute</div>
+          <div className="kpi-value" style={{ fontSize: 18, color: todaySleep ? "var(--purple)" : "var(--text-muted)" }}>
+            {todaySleep ? formatMinutes(todaySleep) : !goalsLoaded ? "–" : sleepGoal ? `${sleepGoal.targetValue} Std.` : "7–9 Std."}
           </div>
-        ) : (
-          <div className="kpi-card" style={{ borderLeft: "2px solid var(--purple)", opacity: 0.9 }}>
-            <div className="kpi-label"><span>😴</span>Schlaf heute</div>
-            <div className="kpi-value" style={{ fontSize: 18, color: todaySleep ? "var(--purple)" : "var(--text-muted)" }}>
-              {todaySleep ? formatMinutes(todaySleep) : !goalsLoaded ? "–" : sleepGoal ? `${sleepGoal.targetValue} Std.` : "7–9 Std."}
-            </div>
-            <div className="kpi-sub">
-              {todaySleep
-                ? (sleepGoal ? `Ziel: ${sleepGoal.targetValue} Std. ${todaySleep >= sleepGoalMins ? "✓" : `· noch ${formatMinutes(sleepGoalMins - todaySleep)}`}` : "Eingetragen")
-                : "Noch kein Eintrag · Empfehlung"}
-            </div>
+          <div className="kpi-sub">
+            {todaySleep
+              ? (sleepGoal ? `Ziel: ${sleepGoal.targetValue} Std. ${todaySleep >= sleepGoalMins ? "✓" : `· noch ${formatMinutes(sleepGoalMins - todaySleep)}`}` : "Eingetragen")
+              : "Noch kein Eintrag · Empfehlung"}
           </div>
-        )}
+        </div>
       </div>
 
       {/* 4 Haupt-Widgets */}
