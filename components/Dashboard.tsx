@@ -309,8 +309,8 @@ export default function Dashboard({ logs, allLogs, profile, range, today: todayP
   const kcalGoal = goals.find(g => g.type === "kcal_deficit");
   const bmrForGoals = calcBMR(latestWeight ?? 80, profile.height, profile.gender, new Date(profile.birthdate));
   const tdeeForGoals = calcTDEE(bmrForGoals, profile.activityLevel);
-  const proteinTarget = proteinGoal?.targetValue
-    ?? (latestWeight ? Math.round(latestWeight * profile.proteinFactor) : null);
+  const proteinTarget = !goalsLoaded ? null : (proteinGoal?.targetValue
+    ?? (latestWeight ? Math.round(latestWeight * profile.proteinFactor) : null));
   const todayAee = logMap[today]?.kcalBurned ?? null;
   const todayProtein = logMap[today]?.proteinG ?? null;
   const sleepGoalMins = sleepGoal ? Math.round(sleepGoal.targetValue * 60) : 420;
@@ -468,17 +468,6 @@ export default function Dashboard({ logs, allLogs, profile, range, today: todayP
             {proteinRemaining != null
               ? `Noch ${proteinRemaining} g · ${todayProtein}g gegessen`
               : latestWeight ? `${profile.proteinFactor} g x ${latestWeight} kg` : "Gewicht eintragen"}
-          </div>
-        </div>
-        <div className="kpi-card" style={{ borderLeft: "2px solid var(--green)", opacity: 0.9 }}>
-          <div className="kpi-label"><span>🏆</span>Zielgewicht</div>
-          <div className="kpi-value" style={{ fontSize: 18, color: "var(--green)" }}>
-            {weightGoal ? `${weightGoal.targetValue} kg` : "–"}
-          </div>
-          <div className="kpi-sub">
-            {weightGoal && latestWeight
-              ? `Noch ${Math.max(0, +(latestWeight - weightGoal.targetValue).toFixed(1))} kg`
-              : weightGoal ? "Ziel gesetzt" : "Kein Ziel gesetzt"}
           </div>
         </div>
         {(() => {

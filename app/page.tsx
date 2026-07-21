@@ -75,7 +75,12 @@ export default function Home() {
   useEffect(() => {
     if (status === "unauthenticated") router.push("/login");
   }, [status, router]);
-  const [view, setView] = useState<View>("dashboard");
+  const TRANSIENT_VIEWS: View[] = ["entry", "workout-entry"];
+  const [view, setView] = useState<View>(() => {
+    if (typeof window === "undefined") return "dashboard";
+    const saved = localStorage.getItem("currentView") as View | null;
+    return saved && !TRANSIENT_VIEWS.includes(saved) ? saved : "dashboard";
+  });
   const [returnView, setReturnView] = useState<View>("dashboard");
   // dashRange wird jedes Mal neu aus dem aktuellen Datum berechnet
   const [today, setToday] = useState(todayStr());
@@ -84,6 +89,13 @@ export default function Home() {
   const [entryDate, setEntryDate] = useState(todayStr());
   const [refreshKey, setRefreshKey] = useState(0);
   const [workoutEditId, setWorkoutEditId] = useState<number | undefined>(undefined);
+
+  useEffect(() => {
+    if (!TRANSIENT_VIEWS.includes(view)) {
+      localStorage.setItem("currentView", view);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [view]);
 
   // Browser-Back fängt SPA-Navigation ab → immer zum Dashboard
   useEffect(() => {
