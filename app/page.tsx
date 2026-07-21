@@ -29,7 +29,7 @@ export type DailyLog = {
   carbsG?: number; fatG?: number; proteinG?: number;
   steps?: number; stepsDuration?: number; stepsType?: string; stepsNotes?: string;
   sleepTotal?: number; sleepActual?: number; sleepDeep?: number; sleepQuality?: number;
-  waterMl?: number; notes?: string;
+  waterMl?: number; kreatinTaken?: boolean; notes?: string;
 };
 export type DateRange = { from: string; to: string };
 

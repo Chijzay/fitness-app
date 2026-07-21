@@ -86,6 +86,7 @@ model DailyLog {
   sleepQuality     Int?
 
   waterMl          Int?
+  kreatinTaken     Boolean    @default(false)
   notes            String?
   createdAt        DateTime   @default(now())
   updatedAt        DateTime   @updatedAt

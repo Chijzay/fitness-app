@@ -17,7 +17,7 @@ type FormState = {
   // Schlaf (Stunden als Dezimal)
   sleepTotal: string; sleepActual: string; sleepDeep: string;
   sleepQuality: string; sleepQualityMode: QualityMode;
-  waterMl: string; notes: string;
+  waterMl: string; kreatinTaken: boolean; notes: string;
 };
 
 const empty: FormState = {
@@ -29,7 +29,7 @@ const empty: FormState = {
   hasMovement: false, movementType: "Schwimmen", movementTypeCustom: "", movementDuration: "", movementNotes: "",
   sleepTotal: "", sleepActual: "", sleepDeep: "",
   sleepQuality: "", sleepQualityMode: "watch",
-  waterMl: "", notes: "",
+  waterMl: "", kreatinTaken: false, notes: "",
 };
 
 // Minuten → "H:MM" für Anzeige im Formular
@@ -79,7 +79,7 @@ function logToForm(log: DailyLog): FormState {
     sleepDeep: log.sleepDeep?.toString() ?? "",
     sleepQuality: log.sleepQuality?.toString() ?? "",
     sleepQualityMode: log.sleepQuality != null && log.sleepQuality > 5 ? "watch" : "manual",
-    waterMl: log.waterMl?.toString() ?? "", notes: log.notes ?? "",
+    waterMl: log.waterMl?.toString() ?? "", kreatinTaken: log.kreatinTaken ?? false, notes: log.notes ?? "",
   };
 }
 
@@ -317,6 +317,7 @@ export default function QuickEntry({
       sleepDeep: n(form.sleepDeep),
       sleepQuality: n(form.sleepQuality),
       waterMl: n(form.waterMl),
+      kreatinTaken: form.kreatinTaken,
       notes: s(form.notes),
     };
     Object.keys(payload).forEach(k => payload[k] === undefined && delete payload[k]);
@@ -674,7 +675,7 @@ export default function QuickEntry({
           </div>
         </Section>
 
-        {/* Wasser & Notizen */}
+        {/* Wasser, Supplemente & Notizen */}
         <Section icon="💧" title="Wasser & Notizen">
           <div className={g2}>
             <Field label={
@@ -689,6 +690,19 @@ export default function QuickEntry({
             }>
               <input type="number" min="0" step="1" value={form.waterMl} onChange={si("waterMl")}
                 placeholder={waterRec ? waterRec.toString() : "z.B. 2500"} />
+            </Field>
+            <Field label="Kreatin">
+              <button type="button"
+                onClick={() => set("kreatinTaken", !form.kreatinTaken)}
+                style={{
+                  width: "100%", padding: "9px 14px", borderRadius: 8, cursor: "pointer",
+                  fontWeight: 700, fontSize: 13, transition: "all .15s",
+                  background: form.kreatinTaken ? "var(--teal-dim)" : "var(--bg2)",
+                  color: form.kreatinTaken ? "var(--teal)" : "var(--text-muted)",
+                  border: `1.5px solid ${form.kreatinTaken ? "var(--teal)" : "var(--border2)"}`,
+                }}>
+                {form.kreatinTaken ? "✓ Kreatin genommen" : "Kreatin genommen?"}
+              </button>
             </Field>
             <Field label="Tagesnotiz">
               <input value={form.notes} onChange={e => set("notes", e.target.value)} placeholder="Freitext…" />
