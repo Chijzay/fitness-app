@@ -26,6 +26,14 @@ const MG_COLORS: Record<string, string> = {
   "Bauch":     "var(--green)",
   "Beine":     "#f472b6",
 };
+const MG_COLORS_HEX: Record<string, string> = {
+  "Brust":     "#4f8ef7",
+  "Rücken":    "#00d4b4",
+  "Schultern": "#a78bfa",
+  "Arme":      "#e3b341",
+  "Bauch":     "#3fb950",
+  "Beine":     "#f472b6",
+};
 
 function fmtDate(s: string) {
   return new Date(s.split("T")[0] + "T12:00:00").toLocaleDateString("de-DE", { weekday: "short", day: "2-digit", month: "2-digit" });
@@ -443,7 +451,7 @@ export default function WorkoutDetail({
                       onClick={() => setSelectedMGs(prev => isActive ? prev.filter(x => x !== mg) : [...prev, mg])}
                       style={{ padding: "14px 16px", borderLeft: `3px solid ${color}`, cursor: "pointer",
                         opacity: isFiltering && !isActive ? 0.4 : 1,
-                        background: isActive ? color + "18" : "var(--surface2)",
+                        background: isActive ? MG_COLORS_HEX[mg] + "28" : "var(--surface2)",
                         transition: "all .15s" }}>
                       <div style={{ fontSize: 12, color, fontWeight: 700, marginBottom: 6 }}>{mg}</div>
                       <div style={{ fontSize: 22, fontWeight: 800, color: "var(--text)", lineHeight: 1, marginBottom: 4 }}>
