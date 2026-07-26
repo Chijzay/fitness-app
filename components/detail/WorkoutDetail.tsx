@@ -67,6 +67,7 @@ export default function WorkoutDetail({
   const [selectedTypes, setSelectedTypes]     = useState<string[]>([]);
   const [selectedMGs, setSelectedMGs]         = useState<string[]>([]);
   const [muscleGroups, setMuscleGroups]       = useState<Record<string, string>>({});
+  const [kreatinLogs, setKreatinLogs]         = useState<Array<{ date: string; kreatinTaken: boolean }>>([]);
 
   useEffect(() => {
     fetch(`/api/workouts?from=${range.from}&to=${range.to}`)
@@ -77,6 +78,14 @@ export default function WorkoutDetail({
     fetch("/api/exercise-muscle-groups")
       .then(r => r.json()).then(setMuscleGroups).catch(() => {});
   }, []);
+
+  useEffect(() => {
+    fetch(`/api/logs?from=${range.from}&to=${range.to}`)
+      .then(r => r.json())
+      .then((logs: Array<{ date: string; kreatinTaken?: boolean }>) =>
+        setKreatinLogs(logs.map(l => ({ date: l.date.split("T")[0], kreatinTaken: l.kreatinTaken ?? false })))
+      ).catch(() => {});
+  }, [range]);
 
   const saveMuscleGroup = useCallback(async (exerciseName: string, muscleGroup: string) => {
     setMuscleGroups(prev => ({ ...prev, [exerciseName]: muscleGroup }));
@@ -196,6 +205,31 @@ export default function WorkoutDetail({
     });
     return [...weekMap.entries()].map(([date, vols]) => ({ date, ...vols }));
   }, [filteredSessions, muscleGroups, assignedMGs]);
+
+  const kreatinStats = useMemo(() => {
+    const logMap = new Map(kreatinLogs.map(l => [l.date, l.kreatinTaken]));
+    const from = new Date(range.from + "T12:00:00");
+    const to   = new Date(range.to   + "T12:00:00");
+    const allDays: { date: string; taken: boolean }[] = [];
+    for (const d = new Date(from); d <= to; d.setDate(d.getDate() + 1)) {
+      const key = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
+      allDays.push({ date: key, taken: logMap.get(key) ?? false });
+    }
+    const takenDays = allDays.filter(d => d.taken).length;
+    if (takenDays === 0) return null;
+    const consistency = Math.round(takenDays / allDays.length * 100);
+    const todayStr = new Date().toISOString().split("T")[0];
+    let streak = 0;
+    for (let i = allDays.length - 1; i >= 0; i--) {
+      if (allDays[i].date > todayStr) continue;
+      if (allDays[i].taken) streak++; else break;
+    }
+    const sessionVol = (s: Session) => s.exercises.reduce((sum, e) => sum + calcVolume(e.sets), 0);
+    const withK    = sessions.filter(s => logMap.get(s.date.split("T")[0]) === true);
+    const withoutK = sessions.filter(s => logMap.get(s.date.split("T")[0]) === false);
+    const avgVol = (ss: Session[]) => ss.length ? Math.round(ss.reduce((sum, s) => sum + sessionVol(s), 0) / ss.length) : null;
+    return { allDays, takenDays, consistency, streak, avgVolWith: avgVol(withK), avgVolWithout: avgVol(withoutK), cntWith: withK.length, cntWithout: withoutK.length };
+  }, [kreatinLogs, range, sessions]);
 
   const tt = tooltipStyle;
   const totalVol = filteredSessions.reduce((sum, s) => sum + s.exercises.reduce((es, e) => es + calcVolume(e.sets), 0), 0);
@@ -656,6 +690,83 @@ export default function WorkoutDetail({
               })}
             </div>
           </div>
+          {/* Kreatin-Auswertung */}
+          {kreatinStats && (
+            <div className="card card-pad">
+              <SectionHeader title="Kreatin-Auswertung" icon="💊" />
+
+              {/* KPIs */}
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 10, marginBottom: 20 }}>
+                {[
+                  { label: "Einnahmen", value: `${kreatinStats.takenDays}`, sub: `von ${kreatinStats.allDays.length} Tagen`, color: "var(--green)" },
+                  { label: "Konsistenz", value: `${kreatinStats.consistency}%`, sub: "im Zeitraum",
+                    color: kreatinStats.consistency >= 80 ? "var(--green)" : kreatinStats.consistency >= 50 ? "var(--orange)" : "var(--red)" },
+                  { label: "Streak", value: `${kreatinStats.streak}`, sub: "Tage in Folge", color: "var(--teal)" },
+                  { label: "Sessions mit Kreatin", value: `${kreatinStats.cntWith}`, sub: `von ${kreatinStats.cntWith + kreatinStats.cntWithout} Sessions`, color: "var(--blue)" },
+                ].map(k => (
+                  <div key={k.label} className="card card-pad" style={{ textAlign: "center", padding: "12px 10px" }}>
+                    <div style={{ fontSize: 11, color: "var(--text-muted)", textTransform: "uppercase", marginBottom: 4 }}>{k.label}</div>
+                    <div style={{ fontSize: 22, fontWeight: 800, color: k.color }}>{k.value}</div>
+                    <div style={{ fontSize: 10.5, color: "var(--text-muted)", marginTop: 3 }}>{k.sub}</div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Tagesstreifen */}
+              <div style={{ marginBottom: 20 }}>
+                <div style={{ fontSize: 11, color: "var(--text-muted)", fontWeight: 700, textTransform: "uppercase", marginBottom: 8 }}>Einnahme-Verlauf</div>
+                <div style={{ display: "flex", flexWrap: "wrap", gap: 3 }}>
+                  {kreatinStats.allDays.map(({ date, taken }) => {
+                    const d = new Date(date + "T12:00:00");
+                    const label = `${String(d.getDate()).padStart(2,"0")}.${String(d.getMonth()+1).padStart(2,"0")}`;
+                    return (
+                      <div key={date} title={`${label}: ${taken ? "✓ genommen" : "–"}`}
+                        style={{ width: 14, height: 14, borderRadius: 3, background: taken ? "var(--green)" : "var(--surface2)", border: `1px solid ${taken ? "var(--green)" : "var(--border2)"}` }} />
+                    );
+                  })}
+                </div>
+                <div style={{ display: "flex", gap: 14, marginTop: 6, fontSize: 10.5, color: "var(--text-muted)" }}>
+                  <span><span style={{ display: "inline-block", width: 10, height: 10, borderRadius: 2, background: "var(--green)", marginRight: 4, verticalAlign: "middle" }} />genommen</span>
+                  <span><span style={{ display: "inline-block", width: 10, height: 10, borderRadius: 2, background: "var(--surface2)", border: "1px solid var(--border2)", marginRight: 4, verticalAlign: "middle" }} />nicht eingetragen</span>
+                </div>
+              </div>
+
+              {/* Korrelation */}
+              {kreatinStats.avgVolWith != null && kreatinStats.avgVolWithout != null && (
+                <div>
+                  <div style={{ fontSize: 11, color: "var(--text-muted)", fontWeight: 700, textTransform: "uppercase", marginBottom: 10 }}>
+                    Einfluss auf Trainingsvolumen
+                  </div>
+                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+                    {[
+                      { label: "Ø Volumen mit Kreatin", value: kreatinStats.avgVolWith, sessions: kreatinStats.cntWith, color: "var(--green)" },
+                      { label: "Ø Volumen ohne Kreatin", value: kreatinStats.avgVolWithout, sessions: kreatinStats.cntWithout, color: "var(--red)" },
+                    ].map(k => (
+                      <div key={k.label} className="card card-pad" style={{ padding: "14px", borderLeft: `3px solid ${k.color}` }}>
+                        <div style={{ fontSize: 11, color: "var(--text-muted)", marginBottom: 4 }}>{k.label}</div>
+                        <div style={{ fontSize: 20, fontWeight: 800, color: k.color }}>
+                          {k.value >= 1000 ? `${(k.value/1000).toFixed(1)} t` : `${k.value} kg`}
+                        </div>
+                        <div style={{ fontSize: 10.5, color: "var(--text-muted)", marginTop: 3 }}>aus {k.sessions} Sessions</div>
+                      </div>
+                    ))}
+                  </div>
+                  {(() => {
+                    const diff = kreatinStats.avgVolWith - kreatinStats.avgVolWithout;
+                    const pct = kreatinStats.avgVolWithout > 0 ? Math.round(diff / kreatinStats.avgVolWithout * 100) : 0;
+                    if (Math.abs(pct) < 3) return null;
+                    return (
+                      <div style={{ marginTop: 10, fontSize: 12, color: "var(--text-muted)", padding: "10px 14px", background: "var(--surface2)", borderRadius: 8 }}>
+                        {diff > 0
+                          ? <span>💊 Mit Kreatin bewegst du durchschnittlich <b style={{ color: "var(--green)" }}>+{pct}% mehr Volumen</b> pro Session.</span>
+                          : <span>📊 Ohne Kreatin bewegst du <b style={{ color: "var(--orange)" }}>{Math.abs(pct)}% mehr Volumen</b> — mehr Daten für sichere Aussage nötig.</span>}
+                      </div>
+                    );
+                  })()}
+                </div>
+              )}
+            </div>
+          )}
         </>
       )}
     </div>
