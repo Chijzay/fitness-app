@@ -136,12 +136,12 @@ export default function QuickEntry({
   function setM<K extends keyof MeasForm>(k: K, v: MeasForm[K]) { setMeasForm(f => ({ ...f, [k]: v })); }
 
   // ── Cardio-Sessions ──────────────────────────────────────────────
-  type CardioEntry = { localId: number; id?: number; type: string; distanceKm: string; durationMin: string; kcal: string; steps: string; notes: string };
+  type CardioEntry = { localId: number; id?: number; type: string; typeCustom: string; distanceKm: string; durationMin: string; kcal: string; steps: string; notes: string };
   const [cardioSessions, setCardioSessions] = useState<CardioEntry[]>([]);
   const [cardioDeleted, setCardioDeleted] = useState<number[]>([]);
   let _localId = 0;
-  function newCardioEntry(): CardioEntry { return { localId: ++_localId, type: "Joggen", distanceKm: "", durationMin: "", kcal: "", steps: "", notes: "" }; }
-  const CARDIO_TYPES = ["Joggen", "Spazieren", "Radfahren", "Schwimmen", "Wandern", "Sonstiges"];
+  function newCardioEntry(): CardioEntry { return { localId: ++_localId, type: "Joggen", typeCustom: "", distanceKm: "", durationMin: "", kcal: "", steps: "", notes: "" }; }
+  const CARDIO_TYPES = ["Joggen", "Incline Walk", "Spazieren", "Radfahren", "Schwimmen", "Wandern", "Eigene Bezeichnung"];
 
   useEffect(() => {
     const existing = logs.find(l => l.date.startsWith(date));
@@ -349,7 +349,7 @@ export default function QuickEntry({
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            date, type: cs.type,
+            date, type: cs.type === "Eigene Bezeichnung" ? (cs.typeCustom || "Sonstiges") : cs.type,
             distanceM: cs.distanceKm ? Math.round(Number(cs.distanceKm) * 1000) : undefined,
             durationS: cs.durationMin ? Number(cs.durationMin) * 60 : undefined,
             kcal: cs.kcal ? Number(cs.kcal) : undefined,
@@ -759,9 +759,13 @@ export default function QuickEntry({
                 </div>
                 <div className={g3}>
                   <Field label="Typ">
-                    <select value={cs.type} onChange={e => setCardioSessions(s => s.map(x => x.localId === cs.localId ? { ...x, type: e.target.value } : x))}>
+                    <select value={cs.type} onChange={e => setCardioSessions(s => s.map(x => x.localId === cs.localId ? { ...x, type: e.target.value, typeCustom: "" } : x))}>
                       {CARDIO_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
                     </select>
+                    {cs.type === "Eigene Bezeichnung" && (
+                      <input value={cs.typeCustom} placeholder="Bezeichnung eingeben…" style={{ marginTop: 6 }}
+                        onChange={e => setCardioSessions(s => s.map(x => x.localId === cs.localId ? { ...x, typeCustom: e.target.value } : x))} />
+                    )}
                   </Field>
                   <Field label="Strecke (km)">
                     <input type="number" min="0" step="0.01" value={cs.distanceKm} placeholder="z.B. 5.2"
