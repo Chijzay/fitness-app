@@ -134,9 +134,9 @@ export default function WeightDetail({ logs, allLogs, profile, range, setRange, 
   const lastMM  = [...weightEntries].reverse().find(d => d.muscleMass)?.muscleMass ?? null;
   const mmDiff  = firstMM != null && lastMM != null ? +(lastMM - firstMM).toFixed(1) : null;
 
-  // Wöchentliche Bilanz für Tabelle
+  // Wöchentliche Bilanz für Tabelle — absteigend (neueste oben)
   const weeklyBilanz = Object.entries(weeklyAvgMap)
-    .sort(([a], [b]) => a.localeCompare(b))
+    .sort(([a], [b]) => b.localeCompare(a))
     .map(([key, { sum, count }]) => {
       const avg = +(sum / count).toFixed(1);
       const dt = new Date(key + "T12:00:00");
@@ -387,7 +387,7 @@ export default function WeightDetail({ logs, allLogs, profile, range, setRange, 
         <SectionHeader title="Wöchentlicher Durchschnitt" icon="📅" />
         <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
           {weeklyBilanz.length > 0 ? weeklyBilanz.map((w, i) => {
-            const prev = weeklyBilanz[i - 1]?.avg ?? null;
+            const prev = weeklyBilanz[i + 1]?.avg ?? null;
             const diff = prev != null ? +(w.avg - prev).toFixed(1) : null;
             return (
               <div key={w.week} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "9px 14px", background: "var(--surface2)", borderRadius: 8 }}>
