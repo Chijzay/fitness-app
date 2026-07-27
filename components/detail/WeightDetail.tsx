@@ -125,14 +125,16 @@ export default function WeightDetail({ logs, allLogs, profile, range, setRange, 
   const mmDiff  = firstMM != null && lastMM != null ? +(lastMM - firstMM).toFixed(1) : null;
 
   // Wöchentliche Bilanz für Tabelle
-  const weeklyBilanz = Object.entries(weeklyAvgMap).map(([key, { sum, count }]) => {
-    const avg = +(sum / count).toFixed(1);
-    const dt = new Date(key + "T12:00:00");
-    return {
-      week: `KW ${dt.toLocaleDateString("de-DE", { day: "2-digit", month: "2-digit" })}`,
-      avg,
-    };
-  });
+  const weeklyBilanz = Object.entries(weeklyAvgMap)
+    .sort(([a], [b]) => a.localeCompare(b))
+    .map(([key, { sum, count }]) => {
+      const avg = +(sum / count).toFixed(1);
+      const dt = new Date(key + "T12:00:00");
+      return {
+        week: `KW ${dt.toLocaleDateString("de-DE", { day: "2-digit", month: "2-digit" })}`,
+        avg,
+      };
+    });
 
   const tt = tooltipStyle;
 
