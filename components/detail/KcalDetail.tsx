@@ -65,9 +65,11 @@ export default function KcalDetail({ logs, allLogs, profile, range, setRange, on
     const key = `KW ${mon.toLocaleDateString("de-DE", { day: "2-digit", month: "2-digit" })}`;
     weeklyMap[key] = (weeklyMap[key] ?? 0) + entry.deficit;
   });
-  const weeklyData = Object.entries(weeklyMap).map(([week, deficit]) => ({
-    week, deficit, fatKg: +calcFatKgFromKcal(deficit).toFixed(2),
-  }));
+  const weeklyData = Object.entries(weeklyMap)
+    .sort(([a], [b]) => a.localeCompare(b))
+    .map(([week, deficit]) => ({
+      week, deficit, fatKg: +calcFatKgFromKcal(deficit).toFixed(2),
+    }));
 
   const tt = tooltipStyle;
 

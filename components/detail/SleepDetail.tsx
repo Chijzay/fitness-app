@@ -65,12 +65,14 @@ export default function SleepDetail({ logs, allLogs, range, setRange, onEditDate
     weeklyMap[key].total += entry.actual; weeklyMap[key].count++;
     if (entry.deep) { weeklyMap[key].deep += entry.deep; weeklyMap[key].deepCount++; }
   });
-  const weeklyData = Object.entries(weeklyMap).map(([week, d]) => ({
-    week,
-    avgActual: Math.round(d.total / d.count),
-    totalActual: d.total,
-    avgDeep: d.deepCount ? Math.round(d.deep / d.deepCount) : null,
-  }));
+  const weeklyData = Object.entries(weeklyMap)
+    .sort(([a], [b]) => a.localeCompare(b))
+    .map(([week, d]) => ({
+      week,
+      avgActual: Math.round(d.total / d.count),
+      totalActual: d.total,
+      avgDeep: d.deepCount ? Math.round(d.deep / d.deepCount) : null,
+    }));
 
   const tt = tooltipStyle;
 

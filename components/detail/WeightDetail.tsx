@@ -55,15 +55,19 @@ export default function WeightDetail({ logs, allLogs, profile, range, setRange, 
   const lastW = [...weightEntries].reverse()[0]?.weight ?? null;
   const diff = firstW && lastW ? +(lastW - firstW).toFixed(1) : null;
 
-  // Lineare Regression Trend
-  const withIdx = weightEntries.map((d, i) => ({ i, w: d.weight ?? 0 }));
+  // Lineare Regression Trend — X = Tage seit erster Messung (nicht Index)
+  const firstDate = weightEntries[0] ? new Date(weightEntries[0].raw + "T12:00:00").getTime() : 0;
+  const withDays = weightEntries.map(d => ({
+    x: (new Date(d.raw + "T12:00:00").getTime() - firstDate) / 86400000,
+    w: d.weight ?? 0,
+  }));
   let trendSlope = 0;
-  if (withIdx.length >= 2) {
-    const n = withIdx.length;
-    const sumX = withIdx.reduce((s, d) => s + d.i, 0);
-    const sumY = withIdx.reduce((s, d) => s + d.w, 0);
-    const sumXY = withIdx.reduce((s, d) => s + d.i * d.w, 0);
-    const sumX2 = withIdx.reduce((s, d) => s + d.i * d.i, 0);
+  if (withDays.length >= 2) {
+    const n = withDays.length;
+    const sumX = withDays.reduce((s, d) => s + d.x, 0);
+    const sumY = withDays.reduce((s, d) => s + d.w, 0);
+    const sumXY = withDays.reduce((s, d) => s + d.x * d.w, 0);
+    const sumX2 = withDays.reduce((s, d) => s + d.x * d.x, 0);
     trendSlope = (n * sumXY - sumX * sumY) / (n * sumX2 - sumX * sumX);
   }
   const weeklyTrend = +(trendSlope * 7).toFixed(2);
@@ -98,21 +102,27 @@ export default function WeightDetail({ logs, allLogs, profile, range, setRange, 
     return { key, week: `KW ${dt.toLocaleDateString("de-DE", { day: "2-digit", month: "2-digit" })}`, avgBF, fatKg, avgMM, mmKg };
   });
 
-  // BF-Trend (lineare Regression)
-  const bfPoints = weightEntries.filter(d => d.bf).map((d, i) => ({ i, v: d.bf! }));
+  // BF-Trend (lineare Regression) — X = Tage seit erster Messung
+  const bfPoints = weightEntries.filter(d => d.bf).map(d => ({
+    x: (new Date(d.raw + "T12:00:00").getTime() - firstDate) / 86400000,
+    v: d.bf!,
+  }));
   let bfSlope = 0;
   if (bfPoints.length >= 2) {
-    const n = bfPoints.length, sx = bfPoints.reduce((s,d)=>s+d.i,0), sy = bfPoints.reduce((s,d)=>s+d.v,0);
-    const sxy = bfPoints.reduce((s,d)=>s+d.i*d.v,0), sx2 = bfPoints.reduce((s,d)=>s+d.i*d.i,0);
+    const n = bfPoints.length, sx = bfPoints.reduce((s,d)=>s+d.x,0), sy = bfPoints.reduce((s,d)=>s+d.v,0);
+    const sxy = bfPoints.reduce((s,d)=>s+d.x*d.v,0), sx2 = bfPoints.reduce((s,d)=>s+d.x*d.x,0);
     bfSlope = (n*sxy - sx*sy) / (n*sx2 - sx*sx);
   }
   const bfWeeklyTrend = +(bfSlope * 7).toFixed(2);
 
-  const mmPoints = weightEntries.filter(d => d.muscleMass).map((d, i) => ({ i, v: d.muscleMass! }));
+  const mmPoints = weightEntries.filter(d => d.muscleMass).map(d => ({
+    x: (new Date(d.raw + "T12:00:00").getTime() - firstDate) / 86400000,
+    v: d.muscleMass!,
+  }));
   let mmSlope = 0;
   if (mmPoints.length >= 2) {
-    const n = mmPoints.length, sx = mmPoints.reduce((s,d)=>s+d.i,0), sy = mmPoints.reduce((s,d)=>s+d.v,0);
-    const sxy = mmPoints.reduce((s,d)=>s+d.i*d.v,0), sx2 = mmPoints.reduce((s,d)=>s+d.i*d.i,0);
+    const n = mmPoints.length, sx = mmPoints.reduce((s,d)=>s+d.x,0), sy = mmPoints.reduce((s,d)=>s+d.v,0);
+    const sxy = mmPoints.reduce((s,d)=>s+d.x*d.v,0), sx2 = mmPoints.reduce((s,d)=>s+d.x*d.x,0);
     mmSlope = (n*sxy - sx*sy) / (n*sx2 - sx*sx);
   }
   const mmWeeklyTrend = +(mmSlope * 7).toFixed(2);

@@ -39,7 +39,9 @@ export default function StepsDetail({ logs, allLogs, range, setRange, onEditDate
     const key = `KW ${mon.toLocaleDateString("de-DE", { day: "2-digit", month: "2-digit" })}`;
     weeklyMap[key] = (weeklyMap[key] ?? 0) + log.steps;
   });
-  const weeklyData = Object.entries(weeklyMap).map(([week, steps]) => ({ week, steps }));
+  const weeklyData = Object.entries(weeklyMap)
+    .sort(([a], [b]) => a.localeCompare(b))
+    .map(([week, steps]) => ({ week, steps }));
 
   // Aktivitätstypen
   const typeMap: Record<string, number> = {};
